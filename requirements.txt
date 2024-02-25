@@ -1,0 +1,4 @@
+pyqt5==5.15.10
+requests==2.31.0
+future==0.18.3
+vdf==3.4
