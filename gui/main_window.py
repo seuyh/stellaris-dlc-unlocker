@@ -134,7 +134,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             msg_box.setWindowTitle('Ошибка!')
             msg_box.setText(
                 'Исполняемый файл "stellaris.exe" не найден.\n\n\nВозможно, вы указали неверную директорию.')
-            ok_button = msg_box.addButton(QMessageBox.Ok)
+            msg_box.addButton(QMessageBox.Ok)
             msg_box.exec_()
             return 0
 
@@ -200,7 +200,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             self.next_button_5.setEnabled(True)
             self.cancel_button_5.setEnabled(True)
 
-    def paradox_remove(self):
+    @staticmethod
+    def paradox_remove():
         user_home = os.path.expanduser("~")
         paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive")
         paradox_folder2 = os.path.join(user_home, "AppData", "Local", "Paradox Interactive")
@@ -316,7 +317,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
 
         self.close()
 
-    def ok_dialog(self, title, text, msg_type):
+    @staticmethod
+    def ok_dialog(title, text, msg_type):
         msg_box = QMessageBox()
         msg_box.setIcon(msg_type)
         msg_box.setWindowTitle(title)
