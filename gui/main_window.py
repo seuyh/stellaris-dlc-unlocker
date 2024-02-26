@@ -59,7 +59,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.space_req_change()
         self.path_change()
         self.setWindowTitle("Stellaris DLC Unlocker")
-        self.setWindowIcon(QIcon('design/435345.png'))
+        self.setWindowIcon(QIcon('../design/435345.png'))
         # ------------------------------------------------------------ #
 
     def switch_to_next(self):
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
 
     def version_check(self):
-        if float(version) > float(0.3):
+        if float(version) > float(0.4):
             if self.ok_dialog('Новая версия',
                               "На сервере обнаружена новая версия!\n\nПерекачайте анлокер с сайта",
                               QMessageBox.Critical):
@@ -257,7 +257,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                     launcher_folders.append(item)
             launcher_folder = os.path.join(os.path.join(folder_path, launcher_folders[0]))
             if self.ok_dialog('Внимание',
-                              "Сейчас мы запустим лаунчер, но так как мы не можем отследить когда он выполнит уведомление, после его открытия нажмите 'SKIP' в правом верхем углу и дождитесь пока лаучнер скажет, что обновление готово и просто закройте его",
+                              "Сейчас мы запустим лаунчер, но так как мы не можем отследить когда он обновится вам придется нам помочь, после его открытия нажмите 'SKIP' в правом верхем углу и дождитесь пока лаучнер скажет, что обновление готово и просто закройте его",
                               QMessageBox.Information):
                 process = Popen([os.path.join(folder_path, launcher_folder, "Paradox Launcher.exe")])
                 process.wait()
@@ -279,9 +279,9 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             pass
         os.rename(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64.dll',
                   f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
-        copytree('creamapi_launcher_files', f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
+        copytree('../creamapi_launcher_files', f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
                  dirs_exist_ok=True)
-        copytree('creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
+        copytree('../creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
         # move(f'{unzipped}/dlc', self.path_place.toPlainText())
         self.finish_text.setPlainText('Все готово!')
         sleep(1)

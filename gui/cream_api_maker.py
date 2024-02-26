@@ -60,7 +60,7 @@ class CreamAPI(QtCore.QThread):
         stellaris_dlc_list = self.get_dlc_list('281990')
         # hoi_dlc_list = self.get_dlc_list('394360')
         total_dlcs = len(stellaris_dlc_list)
-        with open("creamapi_steam_files/cream_api.ini", 'w', encoding='utf-8') as f:
+        with open("../creamapi_steam_files/cream_api.ini", 'w', encoding='utf-8') as f:
             f.write("; auto created by Stellaris DLC Unlocker\n")
             f.write("; Author seuyh\n")
             current_datetime = datetime.now().strftime("%d.%m.%Y")
@@ -114,7 +114,7 @@ class CreamAPI(QtCore.QThread):
             self.launcher_creamapi(dlcs)
 
     def launcher_creamapi(self, dlcs):
-        with open("creamapi_launcher_files/cream_api.ini", 'w', encoding='utf-8') as f:
+        with open("../creamapi_launcher_files/cream_api.ini", 'w', encoding='utf-8') as f:
             current_datetime = datetime.now().strftime("%d.%m.%Y")
             f.write(f"; created {current_datetime}\n")
             f.write("[steam]\n")
