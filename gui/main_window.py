@@ -4,15 +4,15 @@ from sys import exit
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QDesktopServices
 import design.main_window as main_design
 from libs.server_data import gameversion, version, get_remote_file_size, url
 from libs.game_path import stellaris_path
 from gui.DownloadThread import DownloaderThread
 from libs.encrypt import decrypt
-from subprocess import Popen
+from subprocess import Popen, run
 from zipfile import ZipFile
-from shutil import move, rmtree, copytree
+from shutil import rmtree, copytree
 
 
 class MainWindow(QMainWindow, main_design.Ui_MainWindow):
@@ -39,12 +39,13 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.back_button_2.clicked.connect(self.switch_to_back)
         self.back_button_3.clicked.connect(self.switch_to_back)
         self.reinstall_button.clicked.connect(self.reinstall)
-        self.skip_button.clicked.connect(lambda: self.reinstall(skip=True))
+        # self.skip_button.clicked.connect(lambda: self.reinstall(skip=True))
         self.finish_button.clicked.connect(self.finish)
         self.locate_folder.clicked.connect(self.browse_folder)
         self.eula_true.toggled.connect(self.on_radio_button_toggled)
         self.eula_true1.toggled.connect(self.on_radio_button_toggled)
         self.eula_false.toggled.connect(self.on_radio_button_toggled)
+        self.textBrowser_5.anchorClicked.connect(self.open_link_in_browser)
 
         self.download_thread = None
         self.is_downloading = False
@@ -69,7 +70,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
 
     def version_check(self):
-        if float(version) > float(0.2):
+        if float(version) > float(0.3):
             if self.ok_dialog('Новая версия',
                               "На сервере обнаружена новая версия!\n\nПерекачайте анлокер с сайта",
                               QMessageBox.Critical):
@@ -113,6 +114,10 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         elif self.eula_false.isChecked():
             self.next_button_3.setEnabled(False)
             self.next_button_3.setCursor(Qt.ForbiddenCursor)
+
+    def open_link_in_browser(self, url):
+        QDesktopServices.openUrl(url)
+        self.text_browser.ignore()
 
     def path_change(self):
         path = stellaris_path()
@@ -266,21 +271,26 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
 
     def replace_files(self, launcher_folder):
-        unzipped = self.unzip_and_replace()
+        rmtree(f'{self.path_place.toPlainText()}/dlc')
+        self.unzip_and_replace()
+        try:
+            os.remove(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+        except:
+            pass
         os.rename(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64.dll',
                   f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
         copytree('creamapi_launcher_files', f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
                  dirs_exist_ok=True)
         copytree('creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
-        rmtree(f'{self.path_place.toPlainText()}/dlc')
-        move(f'{unzipped}/dlc', self.path_place.toPlainText())
+        # move(f'{unzipped}/dlc', self.path_place.toPlainText())
         self.finish_text.setPlainText('Все готово!')
         sleep(1)
         self.finish_button.setEnabled(True)
 
     def unzip_and_replace(self):
         zip_path = self.save_path
-        extract_folder = os.path.splitext(zip_path)[0]
+        # extract_folder = os.path.splitext(zip_path)[0]
+        extract_folder = self.path_place.toPlainText()
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
 
@@ -291,7 +301,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
     def finish(self):
         if self.launch_game.isChecked():
             try:
-                Popen([f"{self.path_place.toPlainText()}/stellaris.exe"])
+                run('start steam://run/281990', shell=True, capture_output=True, text=True)
+                # Popen([f"{self.path_place.toPlainText()}/stellaris.exe"])
             except:
                 pass
 
