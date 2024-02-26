@@ -139,7 +139,7 @@ class Ui_MainWindow(object):
         self.textBrowser_4.setFrameShape(QtWidgets.QFrame.Box)
         self.textBrowser_4.setObjectName("textBrowser_4")
         self.eula_true = QtWidgets.QRadioButton(self.page_3)
-        self.eula_true.setGeometry(QtCore.QRect(210, 240, 231, 17))
+        self.eula_true.setGeometry(QtCore.QRect(210, 240, 231, 21))
         self.eula_true.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.eula_true.setObjectName("eula_true")
         self.eula = QtWidgets.QButtonGroup(MainWindow)
@@ -153,7 +153,7 @@ class Ui_MainWindow(object):
         self.eula_false.setObjectName("eula_false")
         self.eula.addButton(self.eula_false)
         self.eula_true1 = QtWidgets.QRadioButton(self.page_3)
-        self.eula_true1.setGeometry(QtCore.QRect(210, 220, 231, 17))
+        self.eula_true1.setGeometry(QtCore.QRect(210, 220, 231, 21))
         self.eula_true1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.eula_true1.setAcceptDrops(False)
         self.eula_true1.setChecked(False)
@@ -196,7 +196,10 @@ class Ui_MainWindow(object):
         self.line_6.setObjectName("line_6")
         self.textBrowser_5 = QtWidgets.QTextBrowser(self.page_4)
         self.textBrowser_5.setGeometry(QtCore.QRect(210, 90, 281, 191))
-        self.textBrowser_5.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_5.setStyleSheet("background-color: rgb(240, 240, 240);\n"
+"\n"
+"text-decoration: none;\n"
+"")
         self.textBrowser_5.setFrameShape(QtWidgets.QFrame.Box)
         self.textBrowser_5.setObjectName("textBrowser_5")
         self.cancel_button_4 = QtWidgets.QPushButton(self.page_4)
@@ -321,11 +324,11 @@ class Ui_MainWindow(object):
         self.line_9.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_9.setObjectName("line_9")
         self.download_progressBar = QtWidgets.QProgressBar(self.page_5)
-        self.download_progressBar.setGeometry(QtCore.QRect(210, 132, 281, 21))
+        self.download_progressBar.setGeometry(QtCore.QRect(210, 110, 281, 21))
         self.download_progressBar.setProperty("value", 0)
         self.download_progressBar.setObjectName("download_progressBar")
         self.download_text = QtWidgets.QLineEdit(self.page_5)
-        self.download_text.setGeometry(QtCore.QRect(210, 160, 281, 20))
+        self.download_text.setGeometry(QtCore.QRect(210, 140, 171, 20))
         self.download_text.setStyleSheet("background-color: rgb(240, 240, 240);")
         self.download_text.setFrame(False)
         self.download_text.setReadOnly(True)
@@ -342,6 +345,7 @@ class Ui_MainWindow(object):
 "}")
         self.next_button_5.setObjectName("next_button_5")
         self.cancel_button_5 = QtWidgets.QPushButton(self.page_5)
+        self.cancel_button_5.setEnabled(False)
         self.cancel_button_5.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_5.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_5.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
@@ -351,12 +355,25 @@ class Ui_MainWindow(object):
 "    background-color: #FFD0D1;\n"
 "}")
         self.cancel_button_5.setObjectName("cancel_button_5")
-        self.speed_line = QtWidgets.QLineEdit(self.page_5)
-        self.speed_line.setGeometry(QtCore.QRect(210, 180, 211, 20))
-        self.speed_line.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.speed_line.setFrame(False)
-        self.speed_line.setReadOnly(True)
-        self.speed_line.setObjectName("speed_line")
+        self.label = QtWidgets.QLabel(self.page_5)
+        self.label.setGeometry(QtCore.QRect(210, 86, 91, 20))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.page_5)
+        self.label_2.setGeometry(QtCore.QRect(210, 180, 251, 20))
+        self.label_2.setObjectName("label_2")
+        self.creamapi_progressBar_2 = QtWidgets.QProgressBar(self.page_5)
+        self.creamapi_progressBar_2.setGeometry(QtCore.QRect(210, 204, 281, 21))
+        self.creamapi_progressBar_2.setProperty("value", 0)
+        self.creamapi_progressBar_2.setObjectName("creamapi_progressBar_2")
+        self.creamapi_label = QtWidgets.QLabel(self.page_5)
+        self.creamapi_label.setGeometry(QtCore.QRect(210, 234, 281, 20))
+        self.creamapi_label.setObjectName("creamapi_label")
+        self.label_3 = QtWidgets.QLabel(self.page_5)
+        self.label_3.setGeometry(QtCore.QRect(210, 260, 281, 20))
+        self.label_3.setObjectName("label_3")
+        self.speed_label = QtWidgets.QLabel(self.page_5)
+        self.speed_label.setGeometry(QtCore.QRect(376, 140, 121, 20))
+        self.speed_label.setObjectName("speed_label")
         self.stackedWidget.addWidget(self.page_5)
         self.page_6 = QtWidgets.QWidget()
         self.page_6.setObjectName("page_6")
@@ -524,7 +541,7 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   4. Все права, не предоставленные здесь явно, сохраняются за правообладателями.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   5. Установка и использование данной русификации означает, что вы ознакомились и понимаете положения настоящего лицензионного соглашения и согласны с ними.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   5. Установка и использование данной модификации означает, что вы ознакомились и понимаете положения настоящего лицензионного соглашения и согласны с ними.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.eula_true.setText(_translate("MainWindow", "Я  принимаю условия соглашения"))
         self.eula_false.setText(_translate("MainWindow", "Я не принимаю условия соглашения"))
@@ -538,13 +555,17 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC Unlocker</span></p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Требования</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Лицензия</span><span style=\" font-size:10pt;\">: Steam (не исключена работоспособность других версий).</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Лицензия</span><span style=\" font-size:10pt;\">: Steam.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Установка</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Следуйте инструкциям инсталлятора. Установка почти полностью автоматическая. </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Удаление</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Переустановите Paradox лаунчер, удалите папку &quot;dlc&quot; в директории игры. Не забудте заново скачать те dlc которые у вас приобретены.</span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Переустановите Paradox лаунчер, удалите папку &quot;dlc&quot; в директории игры. Не забудте заново скачать те dlc которые у вас приобретены.<br /><br />Сделано лично мной для всех<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">@seuyh</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">GitHub</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">Отдельная благодарность герою нашего времени, который все это делал для нас ручками </span><img src=\":/images/telegram (1).png\" /><a href=\"@Temri1337\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">He11oThere</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"@Temri1337\"><span style=\" font-size:8pt; text-decoration: underline; color:#000000;\"><br /></span></a><a href=\"https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">playground.ru Stellaris DLC Unlocker</span></a></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; color:#0000ff;\"><br /></p></body></html>"))
         self.cancel_button_4.setText(_translate("MainWindow", "Отмена"))
         self.textBrowser_6.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -570,7 +591,7 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, укажите папку с игрой если мы не смогли найти ее автоматически.</p></body></html>"))
-        self.space_req.setText(_translate("MainWindow", "Требуется как минимум %nan% Гб места на диске \"C:/\""))
+        self.space_req.setText(_translate("MainWindow", "Требуется дополнительно %nan%  места"))
         self.textBrowser_10.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -584,7 +605,11 @@ class Ui_MainWindow(object):
         self.download_text.setText(_translate("MainWindow", "Подключение к серверу..."))
         self.next_button_5.setText(_translate("MainWindow", "Далее"))
         self.cancel_button_5.setText(_translate("MainWindow", "Отмена"))
-        self.speed_line.setText(_translate("MainWindow", "Скорость: %nan%"))
+        self.label.setText(_translate("MainWindow", "Загрузка DLC:"))
+        self.label_2.setText(_translate("MainWindow", "Генерация creamapi:"))
+        self.creamapi_label.setText(_translate("MainWindow", "Получение инфо о dlc: подключение к api"))
+        self.label_3.setText(_translate("MainWindow", "Скорость генерации зависит от сервера, извините ;("))
+        self.speed_label.setText(_translate("MainWindow", "Скорость: %nan%"))
         self.textBrowser_12.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

@@ -1,6 +1,6 @@
 import os.path
 import winreg
-import vdf
+from vdf import loads
 
 
 def get_steam_path():
@@ -18,7 +18,7 @@ def stellaris_path():
 
     try:
         with open(vdf_file_path, 'r', encoding='utf-8') as vdf_file:
-            vdf_data = vdf.loads(vdf_file.read())
+            vdf_data = loads(vdf_file.read())
 
         if "libraryfolders" in vdf_data:
             libraryfolders = vdf_data["libraryfolders"]

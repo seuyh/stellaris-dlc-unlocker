@@ -1,17 +1,18 @@
 import os
-import time
-import sys
+from time import sleep
+from sys import exit
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 import design.main_window as main_design
-from libs.server_data import gameversion, version, size, url
+from libs.server_data import gameversion, version, get_remote_file_size, url
 from libs.game_path import stellaris_path
 from gui.DownloadThread import DownloaderThread
 from libs.encrypt import decrypt
-import subprocess
-import zipfile
-import shutil
+from subprocess import Popen
+from zipfile import ZipFile
+from shutil import move, rmtree, copytree
 
 
 class MainWindow(QMainWindow, main_design.Ui_MainWindow):
@@ -48,11 +49,6 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.download_thread = None
         self.is_downloading = False
         self.next_button_5.setEnabled(False)
-        # self.thread = DownloadThread(
-        #     "https://github.com/user/repository/raw/master/file.zip",
-        #     os.path.join(os.getenv("TEMP"), "file.zip")
-        # )
-        # self.thread.progress.connect(self.update_progress)
         # -------------------------------------------- #
 
         # ----------- запуск необходимых стартовых функций ----------- #
@@ -73,11 +69,11 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
 
     def version_check(self):
-        if float(version) > float(0.1):
+        if float(version) > float(0.2):
             if self.ok_dialog('Новая версия',
                               "На сервере обнаружена новая версия!\n\nПерекачайте анлокер с сайта",
                               QMessageBox.Critical):
-                sys.exit()
+                exit()
 
     def cancel(self):
         msg_box = QMessageBox()
@@ -106,7 +102,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.hello2_msg.setText(new_text)
 
     def space_req_change(self):
-        new_text = self.space_req.text().replace("%nan%", size)
+        new_text = self.space_req.text().replace("%nan%", get_remote_file_size(
+            decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')))
         self.space_req.setText(new_text)
 
     def on_radio_button_toggled(self):
@@ -153,23 +150,50 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                 if os.path.exists(self.save_path):
                     os.remove(self.save_path)
                 if os.path.exists(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker')):
-                    shutil.rmtree(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker'))
+                    rmtree(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker'))
             except:
                 pass
 
-            self.download_thread = DownloaderThread(file_url, self.save_path, self.update_progress, self.show_error)
+            self.download_thread = DownloaderThread(file_url, self.save_path)
+            self.download_thread.progress_signal.connect(self.update_progress)
+            self.download_thread.error_signal.connect(self.show_error)
+            self.download_thread.speed_signal.connect(self.show_download_speed)
+
+            self.creamapi_maker = CreamAPI()
+            self.creamapi_maker.progress_signal.connect(self.update_creamapi_progress)
+            self.creamapi_maker.dlc_signal.connect(self.show_dlc_get_message)
+
             self.download_thread.start()
+            self.creamapi_maker.start()
             self.download_text.setText("Загрузка...")
+            self.creamapi_label.setText(f"Получение инфо о dlc: подключение к api")
+
+    def update_creamapi_progress(self, value):
+        self.creamapi_progressBar_2.setValue(value)
+        if value == 100:
+            self.creamapi_label.setText("Готово!")
+            self.download_complete()
+
+    def show_dlc_get_message(self, dlc_name):
+        self.creamapi_label.setText(f"Получение инфо о dlc: {dlc_name}")
 
     def update_progress(self, value):
         self.download_progressBar.setValue(value)
-        # self.speed_line.setText("Скорость: {:.2f} KB/s".format(speed))
         if value == 100:
-            self.download_text.setText("Готово! Теперь вы можете продолжить установку!")
-            self.next_button_5.setEnabled(True)
+            self.download_text.setText("Готово!")
+            self.speed_label.setText(f"")
+            self.download_complete()
+
+    def show_download_speed(self, speed):
+        self.speed_label.setText(f"Скорость: {speed} Мб/с")
 
     def show_error(self, error_message):
         QMessageBox.warning(self, "Error", "Failed to download file: " + error_message)
+
+    def download_complete(self):
+        if self.download_progressBar.value() == 100 and self.creamapi_progressBar_2.value() == 100:
+            self.next_button_5.setEnabled(True)
+            self.cancel_button_5.setEnabled(True)
 
     def paradox_remove(self):
         user_home = os.path.expanduser("~")
@@ -179,16 +203,16 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         paradox_folder4 = os.path.join(user_home, "AppData", "Roaming", "paradox-launcher-v2")
         try:
             if os.path.exists(paradox_folder1):
-                shutil.rmtree(paradox_folder1)
+                rmtree(paradox_folder1)
 
             if os.path.exists(paradox_folder2):
-                shutil.rmtree(paradox_folder2)
+                rmtree(paradox_folder2)
 
             if os.path.exists(paradox_folder3):
-                shutil.rmtree(paradox_folder3)
+                rmtree(paradox_folder3)
 
             if os.path.exists(paradox_folder4):
-                shutil.rmtree(paradox_folder4)
+                rmtree(paradox_folder4)
         except Exception:
             pass
 
@@ -201,15 +225,15 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             for item in os.listdir(folder_path):
                 if item.startswith("launcher"):
                     launcher_folders.append(item)
-            time.sleep(0.2)
+            sleep(0.2)
             self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
         else:
             self.paradox_remove()
             if self.ok_dialog('Внимание',
                               "Сейчас будет открыт инсталятор лаунчера, пожалуйста выберете 'Remove' если будет предложено, либо просто продолжите установку",
                               QMessageBox.Information):
-                process = subprocess.Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
-                                           shell=True)
+                process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
+                                shell=True)
                 process.wait()
 
             user_home = os.path.expanduser("~")
@@ -218,10 +242,10 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                 if self.ok_dialog('Внимание',
                                   "Сейчас будет открыт инсталятор лаунчера, пожалуйста выполните установку",
                                   QMessageBox.Information):
-                    process = subprocess.Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
-                                               shell=True)
+                    process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
+                                    shell=True)
                     process.wait()
-                time.sleep(1)
+                sleep(1)
             launcher_folders = []
             for item in os.listdir(folder_path):
                 if item.startswith("launcher"):
@@ -230,30 +254,28 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             if self.ok_dialog('Внимание',
                               "Сейчас мы запустим лаунчер, но так как мы не можем отследить когда он выполнит уведомление, после его открытия нажмите 'SKIP' в правом верхем углу и дождитесь пока лаучнер скажет, что обновление готово и просто закройте его",
                               QMessageBox.Information):
-                process = subprocess.Popen([os.path.join(folder_path, launcher_folder, "Paradox Launcher.exe")])
+                process = Popen([os.path.join(folder_path, launcher_folder, "Paradox Launcher.exe")])
                 process.wait()
-            time.sleep(1)
+            sleep(1)
             launcher_folders = []
             for item in os.listdir(folder_path):
                 if item.startswith("launcher"):
                     launcher_folders.append(item)
-                    time.sleep(0.2)
+                    sleep(0.2)
                     self.switch_to_next()
             self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
 
     def replace_files(self, launcher_folder):
         unzipped = self.unzip_and_replace()
-        shutil.rmtree(f'{launcher_folder}/resources')
-        shutil.move(f'{unzipped}/1launcher/resources', launcher_folder)
-        files = os.listdir(f'{unzipped}/2game')
-        for file in files:
-            source_path = os.path.join(f'{unzipped}/2game', file)
-            target_path = os.path.join(self.path_place.toPlainText(), file)
-            shutil.move(source_path, target_path)
-        shutil.rmtree(f'{self.path_place.toPlainText()}/dlc')
-        shutil.move(f'{unzipped}/dlc', self.path_place.toPlainText())
+        os.rename(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64.dll',
+                  f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+        copytree('creamapi_launcher_files', f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
+                 dirs_exist_ok=True)
+        copytree('creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
+        rmtree(f'{self.path_place.toPlainText()}/dlc')
+        move(f'{unzipped}/dlc', self.path_place.toPlainText())
         self.finish_text.setPlainText('Все готово!')
-        time.sleep(1)
+        sleep(1)
         self.finish_button.setEnabled(True)
 
     def unzip_and_replace(self):
@@ -262,14 +284,14 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
 
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        with ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_folder)
         return extract_folder
 
     def finish(self):
         if self.launch_game.isChecked():
             try:
-                subprocess.Popen([f"{self.path_place.toPlainText()}/stellaris.exe"])
+                Popen([f"{self.path_place.toPlainText()}/stellaris.exe"])
             except:
                 pass
 
@@ -277,7 +299,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             if os.path.exists(self.save_path):
                 os.remove(self.save_path)
             if os.path.exists(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker')):
-                shutil.rmtree(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker'))
+                rmtree(os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker'))
         except:
             pass
 
