@@ -6,7 +6,7 @@ from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QDesktopServices
 import design.main_window as main_design
-from libs.server_data import gameversion, version, get_remote_file_size, url
+from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg
 from libs.game_path import stellaris_path
 from gui.DownloadThread import DownloaderThread
 from libs.encrypt import decrypt
@@ -57,6 +57,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         # ----------- запуск необходимых стартовых функций ----------- #
         self.version_check()
         self.version_change()
+        self.server_msg()
         self.gameversion_change()
         self.space_req_change()
         self.path_change()
@@ -130,7 +131,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             updater_file.write(f'del {old_file}\n')
             updater_file.write(f'rename {old_dir}\\Stellaris-DLC-Unlocker.load Stellaris-DLC-Unlocker.exe\n')
             updater_file.write(f'start {old_dir}\\Stellaris-DLC-Unlocker.exe\n')
-            updater_file.write('ping 127.0.0.1 -n 2 > nul\n')
+            updater_file.write('ping 127.0.0.1 -n 3 > nul\n')
             updater_file.write('del %0')
         progress_dialog.close()
 
@@ -389,6 +390,13 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             pass
 
         self.close()
+
+    def server_msg(self):
+        if server_msg:
+            if self.ok_dialog('Важное сообщение',
+                              f"Сообщение с сервера\n\n{server_msg}",
+                              QMessageBox.Information):
+                pass
 
     @staticmethod
     def ok_dialog(title, text, msg_type):
