@@ -2,6 +2,7 @@ from requests import get
 from time import sleep
 from datetime import datetime
 from PyQt5 import QtCore
+import os
 
 
 class CreamAPI(QtCore.QThread):
@@ -12,6 +13,7 @@ class CreamAPI(QtCore.QThread):
         super().__init__()
         # self.dlc_callback = dlc_callback
         # self.progress_callback = progress_callback
+        self.parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     def get_dlc_name(self, dlc_id):
         url = f"https://api.steamcmd.net/v1/info/{dlc_id}"
@@ -60,7 +62,7 @@ class CreamAPI(QtCore.QThread):
         stellaris_dlc_list = self.get_dlc_list('281990')
         # hoi_dlc_list = self.get_dlc_list('394360')
         total_dlcs = len(stellaris_dlc_list)
-        with open("../creamapi_steam_files/cream_api.ini", 'w', encoding='utf-8') as f:
+        with open(os.path.join(self.parent_directory, 'creamapi_steam_files', 'cream_api.ini'), 'w', encoding='utf-8') as f:
             f.write("; auto created by Stellaris DLC Unlocker\n")
             f.write("; Author seuyh\n")
             current_datetime = datetime.now().strftime("%d.%m.%Y")
@@ -114,7 +116,7 @@ class CreamAPI(QtCore.QThread):
             self.launcher_creamapi(dlcs)
 
     def launcher_creamapi(self, dlcs):
-        with open("../creamapi_launcher_files/cream_api.ini", 'w', encoding='utf-8') as f:
+        with open(os.path.join(self.parent_directory, 'creamapi_launcher_files', 'cream_api.ini'), 'w', encoding='utf-8') as f:
             current_datetime = datetime.now().strftime("%d.%m.%Y")
             f.write(f"; created {current_datetime}\n")
             f.write("[steam]\n")
