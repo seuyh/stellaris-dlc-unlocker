@@ -1,6 +1,6 @@
 # Stellaris DLC Unlocker
 
-![Stellaris DLC Unlocker Logo](https://i.playground.ru/p/f72DV753c6AGIytPjdG_DA.png)
+![Stellaris DLC Unlocker Logo](https://github.com/seuyh/stellaris-dlc-unlocker/blob/main/.banner/readme_banner.png)
 
 ## Описание
 
