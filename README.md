@@ -37,7 +37,7 @@ Stellaris DLC Unlocker - это программа, разработанная �
 
 ## Лицензия
 
-Этот проект лицензирован в соответствии с [Creative Commons Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND) License](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru).
+Этот проект лицензирован в соответствии с [Creative Commons Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND) License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 ## Связь с разработчиками
 
