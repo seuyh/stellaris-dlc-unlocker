@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from sys import argv
+from sys import argv, exit
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDialog
 from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
@@ -68,11 +68,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
 
     def switch_to_next(self):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
-        print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        print(get('https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker-files/main/data.json').json())
 
     def switch_to_back(self):
-        self.stackedWidget.currentIndex()
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
 
     @staticmethod
@@ -100,42 +97,18 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         with open('updater.bat', 'w') as updater_file:
             updater_file.write('@echo off\n')
             updater_file.write(f'taskkill /pid {pid} /f\n')
-            updater_file.write('set /a num=(%Random% %%9)+1\n')
-            updater_file.write('color %num%\n')
-            updater_file.write(
-                'echo   _________ __         .__  .__               .__                                   \n')
-            updater_file.write(
-                'echo /   ______/  ^|_  ____ ^|  ^| ^|  ^| _____ _______^|__^| ______                           \n')
-            updater_file.write(
-                'echo \_____  \\   ___/ __ \^|  ^| ^|  ^| \__  \\_  __ ^|  ^|/  ___/                           \n')
-            updater_file.write(
-                'echo /        \^|  ^| \  ___/^|  ^|_^|  ^|__/ __ \^|  ^| \^|  ^|\___ \                            \n')
-            updater_file.write(
-                'echo /_______  /^|__^|  \___  ^|____^|____(____  ^|__^|  ^|__/____  ^>                           \n')
-            updater_file.write(
-                'echo        \/           \/               \/              \/                            \n')
-            updater_file.write(
-                'echo ________  .____   _________      ____ ___      .__                 __                 \n')
-            updater_file.write(
-                'echo \______ \ ^|    ^|  \_   ___ \    ^|    ^|   \____ ^|  ^|   ____   ____ ^|  ^| __ ___________ \n')
-            updater_file.write(
-                'echo  ^|    ^|  \^|    ^|  /    \  \/    ^|    ^|   /    \^|  ^|  /  _ \_/ ___\^|  ^|/ _/ __ \_  __ \\n')
-            updater_file.write(
-                'echo  ^|    `   ^|    ^|^|__\     \____  ^|    ^|  ^|   ^|  ^|_(  ^<_^> \  \___^|    ^<\  ___/^|  ^| \/\n')
-            updater_file.write(
-                'echo /_______  ^|_______ \______  /   ^|______/^|___^|  ^|____/\____/ \___  ^|^|__^|\___  ^|^|__^|   \n')
-            updater_file.write(
-                'echo        \/        \/      \/                 \/                 \/     \/    \/        \n')
-            updater_file.write(f'ping 127.0.0.1 -n 3 > nul\n')
+            updater_file.write(f'ping 127.0.0.1 -n 1 > nul\n')
             updater_file.write('echo Updating...\n')
-            updater_file.write(f'del {old_file}\n')
-            updater_file.write(f'rename {old_dir}\\Stellaris-DLC-Unlocker.load Stellaris-DLC-Unlocker.exe\n')
-            updater_file.write(f'start {old_dir}\\Stellaris-DLC-Unlocker.exe\n')
-            updater_file.write('ping 127.0.0.1 -n 3 > nul\n')
+            updater_file.write(f'del "{old_file}"\n')
+            updater_file.write(f'rename "{old_dir}\\Stellaris-DLC-Unlocker.load" "Stellaris-DLC-Unlocker.exe"\n')
+            updater_file.write(f'start "" "{old_dir}\\Stellaris-DLC-Unlocker.exe"\n')
+            updater_file.write('ping 127.0.0.1 -n 1 > nul\n')
             updater_file.write('del %0')
         progress_dialog.close()
 
+        sleep(0.5)
         Popen(['cmd.exe', '/c', 'updater.bat'], shell=True)
+        exit()
 
     def version_check(self):
         iversion = '0.6'
