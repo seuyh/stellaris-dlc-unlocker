@@ -486,6 +486,13 @@ class Ui_MainWindow(object):
         self.line_10.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_10.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_10.setObjectName("line_10")
+        self.textBrowser_15 = QtWidgets.QTextBrowser(self.centralwidget)
+        self.textBrowser_15.setGeometry(QtCore.QRect(100, 300, 100, 20))
+        self.textBrowser_15.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_15.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.textBrowser_15.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_15.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_15.setObjectName("textBrowser_15")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -642,3 +649,8 @@ class Ui_MainWindow(object):
         self.launch_game.setText(_translate("MainWindow", "Запустить игру"))
         self.checkBox.setText(_translate("MainWindow", "Автор крутой"))
         self.version.setText(_translate("MainWindow", "version %nan%"))
+        self.textBrowser_15.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><span style=\" font-size:10pt; color:#000000;\"> </span><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:10pt; text-decoration: underline; color:#000000;\">GitHub</span></a></p></body></html>"))

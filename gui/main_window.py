@@ -48,6 +48,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.eula_true1.toggled.connect(self.on_radio_button_toggled)
         self.eula_false.toggled.connect(self.on_radio_button_toggled)
         self.textBrowser_5.anchorClicked.connect(self.open_link_in_browser)
+        self.textBrowser_15.anchorClicked.connect(self.open_link_in_browser)
 
         self.download_thread = None
         self.is_downloading = False
@@ -166,8 +167,9 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             self.next_button_3.setCursor(Qt.ForbiddenCursor)
 
     def open_link_in_browser(self, url):
+        content = self.sender().toHtml()
         QDesktopServices.openUrl(url)
-        self.text_browser.ignore()
+        self.sender().setHtml(content)
 
     def path_change(self):
         path = stellaris_path()
