@@ -40,7 +40,6 @@ class MainWindow(QMainWindow):
         self.back_button_2.clicked.connect(self.switch_to_back)
         self.back_button_3.clicked.connect(self.switch_to_back)
         self.reinstall_button.clicked.connect(self.reinstall)
-        # self.skip_button.clicked.connect(lambda: self.reinstall(skip=True))
         self.finish_button.clicked.connect(self.finish)
         self.locate_folder.clicked.connect(self.browse_folder)
         self.eula_true.toggled.connect(self.on_radio_button_toggled)
@@ -218,7 +217,6 @@ class MainWindow(QMainWindow):
             if self.stackedWidget.currentIndex() != 4:
                 self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
             file_url = decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')
-            # self.save_path = os.path.join(os.path.expanduser("~"), "Downloads", 'stellaris_unlocker.zip')
             self.save_path = os.path.join(self.path_place.toPlainText(), 'stellaris_unlocker.zip')
             try:
                 if os.path.exists(self.save_path):
@@ -351,14 +349,12 @@ class MainWindow(QMainWindow):
                  f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
                  dirs_exist_ok=True)
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
-        # move(f'{unzipped}/dlc', self.path_place.toPlainText())
         self.finish_text.setPlainText(self.translations.get('all_done', ''))
         sleep(1)
         self.finish_button.setEnabled(True)
 
     def unzip_and_replace(self):
         zip_path = self.save_path
-        # extract_folder = os.path.splitext(zip_path)[0]
         extract_folder = self.path_place.toPlainText()
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
@@ -371,7 +367,6 @@ class MainWindow(QMainWindow):
         if self.launch_game.isChecked():
             try:
                 run('start steam://run/281990', shell=True, capture_output=True, text=True)
-                # Popen([f"{self.path_place.toPlainText()}/stellaris.exe"])
             except:
                 pass
 

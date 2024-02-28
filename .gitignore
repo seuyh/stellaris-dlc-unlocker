@@ -1,0 +1,10 @@
+/design/languages/installer_ru.ui
+/design/languages/installer_en.ui
+/design/resources.qrc
+/venv/
+/output/
+/.idea/
+/unused_resources/
+/data.json
+/.banner/
+/.github/

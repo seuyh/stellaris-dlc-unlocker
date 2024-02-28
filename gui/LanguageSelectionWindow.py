@@ -4,7 +4,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 
-
 class LanguageSelectionWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -53,16 +52,12 @@ class LanguageSelectionWindow(QWidget):
         self.center()
 
     def center(self):
-        # Получаем геометрию главного экрана
         qr = self.frameGeometry()
-        # Получаем центральную точку относительно главного экрана
         cp = QApplication.desktop().availableGeometry().center()
-        # Перемещаем окно в центр главного экрана
         qr.moveCenter(cp)
         self.setGeometry(qr)
 
     def language_changed(self):
-        # Обновляем надписи на кнопках при изменении выбранного языка
         if self.language_combo.currentData() == 'en':
             self.setWindowTitle("Language selection")
             self.select_button.setText("Next")
