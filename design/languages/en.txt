@@ -1,0 +1,22 @@
+update_found_title: New version
+update_found_text: A new version has been detected on the server!\nClick 'OK' to update\nAfter the update, the new version will be automatically opened\n\nYour version: {iversion} Server version: {version}
+update_load: Updating...
+update: Update
+cancel_title: Exit
+cancel_text: If you exit, the unlocker will not be installed.\n\n\nExit the installation program?
+error: Error!
+path_error: Executable file "stellaris.exe" not found.\n\n\nYou may have specified the wrong directory.
+dir_change: Choose Stellaris folder
+loading: Loading...
+dlc_get: Getting DLC info:
+dlc_get_format: connecting to api
+done: Done!
+speed: Speed: {speed} MB/s
+download_error: File download error\nMost likely the server is currently unavailable
+attention: Attention
+launcher_reinstall_1: The launcher installer will now open, please select 'Remove' if prompted, or simply continue installation
+launcher_reinstall_2: The launcher installer will now open, please proceed with the installation
+launcher_reinstall_3: We will now launch the launcher, but since we cannot track when it updates, you will need to help us, after it opens, click 'SKIP' in the top right corner and wait until the launcher says the update is ready, then simply close it\nNotifications in the launcher are displayed in the bell in the top right corner
+all_done: All done!
+server_msg_title: Important Message
+server_msg_text: Server message\n\n{server_msg}

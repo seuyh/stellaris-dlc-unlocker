@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDial
 from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QDesktopServices
-import design.main_window as main_design
+
 from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg
 from libs.game_path import stellaris_path
 from gui.DownloadThread import DownloaderThread
@@ -17,11 +17,10 @@ from requests import get
 import ctypes
 
 
-class MainWindow(QMainWindow, main_design.Ui_MainWindow):
-
-    def __init__(self):
+class MainWindow(QMainWindow):
+    def __init__(self, language):
         super(MainWindow, self).__init__()
-        self.setupUi(self)
+        self.setup_ui(language)
         self.setWindowState(Qt.WindowActive)
 
         # ----------- инициализация кнопок ----------- #
@@ -51,6 +50,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.textBrowser_15.anchorClicked.connect(self.open_link_in_browser)
 
         self.download_thread = None
+        self.parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.translations = self.load_translations(language)
         self.is_downloading = False
         self.next_button_5.setEnabled(False)
         # -------------------------------------------- #
@@ -63,9 +64,19 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         self.space_req_change()
         self.path_change()
         self.setWindowTitle("Stellaris DLC Unlocker")
-        self.parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.setWindowIcon(QIcon(f'{self.parent_directory}/design/435345.png'))
         # ------------------------------------------------------------ #
+
+    def setup_ui(self, language):
+        if language == 'ru':
+            from design.languages.installer_ru import Ui_MainWindow as gui_design
+        else:
+            from design.languages.installer_en import Ui_MainWindow as gui_design
+        self.ui = gui_design()
+        self.ui.setupUi(self)
+        for name in dir(self.ui):
+            if not name.startswith('_'):
+                setattr(self, name, getattr(self.ui, name))
 
     def switch_to_next(self):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
@@ -73,14 +84,13 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
     def switch_to_back(self):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
 
-    @staticmethod
-    def updateApplication(download_url):
+    def updateApplication(self, download_url):
         old_file = argv[0]
         old_dir = os.path.dirname(old_file)
         pid = ctypes.windll.kernel32.GetCurrentProcessId()
 
-        progress_dialog = QProgressDialog("Загрузка обновления...", None, 0, 100)
-        progress_dialog.setWindowTitle("Обновление")
+        progress_dialog = QProgressDialog(self.translations.get("update_load", ""), None, 0, 100)
+        progress_dialog.setWindowTitle(self.translations.get("update", ""))
         progress_dialog.setWindowModality(2)
         progress_dialog.show()
 
@@ -95,7 +105,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                 progress = int(downloaded_bytes / total_size_in_bytes * 100)
                 progress_dialog.setValue(progress)
 
-        with open('updater.bat', 'w') as updater_file:
+        with open('unlocker_updater.bat', 'w') as updater_file:
             updater_file.write('@echo off\n')
             updater_file.write(f'taskkill /pid {pid} /f\n')
             updater_file.write(f'ping 127.0.0.1 -n 1 > nul\n')
@@ -108,15 +118,14 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         progress_dialog.close()
 
         sleep(0.5)
-        Popen(['cmd.exe', '/c', 'updater.bat'], shell=True)
+        Popen(['cmd.exe', '/c', 'unlocker_updater.bat'], shell=True)
         exit()
 
     def version_check(self):
-        iversion = '0.6'
+        iversion = '0.7'
         if float(version) > float(iversion):
-            if self.ok_dialog('Новая версия',
-                              "На сервере обнаружена новая версия!\nНажмите 'ОК' для обновления\nПосле обновления новая версия будет автоматически открыта\n\n"
-                              f"Ваша версия: {iversion}  Версия на сервере: {version}",
+            if self.ok_dialog(self.translations.get("update_found_title", ""),
+                              self.translations.get("update_found_text", "").format(iversion=iversion, version=version),
                               QMessageBox.Critical):
                 # os.system(f"start https://github.com/seuyh/stellaris-dlc-unlocker/releases/tag/{str(version)}")
                 self.updateApplication(
@@ -125,9 +134,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
     def cancel(self):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
-        msg_box.setWindowTitle('Выход')
-        msg_box.setText(
-            'Если вы выйдете, разблокировщик не будет установлен.\n\n\nВыйти из программы установки?')
+        msg_box.setWindowTitle(self.translations.get("cancel_title", ""))
+        msg_box.setText(self.translations.get("cancel_text", ""))
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
         msg_box.setDefaultButton(QMessageBox.Yes)
         yes_button = msg_box.button(QMessageBox.Yes)
@@ -171,6 +179,16 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         QDesktopServices.openUrl(url)
         self.sender().setHtml(content)
 
+    def load_translations(self, language):
+        translations = {}
+        filename = f"{self.parent_directory}/design/languages/{language}.txt"
+        with open(filename, 'r', encoding='utf-8') as file:
+            for line in file:
+                key, value = line.strip().split(": ", 1)
+                value = value.replace('\\n', '\n')
+                translations[key] = value
+        return translations
+
     def path_change(self):
         path = stellaris_path()
         if path:
@@ -183,15 +201,14 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
         else:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Critical)
-            msg_box.setWindowTitle('Ошибка!')
-            msg_box.setText(
-                'Исполняемый файл "stellaris.exe" не найден.\n\n\nВозможно, вы указали неверную директорию.')
+            msg_box.setWindowTitle(self.translations.get("error", ""))
+            msg_box.setText(self.translations.get("path_error", ""))
             msg_box.addButton(QMessageBox.Ok)
             msg_box.exec_()
             return 0
 
     def browse_folder(self):
-        directory = QFileDialog.getExistingDirectory(self, "Выберите папку Stellaris", self.path_place.toPlainText())
+        directory = QFileDialog.getExistingDirectory(self, self.translations.get("dir_change", ""), self.path_place.toPlainText())
         if directory:
             self.path_place.setPlainText(directory)
 
@@ -220,30 +237,30 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
 
             self.download_thread.start()
             self.creamapi_maker.start()
-            self.download_text.setText("Загрузка...")
-            self.creamapi_label.setText(f"Получение инфо о dlc: подключение к api")
+            self.download_text.setText(self.translations.get("loading", ""))
+            self.creamapi_label.setText(self.translations.get("dlc_get", "") + self.translations.get("dlc_get_format", ""))
 
     def update_creamapi_progress(self, value):
         self.creamapi_progressBar_2.setValue(value)
         if value == 100:
-            self.creamapi_label.setText("Готово!")
+            self.creamapi_label.setText(self.translations.get('done', ''))
             self.download_complete()
 
     def show_dlc_get_message(self, dlc_name):
-        self.creamapi_label.setText(f"Получение инфо о dlc: {dlc_name}")
+        self.creamapi_label.setText(f"{self.translations.get('dlc_get', '')}{dlc_name}")
 
     def update_progress(self, value):
         self.download_progressBar.setValue(value)
         if value == 100:
-            self.download_text.setText("Готово!")
+            self.download_text.setText(self.translations.get('done', ''))
             self.speed_label.setText(f"")
             self.download_complete()
 
     def show_download_speed(self, speed):
-        self.speed_label.setText(f"Скорость: {speed} Мб/с")
+        self.speed_label.setText(self.translations.get("speed", "").format(speed=speed))
 
     def show_error(self, error_message):
-        QMessageBox.warning(self, "Ошибка", "Ошибка загрузки файла\nСкорее всего в данный момент сервер не доступен")
+        QMessageBox.warning(self, self.translations.get('error', ''), self.translations.get('download_error', ''))
 
     def download_complete(self):
         if self.download_progressBar.value() == 100 and self.creamapi_progressBar_2.value() == 100:
@@ -285,8 +302,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
         else:
             self.paradox_remove()
-            if self.ok_dialog('Внимание',
-                              "Сейчас будет открыт инсталятор лаунчера, пожалуйста выберете 'Remove', если будет предложено, либо просто продолжите установку",
+            if self.ok_dialog(self.translations.get('attention', ''),
+                              self.translations.get('launcher_reinstall_1', ''),
                               QMessageBox.Information):
                 process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
                                 shell=True)
@@ -295,8 +312,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
             user_home = os.path.expanduser("~")
             folder_path = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
             if not os.path.exists(folder_path):
-                if self.ok_dialog('Внимание',
-                                  "Сейчас будет открыт инсталятор лаунчера, пожалуйста выполните установку",
+                if self.ok_dialog(self.translations.get('attention', ''),
+                                  self.translations.get('launcher_reinstall_2', ''),
                                   QMessageBox.Information):
                     process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
                                     shell=True)
@@ -307,8 +324,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                 if item.startswith("launcher"):
                     launcher_folders.append(item)
             launcher_folder = os.path.join(os.path.join(folder_path, launcher_folders[0]))
-            if self.ok_dialog('Внимание',
-                              "Сейчас мы запустим лаунчер, но так как мы не можем отследить когда он обновится вам придется нам помочь, после его открытия нажмите 'SKIP' в правом верхем углу и дождитесь пока лаучнер скажет, что обновление готово, а затем просто закройте его\nУведомления в лаунчере отображаются в колокольчике в правом верхнем углу",
+            if self.ok_dialog(self.translations.get('attention', ''),
+                              self.translations.get('launcher_reinstall_3', ''),
                               QMessageBox.Information):
                 process = Popen([os.path.join(folder_path, launcher_folder, "Paradox Launcher.exe")])
                 process.wait()
@@ -335,7 +352,7 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
                  dirs_exist_ok=True)
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
         # move(f'{unzipped}/dlc', self.path_place.toPlainText())
-        self.finish_text.setPlainText('Все готово!')
+        self.finish_text.setPlainText(self.translations.get('all_done', ''))
         sleep(1)
         self.finish_button.setEnabled(True)
 
@@ -368,8 +385,8 @@ class MainWindow(QMainWindow, main_design.Ui_MainWindow):
 
     def server_msg(self):
         if server_msg:
-            if self.ok_dialog('Важное сообщение',
-                              f"Сообщение с сервера\n\n{server_msg}",
+            if self.ok_dialog(self.translations.get('server_msg_title', ''),
+                              self.translations.get('server_msg_text', '').format(server_msg=server_msg),
                               QMessageBox.Information):
                 pass
 
