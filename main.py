@@ -10,7 +10,10 @@ if __name__ == "__main__":
 
     app.exec_()
 
-    main_window = MainWindow(language_selection_window.selected_language)
-    main_window.show()
+    try:
+        main_window = MainWindow(language_selection_window.selected_language)
+        main_window.show()
+    except AttributeError:
+        exit(0)
 
     exit(app.exec_())
