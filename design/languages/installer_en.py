@@ -414,15 +414,27 @@ class Ui_MainWindow(object):
 "    background-color: #FFD0D1;\n"
 "}")
         self.cancel_button_6.setObjectName("cancel_button_6")
-        self.textBrowser_14 = QtWidgets.QTextBrowser(self.page_6)
-        self.textBrowser_14.setGeometry(QtCore.QRect(210, 170, 281, 35))
-        self.textBrowser_14.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.textBrowser_14.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.textBrowser_14.setObjectName("textBrowser_14")
-        self.label_4 = QtWidgets.QLabel(self.page_6)
-        self.label_4.setGeometry(QtCore.QRect(210, 110, 281, 35))
-        self.label_4.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.label_4.setObjectName("label_4")
+        self.reinstall_low = QtWidgets.QTextBrowser(self.page_6)
+        self.reinstall_low.setGeometry(QtCore.QRect(210, 130, 281, 35))
+        self.reinstall_low.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.reinstall_low.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.reinstall_low.setObjectName("reinstall_low")
+        self.reinstall_up = QtWidgets.QLabel(self.page_6)
+        self.reinstall_up.setGeometry(QtCore.QRect(210, 90, 281, 35))
+        self.reinstall_up.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.reinstall_up.setObjectName("reinstall_up")
+        self.reinstall_progress = QtWidgets.QProgressBar(self.page_6)
+        self.reinstall_progress.setGeometry(QtCore.QRect(200, 160, 281, 21))
+        self.reinstall_progress.setStyleSheet("")
+        self.reinstall_progress.setProperty("value", 0)
+        self.reinstall_progress.setTextVisible(True)
+        self.reinstall_progress.setObjectName("reinstall_progress")
+        self.progress_label = QtWidgets.QLabel(self.page_6)
+        self.progress_label.setGeometry(QtCore.QRect(210, 140, 271, 16))
+        self.progress_label.setObjectName("progress_label")
+        self.now_reinstalling = QtWidgets.QLabel(self.page_6)
+        self.now_reinstalling.setGeometry(QtCore.QRect(210, 190, 261, 16))
+        self.now_reinstalling.setObjectName("now_reinstalling")
         self.stackedWidget.addWidget(self.page_6)
         self.page_7 = QtWidgets.QWidget()
         self.page_7.setObjectName("page_7")
@@ -546,7 +558,7 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.eula_true.setText(_translate("MainWindow", "I accept the terms of the agreement"))
         self.eula_false.setText(_translate("MainWindow", "I do not accept the terms of the agreement"))
-        self.eula_true1.setText(_translate("MainWindow", "I haven\'t read anything, but I agree with everything"))
+        self.eula_true1.setText(_translate("MainWindow", "I haven\'t read anything, but i agree with everything"))
         self.back_button_3.setText(_translate("MainWindow", "Back"))
         self.next_button_4.setText(_translate("MainWindow", "Next"))
         self.textBrowser_5.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -624,12 +636,14 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You need to reinstall the Paradox launcher for proper operation.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.reinstall_button.setText(_translate("MainWindow", "Okay"))
         self.cancel_button_6.setText(_translate("MainWindow", "Cancel"))
-        self.textBrowser_14.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.reinstall_low.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The program will handle almost everything automatically, you just need to follow the on-screen instructions.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.label_4.setText(_translate("MainWindow", "You will need to reinstall the Paradox launcher now"))
+        self.reinstall_up.setText(_translate("MainWindow", "You will need to reinstall the Paradox launcher now"))
+        self.progress_label.setText(_translate("MainWindow", "Reinstallation progress:"))
+        self.now_reinstalling.setText(_translate("MainWindow", "Waiting"))
         self.finish_text.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

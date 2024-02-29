@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:/Users/sp21/PycharmProjects/stellaris-dlc-unlock/design/installer.ui'
+# Form implementation generated from reading ui file 'C:/Users/sp21/PycharmProjects/stellaris-dlc-unlock/design/languages/installer_ru.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -414,15 +414,27 @@ class Ui_MainWindow(object):
 "    background-color: #FFD0D1;\n"
 "}")
         self.cancel_button_6.setObjectName("cancel_button_6")
-        self.textBrowser_14 = QtWidgets.QTextBrowser(self.page_6)
-        self.textBrowser_14.setGeometry(QtCore.QRect(210, 170, 281, 35))
-        self.textBrowser_14.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.textBrowser_14.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.textBrowser_14.setObjectName("textBrowser_14")
-        self.label_4 = QtWidgets.QLabel(self.page_6)
-        self.label_4.setGeometry(QtCore.QRect(210, 110, 281, 35))
-        self.label_4.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.label_4.setObjectName("label_4")
+        self.reinstall_low = QtWidgets.QTextBrowser(self.page_6)
+        self.reinstall_low.setGeometry(QtCore.QRect(210, 130, 281, 35))
+        self.reinstall_low.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.reinstall_low.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.reinstall_low.setObjectName("reinstall_low")
+        self.reinstall_up = QtWidgets.QLabel(self.page_6)
+        self.reinstall_up.setGeometry(QtCore.QRect(210, 90, 281, 35))
+        self.reinstall_up.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.reinstall_up.setObjectName("reinstall_up")
+        self.reinstall_progress = QtWidgets.QProgressBar(self.page_6)
+        self.reinstall_progress.setGeometry(QtCore.QRect(210, 160, 281, 21))
+        self.reinstall_progress.setStyleSheet("")
+        self.reinstall_progress.setProperty("value", 0)
+        self.reinstall_progress.setTextVisible(True)
+        self.reinstall_progress.setObjectName("reinstall_progress")
+        self.progress_label = QtWidgets.QLabel(self.page_6)
+        self.progress_label.setGeometry(QtCore.QRect(210, 140, 271, 16))
+        self.progress_label.setObjectName("progress_label")
+        self.now_reinstalling = QtWidgets.QLabel(self.page_6)
+        self.now_reinstalling.setGeometry(QtCore.QRect(210, 190, 261, 16))
+        self.now_reinstalling.setObjectName("now_reinstalling")
         self.stackedWidget.addWidget(self.page_6)
         self.page_7 = QtWidgets.QWidget()
         self.page_7.setObjectName("page_7")
@@ -624,12 +636,14 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Необходимо переустановить Paradox лаунчер для корректной работы.</p></body></html>"))
         self.reinstall_button.setText(_translate("MainWindow", "Хорошо"))
         self.cancel_button_6.setText(_translate("MainWindow", "Отмена"))
-        self.textBrowser_14.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.reinstall_low.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Программа почти все сделает автоматически, вам нужно лишь следовать указаниям на экране.</p></body></html>"))
-        self.label_4.setText(_translate("MainWindow", "Сейчас нужно будет переустановить Paradox лаунчер"))
+        self.reinstall_up.setText(_translate("MainWindow", "Сейчас нужно будет переустановить Paradox лаунчер"))
+        self.progress_label.setText(_translate("MainWindow", "Прогресс переустановки:"))
+        self.now_reinstalling.setText(_translate("MainWindow", "Ждем"))
         self.finish_text.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

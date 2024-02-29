@@ -7,10 +7,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QDesktopServices
 
 from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg
-from libs.game_path import stellaris_path
+from libs.game_path import stellaris_path, launcher_path
 from gui.DownloadThread import DownloaderThread
+from libs.launcher_reinstall import ReinstallThread
 from libs.encrypt import decrypt
-from subprocess import Popen, run
+from subprocess import Popen, run, CREATE_NO_WINDOW
 from zipfile import ZipFile
 from shutil import rmtree, copytree
 from requests import get
@@ -52,7 +53,14 @@ class MainWindow(QMainWindow):
         self.parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.translations = self.load_translations(language)
         self.is_downloading = False
+        self.game_path = None
+        self.progress_label.setVisible(False)
+        self.reinstall_progress.setVisible(False)
+        self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
+
+        self.iversion = '0.8'
+
         # -------------------------------------------- #
 
         # ----------- запуск необходимых стартовых функций ----------- #
@@ -61,6 +69,8 @@ class MainWindow(QMainWindow):
         self.server_msg()
         self.gameversion_change()
         self.space_req_change()
+        self.kill_process('Paradox Launcher.exe')
+        self.kill_process('stellaris.exe')
         self.path_change()
         self.setWindowTitle("Stellaris DLC Unlocker")
         self.setWindowIcon(QIcon(f'{self.parent_directory}/design/435345.png'))
@@ -87,46 +97,54 @@ class MainWindow(QMainWindow):
         old_file = argv[0]
         old_dir = os.path.dirname(old_file)
         pid = ctypes.windll.kernel32.GetCurrentProcessId()
+        error = False
 
         progress_dialog = QProgressDialog(self.translations.get("update_load", ""), None, 0, 100)
         progress_dialog.setWindowTitle(self.translations.get("update", ""))
         progress_dialog.setWindowModality(2)
         progress_dialog.show()
 
-        response = get(download_url, stream=True)
-        total_size_in_bytes = int(response.headers.get('content-length', 0))
-        block_size = 1024
-        downloaded_bytes = 0
-        with open(f'{old_dir}/Stellaris-DLC-Unlocker.load', 'wb') as new_exe:
-            for data in response.iter_content(block_size):
-                new_exe.write(data)
-                downloaded_bytes += len(data)
-                progress = int(downloaded_bytes / total_size_in_bytes * 100)
-                progress_dialog.setValue(progress)
+        try:
+            response = get(download_url, stream=True)
+            total_size_in_bytes = int(response.headers.get('content-length', 0))
+            block_size = 1024
+            downloaded_bytes = 0
+            with open(f'{old_dir}/Stellaris-DLC-Unlocker.load', 'wb') as new_exe:
+                for data in response.iter_content(block_size):
+                    new_exe.write(data)
+                    downloaded_bytes += len(data)
+                    progress = int(downloaded_bytes / total_size_in_bytes * 100)
+                    progress_dialog.setValue(progress)
 
-        with open('unlocker_updater.bat', 'w') as updater_file:
-            updater_file.write('@echo off\n')
-            updater_file.write(f'taskkill /pid {pid} /f\n')
-            updater_file.write(f'ping 127.0.0.1 -n 1 > nul\n')
-            updater_file.write('echo Updating...\n')
-            updater_file.write(f'del "{old_file}"\n')
-            updater_file.write(f'rename "{old_dir}\\Stellaris-DLC-Unlocker.load" "Stellaris-DLC-Unlocker.exe"\n')
-            updater_file.write(f'start "" "{old_dir}\\Stellaris-DLC-Unlocker.exe"\n')
-            updater_file.write('ping 127.0.0.1 -n 1 > nul\n')
-            updater_file.write('del %0')
+            with open('unlocker_updater.bat', 'w') as updater_file:
+                updater_file.write('@echo off\n')
+                updater_file.write(f'taskkill /pid {pid} /f\n')
+                updater_file.write(f'ping 127.0.0.1 -n 1 > nul\n')
+                updater_file.write('echo Updating...\n')
+                updater_file.write(f'del "{old_file}"\n')
+                updater_file.write(f'rename "{old_dir}\\Stellaris-DLC-Unlocker.load" "Stellaris-DLC-Unlocker.exe"\n')
+                updater_file.write(f'start "" "{old_dir}\\Stellaris-DLC-Unlocker.exe"\n')
+                updater_file.write('ping 127.0.0.1 -n 1 > nul\n')
+                updater_file.write('del %0')
+
+        except Exception:
+            if self.ok_dialog(self.translations.get("error", ""),
+                              self.translations.get("update_error", ""),
+                              QMessageBox.Critical):
+                pass
+            error = True
         progress_dialog.close()
 
-        sleep(0.5)
-        Popen(['cmd.exe', '/c', 'unlocker_updater.bat'], shell=True)
-        exit()
+        if not error:
+            sleep(0.5)
+            Popen(['cmd.exe', '/c', 'unlocker_updater.bat'], shell=True)
+            exit()
 
     def version_check(self):
-        iversion = '0.7'
-        if float(version) > float(iversion):
+        if float(version) > float(self.iversion):
             if self.ok_dialog(self.translations.get("update_found_title", ""),
-                              self.translations.get("update_found_text", "").format(iversion=iversion, version=version),
+                              self.translations.get("update_found_text", "").format(iversion=self.iversion, version=version),
                               QMessageBox.Critical):
-                # os.system(f"start https://github.com/seuyh/stellaris-dlc-unlocker/releases/tag/{str(version)}")
                 self.updateApplication(
                     f'https://github.com/seuyh/stellaris-dlc-unlocker/releases/download/{str(version)}/Stellaris-DLC-Unlocker.exe')
 
@@ -150,8 +168,15 @@ class MainWindow(QMainWindow):
                 pass
             self.close()
 
+    @staticmethod
+    def kill_process(process_name):
+        try:
+            run(["taskkill", "/F", "/IM", process_name], check=True, creationflags=CREATE_NO_WINDOW)
+        except:
+            pass
+
     def version_change(self):
-        new_text = self.version.text().replace("%nan%", version)
+        new_text = self.version.text().replace("%nan%", self.iversion)
         self.version.setText(new_text)
 
     def gameversion_change(self):
@@ -194,9 +219,11 @@ class MainWindow(QMainWindow):
             self.path_place.setPlainText(path)
 
     def path_check(self):
-        if os.path.isfile(
-                os.path.join(self.path_place.toPlainText(), "stellaris.exe")):
-            return 1
+        try:
+            if os.path.isfile(os.path.join(self.path_place.toPlainText(), "stellaris.exe")):
+                return self.path_place.toPlainText()
+        except Exception:
+            return 0
         else:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Critical)
@@ -207,17 +234,19 @@ class MainWindow(QMainWindow):
             return 0
 
     def browse_folder(self):
-        directory = QFileDialog.getExistingDirectory(self, self.translations.get("dir_change", ""), self.path_place.toPlainText())
+        directory = QFileDialog.getExistingDirectory(self, self.translations.get("dir_change", ""),
+                                                     self.path_place.toPlainText())
         if directory:
             self.path_place.setPlainText(directory)
 
     def download_file(self):
-        if self.path_check():
+        self.game_path = self.path_check()
+        if self.game_path:
             self.is_downloading = True
             if self.stackedWidget.currentIndex() != 4:
                 self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
             file_url = decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')
-            self.save_path = os.path.join(self.path_place.toPlainText(), 'stellaris_unlocker.zip')
+            self.save_path = os.path.join(self.game_path, 'stellaris_unlocker.zip')
             try:
                 if os.path.exists(self.save_path):
                     os.remove(self.save_path)
@@ -236,7 +265,8 @@ class MainWindow(QMainWindow):
             self.download_thread.start()
             self.creamapi_maker.start()
             self.download_text.setText(self.translations.get("loading", ""))
-            self.creamapi_label.setText(self.translations.get("dlc_get", "") + self.translations.get("dlc_get_format", ""))
+            self.creamapi_label.setText(
+                self.translations.get("dlc_get", "") + " " + self.translations.get("dlc_get_format", ""))
 
     def update_creamapi_progress(self, value):
         self.creamapi_progressBar_2.setValue(value)
@@ -245,7 +275,7 @@ class MainWindow(QMainWindow):
             self.download_complete()
 
     def show_dlc_get_message(self, dlc_name):
-        self.creamapi_label.setText(f"{self.translations.get('dlc_get', '')}{dlc_name}")
+        self.creamapi_label.setText(f"{self.translations.get('dlc_get', '')} {dlc_name}")
 
     def update_progress(self, value):
         self.download_progressBar.setValue(value)
@@ -254,90 +284,80 @@ class MainWindow(QMainWindow):
             self.speed_label.setText(f"")
             self.download_complete()
 
+    def update_reinstall_progress(self, value):
+        self.reinstall_progress.setValue(value)
+        if value == 33:
+            self.now_reinstalling.setText(self.translations.get('launcher_install', ''))
+        elif value == 66:
+            self.now_reinstalling.setText(self.translations.get('launcher_update', ''))
+        elif value == 100:
+            self.now_reinstalling.setText(self.translations.get('done', ''))
+
     def show_download_speed(self, speed):
         self.speed_label.setText(self.translations.get("speed", "").format(speed=speed))
 
     def show_error(self, error_message):
-        QMessageBox.warning(self, self.translations.get('error', ''), self.translations.get('download_error', ''))
+        # QMessageBox.warning(self, self.translations.get('error', ''), self.translations.get('download_error', ''))
+        if self.ok_dialog(self.translations.get("error", ""),
+                          self.translations.get("download_error", ""),
+                          QMessageBox.Critical):
+            self.close()
+
+    def show_reinstall_error(self):
+        if self.ok_dialog(self.translations.get("error", ""),
+                          self.translations.get("reinstall_error", ""),
+                          QMessageBox.Critical):
+            self.close()
 
     def download_complete(self):
         if self.download_progressBar.value() == 100 and self.creamapi_progressBar_2.value() == 100:
             self.next_button_5.setEnabled(True)
             self.cancel_button_5.setEnabled(True)
 
-    @staticmethod
-    def paradox_remove():
-        user_home = os.path.expanduser("~")
-        paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive")
-        paradox_folder2 = os.path.join(user_home, "AppData", "Local", "Paradox Interactive")
-        paradox_folder3 = os.path.join(user_home, "AppData", "Roaming", "Paradox Interactive")
-        paradox_folder4 = os.path.join(user_home, "AppData", "Roaming", "paradox-launcher-v2")
-        try:
-            if os.path.exists(paradox_folder1):
-                rmtree(paradox_folder1)
+    def reinstall(self):
+        self.reinstall_up.setVisible(False)
+        self.reinstall_low.setVisible(False)
+        self.reinstall_progress.setVisible(True)
+        self.now_reinstalling.setVisible(True)
+        self.progress_label.setVisible(True)
+        self.reinstall_button.setVisible(False)
+        self.cancel_button_6.setEnabled(False)
+        self.now_reinstalling.setText(self.translations.get('launcher_uninstall', ''))
+        paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4 = launcher_path()
 
-            if os.path.exists(paradox_folder2):
-                rmtree(paradox_folder2)
+        self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
+                                                paradox_folder4)
+        self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
+        self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
+        self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)
+        self.reinstall_thread.start()
 
-            if os.path.exists(paradox_folder3):
-                rmtree(paradox_folder3)
+    def reinstall_2(self, paradox_folder1):
 
-            if os.path.exists(paradox_folder4):
-                rmtree(paradox_folder4)
-        except Exception:
-            pass
-
-    def reinstall(self, skip=False):
-        self.stackedWidget.setCurrentIndex(6)
-        if skip:
-            user_home = os.path.expanduser("~")
-            folder_path = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
-            launcher_folders = []
-            for item in os.listdir(folder_path):
-                if item.startswith("launcher"):
-                    launcher_folders.append(item)
-            sleep(0.2)
-            self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
-        else:
-            self.paradox_remove()
-            if self.ok_dialog(self.translations.get('attention', ''),
-                              self.translations.get('launcher_reinstall_1', ''),
-                              QMessageBox.Information):
-                process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
-                                shell=True)
+        launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
+        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
+        launcher_folder = os.path.join(os.path.join(paradox_folder1, launcher_folders[0]))
+        if self.ok_dialog(self.translations.get('attention', ''),
+                          self.translations.get('launcher_reinstall_3', ''),
+                          QMessageBox.Information):
+            try:
+                process = Popen([os.path.join(paradox_folder1, launcher_folder, "Paradox Launcher.exe")])
                 process.wait()
-
-            user_home = os.path.expanduser("~")
-            folder_path = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
-            if not os.path.exists(folder_path):
-                if self.ok_dialog(self.translations.get('attention', ''),
-                                  self.translations.get('launcher_reinstall_2', ''),
-                                  QMessageBox.Information):
-                    process = Popen([f"{self.path_place.toPlainText()}/launcher-installer-windows.msi"],
-                                    shell=True)
-                    process.wait()
-                sleep(1)
-            launcher_folders = []
-            for item in os.listdir(folder_path):
-                if item.startswith("launcher"):
-                    launcher_folders.append(item)
-            launcher_folder = os.path.join(os.path.join(folder_path, launcher_folders[0]))
-            if self.ok_dialog(self.translations.get('attention', ''),
-                              self.translations.get('launcher_reinstall_3', ''),
-                              QMessageBox.Information):
-                process = Popen([os.path.join(folder_path, launcher_folder, "Paradox Launcher.exe")])
-                process.wait()
-            sleep(1)
-            launcher_folders = []
-            for item in os.listdir(folder_path):
-                if item.startswith("launcher"):
-                    launcher_folders.append(item)
-                    sleep(0.2)
-                    self.switch_to_next()
-            self.replace_files(os.path.join(os.path.join(folder_path, launcher_folders[1])))
+            except:
+                if self.ok_dialog(self.translations.get("error", ""),
+                                  self.translations.get("reinstall_error", ""),
+                                  QMessageBox.Critical):
+                    self.close()
+        sleep(1)
+        launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
+        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
+        self.update_reinstall_progress(100)
+        sleep(0.2)
+        self.switch_to_next()
+        self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
 
     def replace_files(self, launcher_folder):
-        rmtree(f'{self.path_place.toPlainText()}/dlc')
+        rmtree(f'{self.game_path}/dlc')
         self.unzip_and_replace()
         try:
             os.remove(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
@@ -348,14 +368,14 @@ class MainWindow(QMainWindow):
         copytree(f'{self.parent_directory}/creamapi_launcher_files',
                  f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
                  dirs_exist_ok=True)
-        copytree(f'{self.parent_directory}/creamapi_steam_files', self.path_place.toPlainText(), dirs_exist_ok=True)
+        copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
         self.finish_text.setPlainText(self.translations.get('all_done', ''))
         sleep(1)
         self.finish_button.setEnabled(True)
 
     def unzip_and_replace(self):
         zip_path = self.save_path
-        extract_folder = self.path_place.toPlainText()
+        extract_folder = self.game_path
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
 

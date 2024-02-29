@@ -12,11 +12,17 @@ dlc_get: Getting DLC info:
 dlc_get_format: connecting to api
 done: Done!
 speed: Speed: {speed} MB/s
-download_error: File download error\nMost likely the server is currently unavailable
+download_error: File download error\nMost likely the server is currently unavailable.\nPlease try again later or report the issue to me.
 attention: Attention
-launcher_reinstall_1: The launcher installer will now open, please select 'Remove' if prompted, or simply continue installation
-launcher_reinstall_2: The launcher installer will now open, please proceed with the installation
-launcher_reinstall_3: We will now launch the launcher, but since we cannot track when it updates, you will need to help us, after it opens, click 'SKIP' in the top right corner and wait until the launcher says the update is ready, then simply close it\nNotifications in the launcher are displayed in the bell in the top right corner
+launcher_reinstall_1: The launcher installer will now open, please select 'Remove' if prompted, or simply continue installation.
+launcher_reinstall_2: The launcher installer will now open, please proceed with the installation.
+launcher_reinstall_3: We will now launch the launcher, but since we cannot track when it updates, you will need to help us, after it opens, click 'SKIP' in the top right corner and wait until the launcher says the update is ready, then simply close it\nNotifications in the launcher are displayed in the bell in the top right corner.
 all_done: All done!
 server_msg_title: Important Message
 server_msg_text: Server message\n\n{server_msg}
+launcher_reinstall_error: Unexpected launcher reinstallation error.\nMake sure there is a file named 'launcher-installer-windows.msi' in the game directory.\nIf it's not there, check the integrity of the game files.
+update_error: An update error occurred. Most likely, I don't know what happened.\nYou can report this error to me using the GitHub link in the bottom right corner.\n\nYou can also continue using the unlocker, but its functionality is not guaranteed.
+reinstall_error: It's unbelievable, but there was an error reinstalling the launcher. Most likely, we won't be able to continue the installation.
+launcher_uninstall: Uninstalling the launcher
+launcher_install: installing the launcher
+launcher_update: Updating the launcher

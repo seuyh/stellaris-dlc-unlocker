@@ -1,14 +1,18 @@
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import sys
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 url = 'https://github.com/seuyh/stellaris-dlc-unlocker/raw/main/data.json'
 headers = {'Cache-Control': 'no-cache', 'Pragma': 'no-cache'}
-response = requests.get(url, headers=headers).json()
-gameversion = response["gameversion"]
-version = response["version"]
-url = response["url"]
-server_msg = response["server_msg"]
+try:
+    response = requests.get(url, headers=headers).json()
+    gameversion = response["gameversion"]
+    version = response["version"]
+    url = response["url"]
+    server_msg = response["server_msg"]
+except Exception:
+    sys.exit(2)
 
 
 def get_remote_file_size(url):

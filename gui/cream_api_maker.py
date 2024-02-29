@@ -98,7 +98,7 @@ class CreamAPI(QtCore.QThread):
                 # self.progress_callback(progress)
                 self.progress_signal.emit(progress)
                 # self.dlc_callback(dlc_name)
-                dlc_str = f'{current_dlc}/{total_dlcs}: {dlc_name}'
+                dlc_str = f'{current_dlc}/{total_dlcs} {dlc_name}'
                 self.dlc_signal.emit(dlc_str)
             # f.write("; HOI IV DlS\n")
             # for dlc_id in hoi_dlc_list:
