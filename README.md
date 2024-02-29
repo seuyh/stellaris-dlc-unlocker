@@ -1,8 +1,12 @@
 # Stellaris DLC Unlocker
 
 ![Stellaris DLC Unlocker Logo](https://github.com/seuyh/stellaris-dlc-unlocker/blob/main/.banner/readme_banner.png)
+<br><br><br>
+
+## 
 
 ## [English please](#english-version)
+<br>
 
 ## Описание
 
