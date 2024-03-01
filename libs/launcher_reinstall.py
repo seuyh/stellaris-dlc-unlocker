@@ -29,7 +29,7 @@ class ReinstallThread(QtCore.QThread):
             self.progress_signal.emit(33)
             sleep(1)
             install = Popen(['cmd.exe', '/c',
-                             'msiexec /package D:\steam\steamapps\common\Stellaris\launcher-installer-windows.msi /quiet CREATE_DESKTOP_SHORTCUT=0'],
+                             f'msiexec /package {self.msi_path}\launcher-installer-windows.msi /quiet CREATE_DESKTOP_SHORTCUT=0'],
                             shell=True)
             install.wait()
             self.progress_signal.emit(66)
