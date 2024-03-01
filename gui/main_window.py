@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.91'
+        self.iversion = '0.94'
 
         # -------------------------------------------- #
 
@@ -241,7 +241,7 @@ class MainWindow(QMainWindow):
             self.path_place.setPlainText(directory)
 
     def download_file(self):
-        self.game_path = self.path_check()
+        self.game_path = self.path_check().replace("/", "\\")
         if self.game_path:
             self.is_downloading = True
             if self.stackedWidget.currentIndex() != 4:
@@ -349,7 +349,7 @@ class MainWindow(QMainWindow):
                                   self.translations.get("reinstall_error", ""),
                                   QMessageBox.Critical):
                     self.close()
-        sleep(2.5)
+        sleep(1.5)
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         self.update_reinstall_progress(100)
