@@ -26,3 +26,5 @@ reinstall_error: Это невероятно, но произошла ошибк
 launcher_uninstall: Удаляем лаунчер
 launcher_install: Устанавливаем лаунчер
 launcher_update: Обновление лаунчера
+launcher_update_error_title: Лаунчер обновлен некорректно.
+launcher_update_error_title: Лаунчер обновлен некорректно.\nК сожалению это какая то редкий прикол самого лаунчера, повторите обновление еще раз.

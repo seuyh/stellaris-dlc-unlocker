@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.9'
+        self.iversion = '0.91'
 
         # -------------------------------------------- #
 
@@ -143,7 +143,8 @@ class MainWindow(QMainWindow):
     def version_check(self):
         if float(version) > float(self.iversion):
             if self.ok_dialog(self.translations.get("update_found_title", ""),
-                              self.translations.get("update_found_text", "").format(iversion=self.iversion, version=version),
+                              self.translations.get("update_found_text", "").format(iversion=self.iversion,
+                                                                                    version=version),
                               QMessageBox.Critical):
                 self.updateApplication(
                     f'https://github.com/seuyh/stellaris-dlc-unlocker/releases/download/{str(version)}/Stellaris-DLC-Unlocker.exe')
@@ -348,16 +349,23 @@ class MainWindow(QMainWindow):
                                   self.translations.get("reinstall_error", ""),
                                   QMessageBox.Critical):
                     self.close()
-        sleep(1)
+        sleep(2.5)
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         self.update_reinstall_progress(100)
-        sleep(0.2)
+        sleep(0.5)
         self.switch_to_next()
-        self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
+        self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
+        try:
+            self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
+        except Exception:
+            pass
 
     def replace_files(self, launcher_folder):
-        rmtree(f'{self.game_path}/dlc')
+        try:
+            rmtree(f'{self.game_path}/dlc')
+        except Exception:
+            pass
         self.unzip_and_replace()
         try:
             os.remove(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
