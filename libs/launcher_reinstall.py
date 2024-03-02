@@ -22,15 +22,15 @@ class ReinstallThread(QtCore.QThread):
         try:
             self.paradox_remove(self.paradox_folder1, self.paradox_folder2, self.paradox_folder3, self.paradox_folder4)
 
-            uninstall = Popen(['cmd.exe', '/c',
-                               f'msiexec /uninstall {os.path.join(self.msi_path, "launcher-installer-windows.msi")} /quiet'],
-                              shell=True)
+            uninstall = Popen(['cmd.exe', '/c', 'msiexec', '/uninstall',
+                               os.path.join(self.msi_path, "launcher-installer-windows.msi"), '/quiet'], shell=True)
+
             uninstall.wait()
             self.progress_signal.emit(33)
             sleep(1)
-            install = Popen(['cmd.exe', '/c',
-                             f'msiexec /package {os.path.join(self.msi_path, "launcher-installer-windows.msi")} /quiet CREATE_DESKTOP_SHORTCUT=0'],
-                            shell=True)
+            install = Popen(
+                ['cmd.exe', '/c', 'msiexec', '/package', os.path.join(self.msi_path, "launcher-installer-windows.msi"),
+                 '/quiet', 'CREATE_DESKTOP_SHORTCUT=0'], shell=True)
             install.wait()
             self.progress_signal.emit(66)
             self.continue_reinstall.emit(self.paradox_folder1)

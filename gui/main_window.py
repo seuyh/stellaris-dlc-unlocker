@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.94'
+        self.iversion = '0.95'
 
         # -------------------------------------------- #
 
@@ -72,6 +72,7 @@ class MainWindow(QMainWindow):
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
         self.path_change()
+        # self.stackedWidget.setCurrentIndex(5)
         self.setWindowTitle("Stellaris DLC Unlocker")
         self.setWindowIcon(QIcon(f'{self.parent_directory}/design/435345.png'))
         # ------------------------------------------------------------ #
