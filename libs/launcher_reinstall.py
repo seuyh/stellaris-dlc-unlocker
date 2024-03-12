@@ -17,6 +17,7 @@ class ReinstallThread(QtCore.QThread):
         self.paradox_folder2 = paradox_folder2
         self.paradox_folder3 = paradox_folder3
         self.paradox_folder4 = paradox_folder4
+        self.msi_path = 'D:\\steam\\steamapps\\common\\Stellaris'
 
     def run(self):
         try:
@@ -25,13 +26,15 @@ class ReinstallThread(QtCore.QThread):
             uninstall = Popen(['cmd.exe', '/c', 'msiexec', '/uninstall',
                                os.path.join(self.msi_path, "launcher-installer-windows.msi"), '/quiet'], shell=True)
 
-            uninstall.wait()
+            while uninstall.poll() is None:  # Проверяем, завершился ли процесс
+                sleep(0.1)
             self.progress_signal.emit(33)
             sleep(1)
             install = Popen(
                 ['cmd.exe', '/c', 'msiexec', '/package', os.path.join(self.msi_path, "launcher-installer-windows.msi"),
                  '/quiet', 'CREATE_DESKTOP_SHORTCUT=0'], shell=True)
-            install.wait()
+            while install.poll() is None:  # Проверяем, завершился ли процесс
+                sleep(0.1)
             self.progress_signal.emit(66)
             self.continue_reinstall.emit(self.paradox_folder1)
         except Exception as e:

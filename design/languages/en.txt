@@ -17,6 +17,7 @@ attention: Attention
 launcher_reinstall_1: The launcher installer will now open, please select 'Remove' if prompted, or simply continue installation.
 launcher_reinstall_2: The launcher installer will now open, please proceed with the installation.
 launcher_reinstall_3: We will now launch the launcher, but since we cannot track when it updates, you will need to help us, after it opens, click 'SKIP' in the top right corner and wait until the launcher says the update is ready, then simply close it\nNotifications in the launcher are displayed in the bell in the top right corner.
+launcher_updater: Now we will update the Launcher, the Launcher window will open, you can not touch it, it will close automatically. At this time the unlocker may not respond, no need to click on it, please.
 all_done: All done!
 server_msg_title: Important Message
 server_msg_text: Server message\n\n{server_msg}

@@ -1,4 +1,3 @@
-import os
 from time import sleep
 from sys import argv, exit
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDialog
@@ -16,6 +15,10 @@ from zipfile import ZipFile
 from shutil import rmtree, copytree
 from requests import get
 import ctypes
+import os
+from watchdog.observers import Observer
+from threading import Thread
+from libs.launcher_analyzer import FolderCreationHandler
 
 
 class MainWindow(QMainWindow):
@@ -59,7 +62,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.95'
+        self.iversion = '0.96'
 
         # -------------------------------------------- #
 
@@ -72,7 +75,7 @@ class MainWindow(QMainWindow):
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
         self.path_change()
-        # self.stackedWidget.setCurrentIndex(5)
+        self.stackedWidget.setCurrentIndex(5)
         self.setWindowTitle("Stellaris DLC Unlocker")
         self.setWindowIcon(QIcon(f'{self.parent_directory}/design/435345.png'))
         # ------------------------------------------------------------ #
@@ -340,23 +343,26 @@ class MainWindow(QMainWindow):
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         launcher_folder = os.path.join(os.path.join(paradox_folder1, launcher_folders[0]))
         if self.ok_dialog(self.translations.get('attention', ''),
-                          self.translations.get('launcher_reinstall_3', ''),
+                          self.translations.get('launcher_updater', ''),
                           QMessageBox.Information):
-            try:
-                process = Popen([os.path.join(paradox_folder1, launcher_folder, "Paradox Launcher.exe")])
-                process.wait()
-            except:
-                if self.ok_dialog(self.translations.get("error", ""),
-                                  self.translations.get("reinstall_error", ""),
-                                  QMessageBox.Critical):
-                    self.close()
-        sleep(1.5)
+            # process = Popen([os.path.join(paradox_folder1, launcher_folder, "Paradox Launcher.exe")])
+            # process.wait()
+            self.start_watch_update(paradox_folder1)
+            self.thread.join()
+            self.kill_process('Paradox Launcher.exe')
+
+            # except:
+            #     if self.ok_dialog(self.translations.get("error", ""),
+            #                       self.translations.get("reinstall_error", ""),
+            #                       QMessageBox.Critical):
+            #         self.close()
+
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         self.update_reinstall_progress(100)
         sleep(0.5)
         self.switch_to_next()
-        self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
+        # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         try:
             self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
         except Exception:
@@ -369,13 +375,13 @@ class MainWindow(QMainWindow):
             pass
         self.unzip_and_replace()
         try:
-            os.remove(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+            os.remove(f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
         except:
             pass
-        os.rename(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64.dll',
-                  f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+        os.rename(f'{launcher_folder}/resources/app/dist/main/steam_api64.dll',
+                  f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
         copytree(f'{self.parent_directory}/creamapi_launcher_files',
-                 f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
+                 f'{launcher_folder}/resources/app/dist/main',
                  dirs_exist_ok=True)
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
         self.finish_text.setPlainText(self.translations.get('all_done', ''))
@@ -406,6 +412,24 @@ class MainWindow(QMainWindow):
             pass
 
         self.close()
+
+    def start_watch_update(self, folder_to_watch):
+        self.thread = Thread(target=self.watch_folder, args=(folder_to_watch,))
+        self.thread.start()
+
+    def watch_folder(self, folder_to_watch):
+        process = Popen([os.path.join(folder_to_watch, "bootstrapper-v2.exe")])
+        observer = Observer()
+        event_handler = FolderCreationHandler(folder_to_watch, observer, process)
+        observer.schedule(event_handler, path=folder_to_watch, recursive=True)
+        observer.start()
+
+        try:
+            while observer.is_alive():
+                observer.join(1)
+        except KeyboardInterrupt:
+            observer.stop()
+            observer.join()
 
     def server_msg(self):
         if server_msg:

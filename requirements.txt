@@ -5,3 +5,5 @@ Requests==2.31.0
 vdf==3.4
 pywin32==306
 future==0.18.3
+PyGetWindow==0.0.9
+watchdog==4.0.0
