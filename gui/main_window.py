@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.95'
+        self.iversion = '0.96'
 
         # -------------------------------------------- #
 
@@ -356,7 +356,7 @@ class MainWindow(QMainWindow):
         self.update_reinstall_progress(100)
         sleep(0.5)
         self.switch_to_next()
-        self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
+        # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         try:
             self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
         except Exception:
@@ -369,13 +369,13 @@ class MainWindow(QMainWindow):
             pass
         self.unzip_and_replace()
         try:
-            os.remove(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+            os.remove(f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
         except:
             pass
-        os.rename(f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64.dll',
-                  f'{launcher_folder}/resources/app.asar.unpacked/dist/main/steam_api64_o.dll')
+        os.rename(f'{launcher_folder}/resources/app/dist/main/steam_api64.dll',
+                  f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
         copytree(f'{self.parent_directory}/creamapi_launcher_files',
-                 f'{launcher_folder}/resources/app.asar.unpacked/dist/main',
+                 f'{launcher_folder}/resources/app/dist/main',
                  dirs_exist_ok=True)
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
         self.finish_text.setPlainText(self.translations.get('all_done', ''))
