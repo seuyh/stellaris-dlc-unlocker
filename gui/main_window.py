@@ -1,19 +1,21 @@
+import json
 import os
+import webbrowser
 from time import sleep
 from sys import argv, exit
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDialog, QListWidgetItem, QPushButton
 from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtGui import QIcon, QDesktopServices, QColor
 
-from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg
+from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg, dlc_data
 from libs.game_path import stellaris_path, launcher_path
 from gui.DownloadThread import DownloaderThread
 from libs.launcher_reinstall import ReinstallThread
 from libs.encrypt import decrypt
 from subprocess import Popen, run, CREATE_NO_WINDOW
 from zipfile import ZipFile
-from shutil import rmtree, copytree
+from shutil import copytree
 from requests import get
 import ctypes
 
@@ -30,7 +32,7 @@ class MainWindow(QMainWindow):
         self.next_button_2.clicked.connect(self.download_file)
         self.next_button_3.clicked.connect(self.switch_to_next)
         self.next_button_4.clicked.connect(self.switch_to_next)
-        self.next_button_5.clicked.connect(self.switch_to_next)
+        self.next_button_5.clicked.connect(self.minimizeWindow)
         self.cancel_button.clicked.connect(self.cancel)
         self.cancel_button_2.clicked.connect(self.cancel)
         self.cancel_button_3.clicked.connect(self.cancel)
@@ -59,7 +61,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.96'
+        self.iversion = '0.97'
 
         # -------------------------------------------- #
 
@@ -96,7 +98,10 @@ class MainWindow(QMainWindow):
 
     def updateApplication(self, download_url):
         old_file = argv[0]
+        print(f'oldfile: {old_file}')
+
         old_dir = os.path.dirname(old_file)
+        print(f'old_dir: {old_dir}')
         pid = ctypes.windll.kernel32.GetCurrentProcessId()
         error = False
 
@@ -118,14 +123,15 @@ class MainWindow(QMainWindow):
                     progress_dialog.setValue(progress)
 
             with open('unlocker_updater.bat', 'w') as updater_file:
+                updater_file.write('chcp 1251 > nul\n')
                 updater_file.write('@echo off\n')
                 updater_file.write(f'taskkill /pid {pid} /f\n')
-                updater_file.write(f'ping 127.0.0.1 -n 1 > nul\n')
+                updater_file.write(f'ping 127.0.0.1 -n 3 > nul\n')
                 updater_file.write('echo Updating...\n')
                 updater_file.write(f'del "{old_file}"\n')
                 updater_file.write(f'rename "{old_dir}\\Stellaris-DLC-Unlocker.load" "Stellaris-DLC-Unlocker.exe"\n')
                 updater_file.write(f'start "" "{old_dir}\\Stellaris-DLC-Unlocker.exe"\n')
-                updater_file.write('ping 127.0.0.1 -n 1 > nul\n')
+                updater_file.write('ping 127.0.0.1 -n 2 > nul\n')
                 updater_file.write('del %0')
 
         except Exception:
@@ -143,12 +149,15 @@ class MainWindow(QMainWindow):
 
     def version_check(self):
         if float(version) > float(self.iversion):
+            update_url = f'https://github.com/seuyh/stellaris-dlc-unlocker/releases/tag/{str(version)}'
             if self.ok_dialog(self.translations.get("update_found_title", ""),
                               self.translations.get("update_found_text", "").format(iversion=self.iversion,
-                                                                                    version=version),
-                              QMessageBox.Critical):
+                                                                                    version=version, url=update_url),
+                              QMessageBox.Critical, link=update_url):
                 self.updateApplication(
                     f'https://github.com/seuyh/stellaris-dlc-unlocker/releases/download/{str(version)}/Stellaris-DLC-Unlocker.exe')
+            else:
+                exit(0)
 
     def cancel(self):
         msg_box = QMessageBox()
@@ -163,11 +172,11 @@ class MainWindow(QMainWindow):
         cancel_button.setText('Нет')
         reply = msg_box.exec_()
         if reply == QMessageBox.Yes:
-            try:
-                if os.path.exists(self.save_path):
-                    os.remove(self.save_path)
-            except:
-                pass
+            # try:
+            #     if os.path.exists(self.save_path):
+            #         os.remove(self.save_path)
+            # except:
+            #     pass
             self.close()
 
     @staticmethod
@@ -243,48 +252,102 @@ class MainWindow(QMainWindow):
 
     def download_file(self):
         self.game_path = self.path_check().replace("/", "\\")
+        if not os.path.exists(os.path.join(self.game_path, "dlc")):
+            os.makedirs(os.path.join(self.game_path, "dlc"))
         if self.game_path:
             self.is_downloading = True
             if self.stackedWidget.currentIndex() != 4:
                 self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
-            file_url = decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')
-            self.save_path = os.path.join(self.game_path, 'stellaris_unlocker.zip')
-            try:
-                if os.path.exists(self.save_path):
-                    os.remove(self.save_path)
-            except:
-                pass
-
-            self.download_thread = DownloaderThread(file_url, self.save_path)
-            self.download_thread.progress_signal.connect(self.update_progress)
-            self.download_thread.error_signal.connect(self.show_error)
-            self.download_thread.speed_signal.connect(self.show_download_speed)
-
+                self.expandWindow()
+                self.loadDLCNames()
             self.creamapi_maker = CreamAPI()
             self.creamapi_maker.progress_signal.connect(self.update_creamapi_progress)
-            self.creamapi_maker.dlc_signal.connect(self.show_dlc_get_message)
+            # self.creamapi_maker.dlc_signal.connect(self.show_dlc_get_message)
 
-            self.download_thread.start()
             self.creamapi_maker.start()
-            self.download_text.setText(self.translations.get("loading", ""))
-            self.creamapi_label.setText(
-                self.translations.get("dlc_get", "") + " " + self.translations.get("dlc_get_format", ""))
+            # self.creamapi_label.setText(
+            #     self.translations.get("dlc_get", "") + " " + self.translations.get("dlc_get_format", ""))
+
+            # with open('dlc_data.json', 'r') as f:
+            #     dlc_data = json.load(f)
+            self.dlc_count = 0
+            self.dlc_downloaded = 0
+            self.download_queue = []
+
+            def start_next_download():
+                if self.download_queue:
+                    file_url, save_path = self.download_queue.pop(0)
+                    self.download_thread = DownloaderThread(file_url, save_path, self.dlc_downloaded, self.dlc_count)
+                    self.download_thread.progress_signal.connect(self.update_progress)
+                    self.download_thread.progress_signal_2.connect(self.update_progress_2)
+                    self.download_thread.error_signal.connect(self.show_error)
+                    self.download_thread.text_signal.connect(self.download_text_dlc)
+                    self.download_thread.speed_signal.connect(self.show_download_speed)
+                    self.download_thread.finished.connect(start_next_download)
+                    self.download_thread.start()
+
+            for item in dlc_data:
+                if 'dlc_folder' in item and item['dlc_folder']:
+                    self.dlc_count += 1
+            for dlc in dlc_data:
+                dlc_folder = dlc['dlc_folder']
+                if dlc_folder == '':
+                    continue
+                url = 'gAAAAABl9aNSiYh_5HauLeXsOl1N-mC843aU8oq6NChQdjhxAvJwXgHibACNJ_4p8jGcLhP8wmy0mDmIr11jNKt3-ZjW6LY1cxex5EC6PNGCXIJUSOECECzIeWTT2SkpxdwzkwKhg4I3'
+                file_url = f"{decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')}{dlc_folder}.zip"
+                save_path = os.path.join(self.game_path, 'dlc', f'{dlc_folder}.zip')
+                dlc_path = os.path.join(self.game_path, 'dlc', dlc_folder)
+                self.download_text.setText(self.translations.get("loading", ""))
+                # file_url = decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')
+                # self.save_path = os.path.join(self.game_path, 'stellaris_unlocker.zip')
+                # try:
+                #     if os.path.exists(self.save_path):
+                #         os.remove(self.save_path)
+                # except:
+                #     pass
+
+                # self.download_thread = DownloaderThread(file_url, self.save_path)
+                # self.download_thread.progress_signal.connect(self.update_progress)
+                # self.download_thread.error_signal.connect(self.show_error)
+                # self.download_thread.speed_signal.connect(self.show_download_speed)
+                if not os.path.exists(dlc_path) and (not os.path.exists(save_path) or os.path.getsize(save_path) == 0):
+                    if os.path.exists(save_path) and os.path.getsize(save_path) == 0:
+                        os.remove(save_path)
+                    self.download_queue.append((file_url, save_path))
+
+                else:
+                    self.dlc_downloaded += 1
+                    self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
+            if self.download_queue:
+                start_next_download()
 
     def update_creamapi_progress(self, value):
         self.creamapi_progressBar_2.setValue(value)
         if value == 100:
-            self.creamapi_label.setText(self.translations.get('done', ''))
+            # self.creamapi_label.setText(self.translations.get('done', ''))
             self.download_complete()
 
-    def show_dlc_get_message(self, dlc_name):
-        self.creamapi_label.setText(f"{self.translations.get('dlc_get', '')} {dlc_name}")
+    # def show_dlc_get_message(self, dlc_name):
+    #     self.creamapi_label.setText(f"{self.translations.get('dlc_get', '')} {dlc_name}")
 
-    def update_progress(self, value):
+    def update_progress(self, value, by_download=False):
         self.download_progressBar.setValue(value)
+        if by_download:
+            self.dlc_downloaded += 1
+            self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
+            self.loadDLCNames()
         if value == 100:
             self.download_text.setText(self.translations.get('done', ''))
             self.speed_label.setText(f"")
+            self.update_progress_2(100)
+            self.download_text_dlc(' ')
             self.download_complete()
+
+    def update_progress_2(self, value):
+        self.download_progressBar_2.setValue(value)
+
+    def download_text_dlc(self, text):
+        self.download_text_2.setText(text)
 
     def update_reinstall_progress(self, value):
         self.reinstall_progress.setValue(value)
@@ -300,6 +363,7 @@ class MainWindow(QMainWindow):
 
     def show_error(self, error_message):
         # QMessageBox.warning(self, self.translations.get('error', ''), self.translations.get('download_error', ''))
+        print(error_message)
         if self.ok_dialog(self.translations.get("error", ""),
                           self.translations.get("download_error", ""),
                           QMessageBox.Critical):
@@ -359,15 +423,19 @@ class MainWindow(QMainWindow):
         # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         try:
             self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
-        except Exception:
-            pass
+        except Exception as e:
+            raise e
 
     def replace_files(self, launcher_folder):
-        try:
-            rmtree(f'{self.game_path}/dlc')
-        except Exception:
-            pass
-        self.unzip_and_replace()
+        # try:
+        #     rmtree(f'{self.game_path}/dlc')
+        # except Exception:
+        #     pass
+        zip_files = [file for file in os.listdir(os.path.join(self.game_path, 'dlc')) if file.endswith('.zip')]
+        if zip_files:
+            for zip_file in zip_files:
+                self.unzip_and_replace(zip_file)
+
         try:
             os.remove(f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
         except:
@@ -382,14 +450,15 @@ class MainWindow(QMainWindow):
         sleep(1)
         self.finish_button.setEnabled(True)
 
-    def unzip_and_replace(self):
-        zip_path = self.save_path
-        extract_folder = self.game_path
+    def unzip_and_replace(self, dlc_path):
+        zip_path = os.path.join(self.game_path, 'dlc', dlc_path)
+        extract_folder = os.path.join(self.game_path, 'dlc')
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
 
         with ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_folder)
+        os.remove(zip_path)
         return extract_folder
 
     def finish(self):
@@ -399,13 +468,44 @@ class MainWindow(QMainWindow):
             except:
                 pass
 
-        try:
-            if os.path.exists(self.save_path):
-                os.remove(self.save_path)
-        except:
-            pass
+        # try:
+        #     if os.path.exists(self.save_path):
+        #         os.remove(self.save_path)
+        # except:
+        #     pass
 
         self.close()
+
+    def expandWindow(self):
+        self.setMaximumSize(720, 330)
+        self.resize(720, 330)
+
+    def minimizeWindow(self):
+        self.setMaximumSize(510, 330)
+        self.resize(510, 330)
+        self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() + 1)
+
+    def loadDLCNames(self):
+        self.dlc_list.clear()
+        # with open(os.path.join(self.parent_directory, 'dlc_data.json'), 'r') as f:
+        #     dlc_data = json.load(f)
+
+        for dlc in dlc_data:
+            item = QListWidgetItem(dlc['dlc_name'])
+            status_color = self.checkDLCStatus(dlc['dlc_folder'])
+            if status_color != 'orange':
+                item.setBackground(QColor(status_color))
+                self.dlc_list.addItem(item)
+
+    def checkDLCStatus(self, dlc_folder):
+        if not dlc_folder:
+            return "orange"
+        dlc_path_folder = os.path.join(self.game_path, "dlc", dlc_folder)
+        dlc_path_zip = os.path.join(self.game_path, "dlc", f'{dlc_folder}.zip')
+        if os.path.exists(dlc_path_folder) or os.path.exists(dlc_path_zip):
+            return "green"
+        else:
+            return "red"
 
     def server_msg(self):
         if server_msg:
@@ -414,12 +514,36 @@ class MainWindow(QMainWindow):
                               QMessageBox.Information):
                 pass
 
-    @staticmethod
-    def ok_dialog(title, text, msg_type):
+    # @staticmethod
+    # def ok_dialog(title, text, msg_type):
+    #     msg_box = QMessageBox()
+    #     msg_box.setIcon(msg_type)
+    #     msg_box.setWindowTitle(title)
+    #     msg_box.setText(text)
+    #     ok_button = msg_box.addButton(QMessageBox.Ok)
+    #     msg_box.exec_()
+    #     return msg_box.clickedButton() == ok_button
+
+    def ok_dialog(self, title, text, msg_type, link=None):
         msg_box = QMessageBox()
         msg_box.setIcon(msg_type)
         msg_box.setWindowTitle(title)
         msg_box.setText(text)
+
         ok_button = msg_box.addButton(QMessageBox.Ok)
-        msg_box.exec_()
-        return msg_box.clickedButton() == ok_button
+        open_link_button = None
+        if link:
+            open_link_button = QPushButton(self.translations.get('open_link', ''))
+            msg_box.addButton(open_link_button, QMessageBox.ActionRole)
+
+        def open_link():
+            if link:
+                webbrowser.open(link)
+                msg_box.reject()
+
+        if open_link_button:
+            open_link_button.clicked.connect(open_link)
+
+        result = msg_box.exec_()
+
+        return result == QMessageBox.Ok

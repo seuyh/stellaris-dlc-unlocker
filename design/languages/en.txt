@@ -1,5 +1,6 @@
 update_found_title: New version
-update_found_text: A new version has been detected on the server!\nClick 'OK' to update\nAfter the update, the new version will be automatically opened\n\nYour version: {iversion} Server version: {version}
+update_found_text: A new version has been detected on the server!\nClick 'OK' to update\nAfter the update, the new version will be automatically opened\n\nYour version: {iversion} Server version: {version}\n\nIf auto-update does not work, download the latest version using the link:\n{url}
+open_link: Open link
 update_load: Updating...
 update: Update
 cancel_title: Exit
@@ -12,7 +13,7 @@ dlc_get: Getting DLC info:
 dlc_get_format: connecting to api
 done: Done!
 speed: Speed: {speed} MB/s
-download_error: File download error\nMost likely the server is currently unavailable.\nPlease try again later or report the issue to me.
+download_error: File download error\nMost likely the server is currently unavailable.\nPlease try again later or report the issue to me.\n\nThe download server is not available in Ukraine, please use VPN.
 attention: Attention
 launcher_reinstall_1: The launcher installer will now open, please select 'Remove' if prompted, or simply continue installation.
 launcher_reinstall_2: The launcher installer will now open, please proceed with the installation.
