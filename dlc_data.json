@@ -146,5 +146,9 @@
     {
         "dlc_name": "Expansion Subscription",
         "dlc_folder": ""
+    },
+    {
+        "dlc_name": "The Machine Age",
+        "dlc_folder": ""
     }
 ]
