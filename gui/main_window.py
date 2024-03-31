@@ -98,10 +98,7 @@ class MainWindow(QMainWindow):
 
     def updateApplication(self, download_url):
         old_file = argv[0]
-        print(f'oldfile: {old_file}')
-
         old_dir = os.path.dirname(old_file)
-        print(f'old_dir: {old_dir}')
         pid = ctypes.windll.kernel32.GetCurrentProcessId()
         error = False
 
@@ -293,7 +290,6 @@ class MainWindow(QMainWindow):
                 dlc_folder = dlc['dlc_folder']
                 if dlc_folder == '':
                     continue
-                url = 'gAAAAABl9aNSiYh_5HauLeXsOl1N-mC843aU8oq6NChQdjhxAvJwXgHibACNJ_4p8jGcLhP8wmy0mDmIr11jNKt3-ZjW6LY1cxex5EC6PNGCXIJUSOECECzIeWTT2SkpxdwzkwKhg4I3'
                 file_url = f"{decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')}{dlc_folder}.zip"
                 save_path = os.path.join(self.game_path, 'dlc', f'{dlc_folder}.zip')
                 dlc_path = os.path.join(self.game_path, 'dlc', dlc_folder)
@@ -403,18 +399,18 @@ class MainWindow(QMainWindow):
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         launcher_folder = os.path.join(os.path.join(paradox_folder1, launcher_folders[0]))
-        if self.ok_dialog(self.translations.get('attention', ''),
-                          self.translations.get('launcher_reinstall_3', ''),
-                          QMessageBox.Information):
-            try:
-                process = Popen([os.path.join(paradox_folder1, launcher_folder, "Paradox Launcher.exe")])
-                process.wait()
-            except:
-                if self.ok_dialog(self.translations.get("error", ""),
-                                  self.translations.get("reinstall_error", ""),
-                                  QMessageBox.Critical):
-                    self.close()
-        sleep(1.5)
+        # if self.ok_dialog(self.translations.get('attention', ''),
+        #                   self.translations.get('launcher_reinstall_3', ''),
+        #                   QMessageBox.Information):
+        #     try:
+        #         process = Popen([os.path.join(paradox_folder1, launcher_folder, "Paradox Launcher.exe")])
+        #         process.wait()
+        #     except:
+        #         if self.ok_dialog(self.translations.get("error", ""),
+        #                           self.translations.get("reinstall_error", ""),
+        #                           QMessageBox.Critical):
+        #             self.close()
+        # sleep(1.5)
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
         self.update_reinstall_progress(100)
@@ -422,7 +418,7 @@ class MainWindow(QMainWindow):
         self.switch_to_next()
         # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         try:
-            self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[1])))
+            self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         except Exception as e:
             raise e
 
@@ -436,14 +432,19 @@ class MainWindow(QMainWindow):
             for zip_file in zip_files:
                 self.unzip_and_replace(zip_file)
 
+        if os.path.exists(os.path.join(launcher_folder, 'resources', 'app')):
+            old_path = 'app'
+        else:
+            old_path = 'app.asar.unpacked'
         try:
-            os.remove(f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
+            os.remove(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
         except:
             pass
-        os.rename(f'{launcher_folder}/resources/app/dist/main/steam_api64.dll',
-                  f'{launcher_folder}/resources/app/dist/main/steam_api64_o.dll')
+        os.remove(f'{launcher_folder}/xdelta3.exe')
+        os.rename(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64.dll',
+                  f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
         copytree(f'{self.parent_directory}/creamapi_launcher_files',
-                 f'{launcher_folder}/resources/app/dist/main',
+                 f'{launcher_folder}/resources/{old_path}/dist/main',
                  dirs_exist_ok=True)
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
         self.finish_text.setPlainText(self.translations.get('all_done', ''))
@@ -456,10 +457,16 @@ class MainWindow(QMainWindow):
         if not os.path.exists(extract_folder):
             os.makedirs(extract_folder)
 
-        with ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_folder)
-        os.remove(zip_path)
-        return extract_folder
+        try:
+            with ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_folder)
+            os.remove(zip_path)
+            return extract_folder
+        except:
+            if self.ok_dialog(self.translations.get('unzip_error_title', ''),
+                              self.translations.get('unzip_error_text', ''),
+                              QMessageBox.Critical):
+                exit(2)
 
     def finish(self):
         if self.launch_game.isChecked():
