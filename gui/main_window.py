@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '0.97'
+        self.iversion = '1.0'
 
         # -------------------------------------------- #
 
@@ -196,7 +196,7 @@ class MainWindow(QMainWindow):
     def space_req_change(self):
         new_text = self.space_req.text().replace("%nan%", get_remote_file_size(
             decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')))
-        self.space_req.setText(new_text)
+        # self.space_req.setText(new_text)
 
     def on_radio_button_toggled(self):
         if self.eula_true.isChecked() or self.eula_true1.isChecked():
