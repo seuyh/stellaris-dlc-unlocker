@@ -149,6 +149,10 @@
     },
     {
         "dlc_name": "The Machine Age",
-        "dlc_folder": ""
+        "dlc_folder": "dlc032_machine_age"
+    },
+    {
+        "dlc_name": "Rick the Cube Species Portrait",
+        "dlc_folder": "dlc035_rick_the_cube"
     }
 ]
