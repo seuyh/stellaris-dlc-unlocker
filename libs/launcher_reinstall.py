@@ -3,6 +3,7 @@ from shutil import rmtree
 from subprocess import Popen
 from PyQt5 import QtCore
 from time import sleep
+from glob import glob
 
 
 class ReinstallThread(QtCore.QThread):
@@ -19,18 +20,37 @@ class ReinstallThread(QtCore.QThread):
         self.paradox_folder4 = paradox_folder4
 
     def run(self):
+        msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
+        if msi_files:
+            msi_path = msi_files[0]
+        else:
+            msi_path = os.path.join(self.msi_path, "launcher-installer-windows.msi")
+            if os.path.exists(msi_path):
+                pass
+            else:
+                self.error_signal.emit('launcher_installer not found!')
+        print(f'Путь к игре: {self.msi_path}')
+        print(f'Путь к лаунчеру: {msi_path}\nСуществует ли путь: {os.path.exists(msi_path)}')
+        print(f'Выполнение удаления')
         try:
             self.paradox_remove(self.paradox_folder1, self.paradox_folder2, self.paradox_folder3, self.paradox_folder4)
 
             uninstall = Popen(['cmd.exe', '/c', 'msiexec', '/uninstall',
-                               os.path.join(self.msi_path, "launcher-installer-windows.msi"), '/quiet'], shell=True)
+                               msi_path, '/quiet'], shell=True)
+            output, error = uninstall.communicate()
+            if uninstall.returncode != 0:
+                print("Произошла ошибка при удалении:", error.decode())
 
             uninstall.wait()
             self.progress_signal.emit(33)
             sleep(1)
+            print(f'Выполнение установки')
             install = Popen(
-                ['cmd.exe', '/c', 'msiexec', '/package', os.path.join(self.msi_path, "launcher-installer-windows.msi"),
+                ['cmd.exe', '/c', 'msiexec', '/package', msi_path,
                  '/quiet', 'CREATE_DESKTOP_SHORTCUT=0'], shell=True)
+            output, error = install.communicate()
+            if uninstall.returncode != 0:
+                print("Произошла ошибка при установке:", error.decode())
             install.wait()
             self.progress_signal.emit(66)
             self.continue_reinstall.emit(self.paradox_folder1)

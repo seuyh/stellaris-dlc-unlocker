@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '1.0'
+        self.iversion = '1.1'
 
         # -------------------------------------------- #
 
@@ -365,9 +365,9 @@ class MainWindow(QMainWindow):
                           QMessageBox.Critical):
             self.close()
 
-    def show_reinstall_error(self):
+    def show_reinstall_error(self, error_message):
         if self.ok_dialog(self.translations.get("error", ""),
-                          self.translations.get("reinstall_error", ""),
+                          self.translations.get("reinstall_error", "").format(error=error_message),
                           QMessageBox.Critical):
             self.close()
 
