@@ -50,7 +50,7 @@ Stellaris DLC Unlocker - это программа, разработана дл�
 
 ## Связь с разработчиком
 
-Если у вас есть вопросы, проблемы или предложения, пожалуйста, свяжитесь со мной в Telegram [@seuyh](https://t.me/seuyh).
+Если у вас есть вопросы, проблемы или предложения, пожалуйста, свяжитесь со мной в Telegram [@kanuniya](https://t.me/kanuniya).
 
 Я ценю ваше мнение и постараюсь ответить вам как можно скорее!
 
@@ -109,7 +109,7 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial-N
 
 ## Contact the Developer
 
-If you have any questions, issues, or suggestions, please contact me on Telegram [@seuyh](https://t.me/seuyh).
+If you have any questions, issues, or suggestions, please contact me on Telegram [@kanuniya](https://t.me/kanuniya).
 
 I value your opinion and will try to respond as soon as possible!
 
