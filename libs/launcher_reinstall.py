@@ -38,8 +38,8 @@ class ReinstallThread(QtCore.QThread):
             uninstall = Popen(['cmd.exe', '/c', 'msiexec', '/uninstall',
                                msi_path, '/quiet'], shell=True)
             output, error = uninstall.communicate()
-            if uninstall.returncode != 0:
-                print("Произошла ошибка при удалении:", error.decode())
+            # if uninstall.returncode != 0:
+            #     print("Произошла ошибка при удалении:", error.decode())
 
             uninstall.wait()
             self.progress_signal.emit(33)
@@ -49,8 +49,8 @@ class ReinstallThread(QtCore.QThread):
                 ['cmd.exe', '/c', 'msiexec', '/package', msi_path,
                  '/quiet', 'CREATE_DESKTOP_SHORTCUT=0'], shell=True)
             output, error = install.communicate()
-            if uninstall.returncode != 0:
-                print("Произошла ошибка при установке:", error.decode())
+            # if uninstall.returncode != 0:
+            #     print("Произошла ошибка при установке:", error.decode())
             install.wait()
             self.progress_signal.emit(66)
             self.continue_reinstall.emit(self.paradox_folder1)

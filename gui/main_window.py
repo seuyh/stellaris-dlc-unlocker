@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '1.1'
+        self.iversion = '1.11'
 
         # -------------------------------------------- #
 
