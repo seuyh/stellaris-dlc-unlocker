@@ -82,6 +82,8 @@ class MainWindow(QMainWindow):
     def setup_ui(self, language):
         if language == 'ru':
             from design.languages.installer_ru import Ui_MainWindow as gui_design
+        elif language == 'zh':
+            from design.languages.installer_zh import Ui_MainWindow as gui_design
         else:
             from design.languages.installer_en import Ui_MainWindow as gui_design
         self.ui = gui_design()
