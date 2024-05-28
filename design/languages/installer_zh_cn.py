@@ -661,13 +661,13 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">请等待我们从服务器下载必要的文件，连接可能被GFW拦截。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">请等待我们从服务器下载必要的文件，大陆用户可能被GFW拦截，若无法下载请使用魔法。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_11.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">DLC Loading</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.download_text.setText(_translate("MainWindow", "正在连接服务器...如果长时间无法连接可能是GFW拦截，请使用代理。"))
+        self.download_text.setText(_translate("MainWindow", "正在连接服务器...大陆用户如果长时间无法连接可能是GFW拦截，请使用魔法。"))
         self.next_button_5.setText(_translate("MainWindow", "下一步"))
         self.cancel_button_5.setText(_translate("MainWindow", "取消"))
         self.label.setText(_translate("MainWindow", "DLC 下载中:"))
