@@ -82,7 +82,7 @@ class MainWindow(QMainWindow):
     def setup_ui(self, language):
         if language == 'ru':
             from design.languages.installer_ru import Ui_MainWindow as gui_design
-        elif language == 'zh':
+        elif language == 'zh_cn':
             from design.languages.installer_zh_cn import Ui_MainWindow as gui_design
         else:
             from design.languages.installer_en import Ui_MainWindow as gui_design
@@ -166,9 +166,9 @@ class MainWindow(QMainWindow):
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
         msg_box.setDefaultButton(QMessageBox.Yes)
         yes_button = msg_box.button(QMessageBox.Yes)
-        yes_button.setText('Да')
+        yes_button.setText(self.translations.get("yes_button", ""))
         cancel_button = msg_box.button(QMessageBox.Cancel)
-        cancel_button.setText('Нет')
+        cancel_button.setText(self.translations.get("cancel_button", ""))
         reply = msg_box.exec_()
         if reply == QMessageBox.Yes:
             # try:

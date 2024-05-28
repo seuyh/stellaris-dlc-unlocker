@@ -31,3 +31,5 @@ launcher_update_error_title: 启动器更新不正确。
 launcher_update_error_title: 启动器更新不正确。这似乎是启动器本身的一些罕见问题。请尝试再次更新。
 unzip_error_title: 解压错误
 unzip_error_text: 解压归档时发生错误：归档文件损坏。\n我们将删除已下载的归档文件，请重启程序。\n如果错误持续存在，请从游戏的根目录中删除“dlc”文件夹。
+yes_button: 确认
+cancel_button: 取消

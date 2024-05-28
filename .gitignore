@@ -8,3 +8,6 @@
 /data.json
 /.banner/
 /.github/
+/gui/__pycache__
+/libs/__pycache__
+/design/languages/__pycache__

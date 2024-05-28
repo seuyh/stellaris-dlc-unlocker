@@ -563,14 +563,14 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.next_button.setText(_translate("MainWindow", "Next"))
-        self.cancel_button.setText(_translate("MainWindow", "Cancel"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "主窗口"))
+        self.next_button.setText(_translate("MainWindow", "下一步"))
+        self.cancel_button.setText(_translate("MainWindow", "取消"))
         self.hello_msg.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">欢迎使用 Stellaris ‘DLC 解锁器’ [unknown]</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">欢迎使用 Stellaris DLC 解锁器 [unknown]</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.hello2_msg.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -580,7 +580,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">点击 &quot;下一步t&quot; 继续或 &quot;取消&quot; 来取消安装.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">点击 &quot;下一步 &quot; 继续或 &quot;取消&quot; 来取消安装.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.next_button_3.setText(_translate("MainWindow", "下一步"))
         self.cancel_button_3.setText(_translate("MainWindow", "取消"))
         self.back_button_2.setText(_translate("MainWindow", "返回"))
@@ -618,20 +618,20 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC 解锁器</span></p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">要求</span><span style=\" font-size:10pt;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Steam</span><span style=\" font-size:10pt;\">: 许可证</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Steam</span><span style=\" font-size:10pt;\">: 已购买Stellaris</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">安装</span><span style=\" font-size:10pt;\">:</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> 按照安装程序的指示进行安装。安装过程几乎完全自动化。 </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">卸载</span><span style=\" font-size:10pt;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> 重新安装 Paradox 启动器，删除游戏目录中的“dlc”文件夹。不要忘记重新下载您购买的 DLC。<br /><br /> 用爱为每个人制作。<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> 重新安装 Paradox 启动器，删除游戏目录中的“dlc”文件夹。不要忘记重新下载您购买的 DLC。<br /><br /> 为每个人，用爱制作。<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/yige-yigeren\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">中文翻译@武乙凌薇<br /></span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">GitHub<br /></span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">特别感谢一直以来更新手动安装解锁器的人。</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/Temri1337\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">He11oThere</span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"@Temri1337\"><span style=\" font-size:8pt; text-decoration: underline; color:#000000;\"><br /></span></a><a href=\"https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">playground.ru Stellaris DLC Unlocker</span></a></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; color:#0000ff;\"><br /></p></body></html>"))
-        self.cancel_button_4.setText(_translate("MainWindow", "Cancel"))
+        self.cancel_button_4.setText(_translate("MainWindow", "取消"))
         self.textBrowser_6.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -708,7 +708,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">We\'ve almost completed everything, just a little more waiting.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">我们几乎已完成所有事情，只需再等待一小会儿。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.finish_button.setText(_translate("MainWindow", "完成"))
         self.launch_game.setText(_translate("MainWindow", "启动游戏"))
         self.checkBox.setText(_translate("MainWindow", "感谢安装，由@武乙凌薇翻译"))
