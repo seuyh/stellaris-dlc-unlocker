@@ -164,11 +164,15 @@ Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可
 
 本项目根据[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
 
-中文翻译由[@武乙凌薇](https://github.com/yige-yigeren)提供，以[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。由于使用了Ai协助进行翻译以减少工作量，如果有任何翻译不当或疏漏的地方请联系我。
+## 关于中文翻译
+
+中文翻译由[@武乙凌薇](https://github.com/yige-yigeren)提供，以[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
+
+使用了Ai协助进行翻译以减少工作量，如果有任何翻译不当或疏漏的地方请联系我（长时间的留学生活也让我的中文水平急剧下降23333）。安装界面的相关代码也是我从英语版改的，没啥大问题，应该（（（（
 
 ## 联系开发者
 
-如果您有任何问题、问题或建议，请通过 Telegram 联系我 [@kanuniya](https://t.me/kanuniya).。
+如果您有任何问题、问题或建议，请通过 Telegram 联系我 [@kanuniya](https://t.me/kanuniya)。
 
 我重视您的意见，并将尽快回复！
 
