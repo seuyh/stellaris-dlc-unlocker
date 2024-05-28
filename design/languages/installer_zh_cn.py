@@ -2,7 +2,7 @@
 
 # This file is copy form en, I am not sure if it is correct
 
-# Form implementation generated from reading ui file 'C:/Users/sp21/PycharmProjects/stellaris-dlc-unlock/design/languages/installer_cn.ui'
+# Form implementation generated from reading ui file 'C:/Users/sp21/PycharmProjects/stellaris-dlc-unlock/design/languages/installer_zh_cn.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -570,63 +570,64 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Welcome to Stellaris \'DLC Unlocker\' [unknown]</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">欢迎使用 Stellaris ‘DLC 解锁器’ [unknown]</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.hello2_msg.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The program will unlock all DLC for the Stellaris game version [unknown]<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">该程序将解锁 Stellaris 游戏版本 [unknown] 的所有 DLC<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_3.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Click &quot;Next&quot; to continue or &quot;Cancel&quot; to exit the installation program.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.next_button_3.setText(_translate("MainWindow", "Next"))
-        self.cancel_button_3.setText(_translate("MainWindow", "Cancel"))
-        self.back_button_2.setText(_translate("MainWindow", "Back"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">点击 &quot;下一步t&quot; 继续或 &quot;取消&quot; 来取消安装.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.next_button_3.setText(_translate("MainWindow", "下一步"))
+        self.cancel_button_3.setText(_translate("MainWindow", "取消"))
+        self.back_button_2.setText(_translate("MainWindow", "返回"))
         self.textBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Information</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">信息</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_2.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please read the following important information before proceeding.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">在继续前，请阅读以下信息。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_4.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1. This unlocker is distributed absolutely free of charge. Any commercial use of this unlocker is prohibited.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1. 此解锁器完全免费。禁止任何形式将此解锁器用于任何商业行为。</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2. THIS UNLOCKER IS PROVIDED &quot;AS IS&quot;. NO WARRANTIES ARE PROVIDED OR IMPLIED. YOU USE THIS MODIFICATION OF THE ORIGINAL GAME AT YOUR OWN RISK. THE AUTHORS OF THE MODIFICATION WILL NOT BE LIABLE FOR ANY LOSSES OR DATA CORRUPTION, ANY LOST PROFITS IN THE PROCESS OF USE OR MISUSE OF THIS MODIFICATION.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2. 本解锁器“按原样”提供，不提供任何形式的担保。使用此修改版游戏风险自负。修改者不承担因使用或误用此修改版而导致的任何损失或数据损坏，以及在使用过程中可能发生的任何利润损失。</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">4. All rights not expressly granted here are reserved by the copyright holders.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">4. 未在此明确授予的所有权利均由版权持有者保留。</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">5. Installation and use of this modification implies that you have read and understand the terms of this license agreement and agree to them.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">5. 安装并使用此修改意味着您已阅读并理解了本许可协议的条款，并同意遵守。</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.eula_true.setText(_translate("MainWindow", "I accept the terms of the agreement"))
-        self.eula_false.setText(_translate("MainWindow", "I do not accept the terms of the agreement"))
-        self.eula_true1.setText(_translate("MainWindow", "I haven\'t read anything, but i agree with everything"))
-        self.back_button_3.setText(_translate("MainWindow", "Back"))
-        self.next_button_4.setText(_translate("MainWindow", "Next"))
+        self.eula_true.setText(_translate("MainWindow", "我接受协议条款"))
+        self.eula_false.setText(_translate("MainWindow", "我不接受协议条款"))
+        self.eula_true1.setText(_translate("MainWindow", "我没有阅读，但我接受其中所有内容"))
+        self.back_button_3.setText(_translate("MainWindow", "返回"))
+        self.next_button_4.setText(_translate("MainWindow", "下一步"))
         self.textBrowser_5.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC Unlocker</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC 解锁器</span></p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Requirements</span><span style=\" font-size:10pt;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">License</span><span style=\" font-size:10pt;\">: Steam.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">要求</span><span style=\" font-size:10pt;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Steam</span><span style=\" font-size:10pt;\">: 许可证</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Installation</span><span style=\" font-size:10pt;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Follow the installer instructions. Installation is almost entirely automatic. </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">安装</span><span style=\" font-size:10pt;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> 按照安装程序的指示进行安装。安装过程几乎完全自动化。 </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Uninstallation</span><span style=\" font-size:10pt;\">:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Reinstall the Paradox launcher, delete the &quot;dlc&quot; folder in the game directory. Don\'t forget to re-download the DLCs you have purchased. <br /><br /> Made for everyone, with love <br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">卸载</span><span style=\" font-size:10pt;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> 重新安装 Paradox 启动器，删除游戏目录中的“dlc”文件夹。不要忘记重新下载您购买的 DLC。<br /><br /> 用爱为每个人制作。<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/yige-yigeren\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">中文翻译@武乙凌薇<br /></span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">GitHub<br /></span></a></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">Special thanks to the person who updated the manual installation unlocker all this time</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">特别感谢一直以来更新手动安装解锁器的人。</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/Temri1337\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">He11oThere</span></a></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"@Temri1337\"><span style=\" font-size:8pt; text-decoration: underline; color:#000000;\"><br /></span></a><a href=\"https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">playground.ru Stellaris DLC Unlocker</span></a></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; color:#0000ff;\"><br /></p></body></html>"))
@@ -635,83 +636,83 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please read the following important information before proceeding.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">在继续之前，请阅读以下重要信息。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_7.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Information</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.next_button_2.setText(_translate("MainWindow", "Next"))
-        self.cancel_button_2.setText(_translate("MainWindow", "Cancel"))
-        self.locate_folder.setText(_translate("MainWindow", "Browse..."))
-        self.back_button.setText(_translate("MainWindow", "Back"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">信息</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.next_button_2.setText(_translate("MainWindow", "下一步"))
+        self.cancel_button_2.setText(_translate("MainWindow", "取消"))
+        self.locate_folder.setText(_translate("MainWindow", "浏览..."))
+        self.back_button.setText(_translate("MainWindow", "返回"))
         self.textBrowser_8.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Select Game Folder</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">选择游戏文件夹</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_9.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please specify the game folder if we couldn\'t find it automatically.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.space_req.setText(_translate("MainWindow", "It requires an additional %nan% space"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">如果我们无法自动找到游戏文件夹，请指定游戏文件夹。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.space_req.setText(_translate("MainWindow", "需要额外 %nan% 空间"))
         self.textBrowser_10.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please wait while we download all necessary files from the server.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">请等待我们从服务器下载必要的文件，连接可能被GFW拦截。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_11.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">DLC Loading</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.download_text.setText(_translate("MainWindow", "Connecting to server..."))
-        self.next_button_5.setText(_translate("MainWindow", "Next"))
-        self.cancel_button_5.setText(_translate("MainWindow", "Cancel"))
-        self.label.setText(_translate("MainWindow", "DLC downloading:"))
-        self.label_2.setText(_translate("MainWindow", "Generating creamapi:"))
-        self.speed_label.setText(_translate("MainWindow", "Speed: %nan%"))
-        self.label_3.setText(_translate("MainWindow", "DLC download progress:"))
+        self.download_text.setText(_translate("MainWindow", "正在连接服务器...如果长时间无法连接可能是GFW拦截，请使用代理。"))
+        self.next_button_5.setText(_translate("MainWindow", "下一步"))
+        self.cancel_button_5.setText(_translate("MainWindow", "取消"))
+        self.label.setText(_translate("MainWindow", "DLC 下载中:"))
+        self.label_2.setText(_translate("MainWindow", "生成creamapi:"))
+        self.speed_label.setText(_translate("MainWindow", "速度: %nan%"))
+        self.label_3.setText(_translate("MainWindow", "DLC 下载进度:"))
         self.textBrowser_12.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Launcher Reinstallation</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">启动器重新安装</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_13.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You need to reinstall the Paradox launcher for proper operation.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.reinstall_button.setText(_translate("MainWindow", "Okay"))
-        self.cancel_button_6.setText(_translate("MainWindow", "Cancel"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">您需要重新安装 Paradox 启动器才能正常运行。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.reinstall_button.setText(_translate("MainWindow", "完成"))
+        self.cancel_button_6.setText(_translate("MainWindow", "取消"))
         self.reinstall_low.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The program will handle almost everything automatically, you just need to follow the on-screen instructions.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.reinstall_up.setText(_translate("MainWindow", "You will need to reinstall the Paradox launcher now"))
-        self.progress_label.setText(_translate("MainWindow", "Reinstallation progress:"))
-        self.now_reinstalling.setText(_translate("MainWindow", "Waiting"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">该程序将自动处理几乎所有事情，您只需按照屏幕上的说明进行操作即可。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.reinstall_up.setText(_translate("MainWindow", "你需要重新安装Paradox启动器以确保正确运行。"))
+        self.progress_label.setText(_translate("MainWindow", "重新安装进度:"))
+        self.now_reinstalling.setText(_translate("MainWindow", "等待中"))
         self.finish_text.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Overwriting the remaining files.<br /><br />Please wait a moment.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Overwriting the remaining files.<br /><br />请等待一下<span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_16.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Completion</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">完成</span><span style=\" font-size:8pt;\"> </span></p></body></html>"))
         self.textBrowser_17.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">We\'ve almost completed everything, just a little more waiting.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.finish_button.setText(_translate("MainWindow", "Finish"))
-        self.launch_game.setText(_translate("MainWindow", "Launch the game"))
-        self.checkBox.setText(_translate("MainWindow", "Thank you, you\'re cool!"))
-        self.version.setText(_translate("MainWindow", "version %nan%"))
+        self.finish_button.setText(_translate("MainWindow", "完成"))
+        self.launch_game.setText(_translate("MainWindow", "启动游戏"))
+        self.checkBox.setText(_translate("MainWindow", "感谢安装，由@武乙凌薇翻译"))
+        self.version.setText(_translate("MainWindow", "版本 %nan%"))
         self.textBrowser_15.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

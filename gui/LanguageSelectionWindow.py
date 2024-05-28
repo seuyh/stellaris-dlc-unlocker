@@ -17,6 +17,7 @@ class LanguageSelectionWindow(QWidget):
         self.language_combo = QComboBox()
         self.language_combo.addItem("English", "en")
         self.language_combo.addItem("Русский", "ru")
+        self.language_combo.addItem("简体中文", "zh_cn")
         self.language_combo.currentIndexChanged.connect(self.language_changed)
         font = self.language_combo.font()
         font.setPointSize(10)
@@ -66,6 +67,10 @@ class LanguageSelectionWindow(QWidget):
             self.setWindowTitle("Выбор языка")
             self.select_button.setText("Далее")
             self.cancel_button.setText("Отмена")
+        elif self.language_combo.currentData() == 'zh_cn':
+            self.setWindowTitle("选择语言")
+            self.select_button.setText("下一步")
+            self.cancel_button.setText("取消")
 
     def select_language(self):
         self.selected_language = self.language_combo.currentData()
