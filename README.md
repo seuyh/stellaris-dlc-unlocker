@@ -7,7 +7,7 @@
 
 ## [English please](#english-version)
 
-## [中文版](#中文版)
+## [中文版](#simple-chinese-version)
 <br>
 
 ## Описание
@@ -119,9 +119,9 @@ I value your opinion and will try to respond as soon as possible!
 
 The idea for this product is inspired by [He11oThere](https://t.me/Temri1337), who supported and updated the topic dedicated to manual DLC unlocking on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
 
---- 
-
 *Note: The unlocker is in the development stage and is provided "AS IS." The product may change, be supplemented, and improved in the future. The presence of bugs, shortcomings, crashes is not excluded.*
+
+<br><br><br>
 
 # 中文版
 ## 简介
@@ -181,3 +181,5 @@ Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可
 该产品的灵感来自 [He11oThere](https://t.me/Temri1337)，他支持并更新了 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040)上关于手动 DLC 解锁的专题。
 
 注：解锁器处于开发阶段，并且以“按原样”提供。产品可能会变更、补充和改进。不排除存在缺陷、不足、崩溃的可能。
+
+--- 
