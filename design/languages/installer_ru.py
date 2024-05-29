@@ -683,7 +683,7 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Загрузка DLC:"))
         self.label_2.setText(_translate("MainWindow", "Генерация creamapi:"))
         self.speed_label.setText(_translate("MainWindow", "Скорость: %nan%"))
-        self.label_3.setText(_translate("MainWindow", "Прогресс загрузки теущего DLC:"))
+        self.label_3.setText(_translate("MainWindow", "Прогресс загрузки текущего DLC:"))
         self.textBrowser_12.setHtml(_translate("MainWindow",
                                                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                                                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
