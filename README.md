@@ -123,7 +123,8 @@ The idea for this product is inspired by [He11oThere](https://t.me/Temri1337), w
 
 <br><br><br>
 
-# 中文版
+# Simple Chinese version
+
 ## 简介
 
 Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可下载内容）的过程的程序。它允许用户免费和自动解锁所有 DLC。由于自动更新和从服务器下载文件的能力，每次发布游戏和 DLC 的新版本时，无需重新下载程序。一旦下载，程序将自动加载所需文件。
