@@ -61,7 +61,7 @@ Stellaris DLC Unlocker - это программа, разработана дл�
 
 Идея данного продукта вдохновлена [He11oThere](https://t.me/Temri1337), который поддерживал и обновлял тему посвященную ручной разблокировке DLC на [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
 
-Перевод на Простой Китайский язык: [yige-yigeren](https://github.com/yige-yigeren).
+Перевод на Простой Китайский язык: [wuyilingwei](https://github.com/wuyilingwei).
 
 --- 
 
@@ -121,7 +121,7 @@ I value your opinion and will try to respond as soon as possible!
 
 The idea for this product is inspired by [He11oThere](https://t.me/Temri1337), who supported and updated the topic dedicated to manual DLC unlocking on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
 
-Translation into Simple Chinese: [yige-yigeren](https://github.com/yige-yigeren).
+Translation into Simple Chinese: [wuyilingwei](https://github.com/wuyilingwei).
 
 *Note: The unlocker is in the development stage and is provided "AS IS." The product may change, be supplemented, and improved in the future. The presence of bugs, shortcomings, crashes is not excluded.*
 
@@ -171,9 +171,9 @@ Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可
 
 ## 关于中文翻译
 
-中文翻译由[@武乙凌薇](https://github.com/yige-yigeren)提供，以[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
+中文翻译由[@武乙凌薇](https://github.com/wuyilingwei)提供，以[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
 
-使用了Ai协助进行翻译以减少工作量，如果有任何翻译不当或疏漏的地方请联系我（长时间的留学生活也让我的中文水平急剧下降23333）。安装界面的相关代码也是我从英语版改的，没啥大问题，应该（（（（
+使用了Ai协助进行翻译以减少工作量，如果有任何翻译不当或疏漏的地方请联系我（长时间的留学生活也让我的中文水平急剧下降23333）。安装界面的相关代码我是从英语版改的，没啥大问题，应该（（（（
 
 ## 联系开发者
 
@@ -185,7 +185,7 @@ Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可
 
 该产品的灵感来自 [He11oThere](https://t.me/Temri1337)，他支持并更新了 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040)上关于手动 DLC 解锁的专题。
 
-翻译成简体中文 [yige-yigeren](https://github.com/yige-yigeren)。
+翻译成简体中文 [wuyilingwei](https://github.com/wuyilingwei)。
 
 注：解锁器处于开发阶段，并且以“按原样”提供。产品可能会变更、补充和改进。不排除存在缺陷、不足、崩溃的可能。
 
