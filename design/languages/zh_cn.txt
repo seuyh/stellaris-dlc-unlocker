@@ -1,16 +1,16 @@
 update_found_title: 新版本
-update_found_text: 服务器上检测到新版本！\n点击“确定”进行更新\n更新后，将自动打开新版本\n\n您的版本：{iversion} 服务器版本：{version}\n\n如果自动更新不起作用，请使用以下链接下载最新版本：\n{url}
+update_found_text: 服务器上检测到新版本！\n点击“确定”进行更新\n更新后，将自动打开新版本\n\n您的版本：{iversion} 服务器版本：{version}\n\n如果无法自动更新，请使用以下链接下载最新版本：\n{url}
 open_link: 打开链接
 update_load: 正在更新...
 update: 更新
 cancel_title: 退出
-cancel_text: 如果您退出，DLC解锁器将不会被安装。\n\n\n退出安装程序？
+cancel_text: 如果您退出，DLC解锁器将不会被安装。\n\n\n确认退出安装程序？
 error: 错误！
 path_error: 未找到可执行文件“stellaris.exe”。\n\n\n您可能指定了错误的目录。
 dir_change: 选择 Stellaris 文件夹
 loading: 正在加载...
 dlc_get: 正在获取 DLC 信息：
-dlc_get_format: 正在连接到 api
+dlc_get_format: 正在连接到下载api
 done: 完成！
 speed: 速度：{speed} MB/s
 download_error: 文件下载错误\n很可能是服务器当前不可用。\n请稍后重试或向我报告问题。\n\n下载服务器在乌克兰，如不可用请开启魔法后重试。
@@ -20,16 +20,16 @@ launcher_reinstall_2: 启动器安装程序将现在打开，请继续进行安�
 launcher_reinstall_3: 现在将启动Paradox启动器，但由于我们无法跟踪其更新状态，您需要在启动后点击右上角的“跳过”，并等待启动器显示更新准备就绪，然后关闭它\n启动器中的通知显示在右上角的铃铛图标中。
 all_done: 全部完成！
 server_msg_title: 重要消息
-server_msg_text: 服务器消息\n\n{server_msg}
-launcher_reinstall_error: 启动器重新安装时出现意外错误。\n请确保游戏目录中有一个名为“launcher-installer-windows.msi”的文件。\n如果找不到该文件，请检查游戏文件的完整性。
-update_error: 更新时发生错误。最有可能的情况是我不知道发生了什么。\n您可以使用右下角的 GitHub 链接报告此错误。\n\n您也可以继续使用解锁器，但其功能无法保证。
+server_msg_text: 服务器消息：\n\n{server_msg}
+launcher_reinstall_error: 启动器重新安装时出现意外错误。\n请确保游戏目录中有一个名为“launcher-installer-windows.msi”的文件。\n如果找不到该文件，请使用steam的“检查游戏文件完整性”。
+update_error: 更新时发生错误。我不知道发生了什么。\n您可以使用右下角的 GitHub 链接报告此错误。\n\n您也可以尝试继续使用解锁器，但无法保证其功能。
 reinstall_error: 重新安装启动器时出现了意外错误。可能无法继续安装。{error}
 launcher_uninstall: 卸载启动器
 launcher_install: 安装启动器
 launcher_update: 更新启动器
-launcher_update_error_title: 启动器更新不正确。
+launcher_update_error_title: 启动器更新不正确
 launcher_update_error_title: 启动器更新不正确。这似乎是启动器本身的一些罕见问题。请尝试再次更新。
-unzip_error_title: 解压错误
-unzip_error_text: 解压归档时发生错误：归档文件损坏。\n我们将删除已下载的归档文件，请重启程序。\n如果错误持续存在，请从游戏的根目录中删除“dlc”文件夹。
+unzip_error_title: 文件解压错误
+unzip_error_text: 解压DLC压缩文件时发生错误：压缩文件已损坏。\n我们将删除已下载的压缩文件，请重启程序后再试。\n如果错误持续存在，请从游戏的根目录中删除整个“dlc”文件夹。
 yes_button: 确认
 cancel_button: 取消
