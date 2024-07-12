@@ -3,12 +3,12 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import sys
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-url = 'https://github.com/seuyh/stellaris-dlc-unlocker/raw/main/data.json'
+url = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker/data.json'
 headers = {'Cache-Control': 'no-cache', 'Pragma': 'no-cache'}
 try:
     response = requests.get(url, headers=headers).json()
     response_dlc_data = requests.get(
-        'https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/dlc_data.json', headers=headers).json()
+        'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker/dlc_data.json', headers=headers).json()
     gameversion = response["gameversion"]
     version = response["version"]
     url = response["url"]
