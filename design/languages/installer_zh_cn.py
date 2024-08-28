@@ -80,6 +80,16 @@ class Ui_MainWindow(object):
         self.listWidget_4.setStyleSheet("background-image: url(:/images/stallaris_ba (1).jpg);")
         self.listWidget_4.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.listWidget_4.setObjectName("listWidget_4")
+        self.help_button = QtWidgets.QPushButton(self.page_2)
+        self.help_button.setGeometry(QtCore.QRect(250, 250, 181, 31))
+        self.help_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.help_button.setObjectName("help_button")
+        self.help_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))                                                                       
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
@@ -314,12 +324,6 @@ class Ui_MainWindow(object):
         self.line_7.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_7.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_7.setObjectName("line_7")
-        self.space_req = QtWidgets.QLineEdit(self.page)
-        self.space_req.setGeometry(QtCore.QRect(210, 250, 291, 20))
-        self.space_req.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.space_req.setFrame(False)
-        self.space_req.setReadOnly(True)
-        self.space_req.setObjectName("space_req")
         self.stackedWidget.addWidget(self.page)
         self.page_5 = QtWidgets.QWidget()
         self.page_5.setObjectName("page_5")
@@ -525,6 +529,69 @@ class Ui_MainWindow(object):
         self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
         self.stackedWidget.addWidget(self.page_7)
+        self.page_8 = QtWidgets.QWidget()
+        self.page_8.setObjectName("page_8")
+        self.textBrowser_19 = QtWidgets.QTextBrowser(self.page_8)
+        self.textBrowser_19.setGeometry(QtCore.QRect(210, 40, 281, 35))
+        self.textBrowser_19.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_19.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.textBrowser_19.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_19.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_19.setObjectName("textBrowser_19")
+        self.help_finish_button = QtWidgets.QPushButton(self.page_8)
+        self.help_finish_button.setEnabled(True)
+        self.help_finish_button.setGeometry(QtCore.QRect(414, 300, 91, 23))
+        self.help_finish_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.help_finish_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.help_finish_button.setObjectName("help_finish_button")
+        self.textBrowser_18 = QtWidgets.QTextBrowser(self.page_8)
+        self.textBrowser_18.setGeometry(QtCore.QRect(210, 10, 281, 31))
+        self.textBrowser_18.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_18.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.textBrowser_18.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_18.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_18.setObjectName("textBrowser_18")
+        self.line_13 = QtWidgets.QFrame(self.page_8)
+        self.line_13.setGeometry(QtCore.QRect(190, 80, 331, 1))
+        self.line_13.setStyleSheet("border-top: 1px solid black;")
+        self.line_13.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_13.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_13.setObjectName("line_13")
+        self.fix_2_button = QtWidgets.QPushButton(self.page_8)
+        self.fix_2_button.setEnabled(True)
+        self.fix_2_button.setGeometry(QtCore.QRect(210, 140, 281, 23))
+        self.fix_2_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.fix_2_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.fix_2_button.setObjectName("fix_2_button")
+        self.fix_1_button = QtWidgets.QPushButton(self.page_8)
+        self.fix_1_button.setEnabled(True)
+        self.fix_1_button.setGeometry(QtCore.QRect(210, 110, 281, 23))
+        self.fix_1_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.fix_1_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.fix_1_button.setObjectName("fix_1_button")
+        self.help_info = QtWidgets.QTextBrowser(self.page_8)
+        self.help_info.setGeometry(QtCore.QRect(210, 230, 281, 51))
+        self.help_info.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.help_info.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.help_info.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.help_info.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.help_info.setObjectName("help_info")
+        self.stackedWidget.addWidget(self.page_8)
         self.listWidget_5 = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget_5.setGeometry(QtCore.QRect(0, 0, 191, 291))
         self.listWidget_5.setStyleSheet("background-image: url(:/images/stallaris_ba (1).jpg);")
@@ -581,6 +648,7 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">点击 &quot;下一步 &quot; 继续或 &quot;取消&quot; 来取消安装.<span style=\" font-size:8pt;\"> </span></p></body></html>"))
+        self.help_button.setText(_translate("MainWindow", "帮助，什么都不起作用"))
         self.next_button_3.setText(_translate("MainWindow", "下一步"))
         self.cancel_button_3.setText(_translate("MainWindow", "取消"))
         self.back_button_2.setText(_translate("MainWindow", "返回"))
@@ -656,7 +724,6 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">如果无法自动找到游戏文件夹，请指定游戏文件夹。<span style=\" font-size:8pt;\"> </span></p></body></html>"))
-        self.space_req.setText(_translate("MainWindow", "需要额外 %nan% 空间"))
         self.textBrowser_10.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -712,10 +779,27 @@ class Ui_MainWindow(object):
         self.finish_button.setText(_translate("MainWindow", "完成"))
         self.launch_game.setText(_translate("MainWindow", "启动游戏"))
         self.checkBox.setText(_translate("MainWindow", "感谢安装，You are cool! 中文版本由@武乙凌薇翻译"))
+        self.textBrowser_19.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">修复一些已知问题</p></body></html>"))
+        self.help_finish_button.setText(_translate("MainWindow", "完成"))
+        self.textBrowser_18.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">修复</span></p></body></html>"))
+        self.fix_2_button.setText(_translate("MainWindow", "启动器无法验证 DLC"))
+        self.fix_1_button.setText(_translate("MainWindow", "启动器中提供 DLC，但游戏中没有"))
+        self.help_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">这些修复并不能保证一切正常，但在大多数情况下，它们应该有所帮助</p></body></html>"))                                                                                                                                                                                                                                                                                                                                                                                                        
         self.version.setText(_translate("MainWindow", "版本 %nan%"))
         self.textBrowser_15.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><span style=\" font-size:10pt; color:#000000;\"> </span><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:10pt; text-decoration: underline; color:#000000;\">GitHub</span></a></p></body></html>"))
-
