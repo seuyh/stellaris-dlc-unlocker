@@ -1,5 +1,5 @@
 import os
-from shutil import rmtree
+from shutil import rmtree, move
 from subprocess import Popen
 from PyQt5 import QtCore
 from time import sleep
@@ -11,13 +11,16 @@ class ReinstallThread(QtCore.QThread):
     error_signal = QtCore.pyqtSignal(Exception)
     continue_reinstall = QtCore.pyqtSignal(str)
 
-    def __init__(self, msi_path, paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4):
+    def __init__(self, msi_path, paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4,
+                 launcher_downloaded, downloaded_launcher_dir):
         super().__init__()
         self.msi_path = msi_path
         self.paradox_folder1 = paradox_folder1
         self.paradox_folder2 = paradox_folder2
         self.paradox_folder3 = paradox_folder3
         self.paradox_folder4 = paradox_folder4
+        self.launcher_downloaded = launcher_downloaded
+        self.downloaded_launcher_dir = downloaded_launcher_dir
 
     def run(self):
         msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
@@ -29,6 +32,10 @@ class ReinstallThread(QtCore.QThread):
                 pass
             else:
                 self.error_signal.emit('launcher_installer not found!')
+        print(f'Требуется ли подмена лаунчера: {self.launcher_downloaded}')
+        if self.launcher_downloaded:
+            os.remove(msi_path)
+            move(self.downloaded_launcher_dir, msi_path)
         print(f'Путь к игре: {self.msi_path}')
         print(f'Путь к лаунчеру: {msi_path}\nСуществует ли путь: {os.path.exists(msi_path)}')
         print(f'Выполнение удаления')
