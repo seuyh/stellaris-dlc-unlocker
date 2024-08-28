@@ -30,21 +30,21 @@ class Ui_MainWindow(object):
         self.next_button.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.next_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.next_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                       "}\n"
-                                       "\n"
-                                       "QPushButton:hover {\n"
-                                       "    background-color: #FFD0D1;\n"
-                                       "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.next_button.setObjectName("next_button")
         self.cancel_button = QtWidgets.QPushButton(self.page_2)
         self.cancel_button.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button.setObjectName("cancel_button")
         self.line = QtWidgets.QFrame(self.page_2)
         self.line.setGeometry(QtCore.QRect(190, 290, 331, 1))
@@ -76,6 +76,16 @@ class Ui_MainWindow(object):
         self.listWidget_4.setStyleSheet("background-image: url(:/images/stallaris_ba (1).jpg);")
         self.listWidget_4.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.listWidget_4.setObjectName("listWidget_4")
+        self.help_button = QtWidgets.QPushButton(self.page_2)
+        self.help_button.setGeometry(QtCore.QRect(250, 250, 181, 31))
+        self.help_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.help_button.setObjectName("help_button")
+        self.help_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
@@ -90,21 +100,21 @@ class Ui_MainWindow(object):
         self.next_button_3.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.next_button_3.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
         self.next_button_3.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.next_button_3.setObjectName("next_button_3")
         self.cancel_button_3 = QtWidgets.QPushButton(self.page_3)
         self.cancel_button_3.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_3.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                           "}\n"
-                                           "\n"
-                                           "QPushButton:hover {\n"
-                                           "    background-color: #FFD0D1;\n"
-                                           "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button_3.setObjectName("cancel_button_3")
         self.listWidget_3 = QtWidgets.QListWidget(self.page_3)
         self.listWidget_3.setGeometry(QtCore.QRect(0, 0, 191, 291))
@@ -115,11 +125,11 @@ class Ui_MainWindow(object):
         self.back_button_2.setGeometry(QtCore.QRect(270, 300, 75, 23))
         self.back_button_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.back_button_2.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.back_button_2.setObjectName("back_button_2")
         self.textBrowser = QtWidgets.QTextBrowser(self.page_3)
         self.textBrowser.setGeometry(QtCore.QRect(210, 10, 281, 31))
@@ -176,11 +186,11 @@ class Ui_MainWindow(object):
         self.back_button_3.setGeometry(QtCore.QRect(270, 300, 75, 23))
         self.back_button_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.back_button_3.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.back_button_3.setObjectName("back_button_3")
         self.line_5 = QtWidgets.QFrame(self.page_4)
         self.line_5.setGeometry(QtCore.QRect(190, 80, 331, 1))
@@ -192,11 +202,11 @@ class Ui_MainWindow(object):
         self.next_button_4.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.next_button_4.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.next_button_4.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.next_button_4.setObjectName("next_button_4")
         self.line_6 = QtWidgets.QFrame(self.page_4)
         self.line_6.setGeometry(QtCore.QRect(190, 290, 331, 1))
@@ -207,9 +217,9 @@ class Ui_MainWindow(object):
         self.textBrowser_5 = QtWidgets.QTextBrowser(self.page_4)
         self.textBrowser_5.setGeometry(QtCore.QRect(210, 90, 281, 191))
         self.textBrowser_5.setStyleSheet("background-color: rgb(240, 240, 240);\n"
-                                         "\n"
-                                         "text-decoration: none;\n"
-                                         "")
+"\n"
+"text-decoration: none;\n"
+"")
         self.textBrowser_5.setFrameShape(QtWidgets.QFrame.Box)
         self.textBrowser_5.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.textBrowser_5.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -218,11 +228,11 @@ class Ui_MainWindow(object):
         self.cancel_button_4.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_4.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_4.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                           "}\n"
-                                           "\n"
-                                           "QPushButton:hover {\n"
-                                           "    background-color: #FFD0D1;\n"
-                                           "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button_4.setObjectName("cancel_button_4")
         self.textBrowser_6 = QtWidgets.QTextBrowser(self.page_4)
         self.textBrowser_6.setGeometry(QtCore.QRect(210, 40, 281, 35))
@@ -245,21 +255,21 @@ class Ui_MainWindow(object):
         self.next_button_2.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.next_button_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.next_button_2.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.next_button_2.setObjectName("next_button_2")
         self.cancel_button_2 = QtWidgets.QPushButton(self.page)
         self.cancel_button_2.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_2.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                           "}\n"
-                                           "\n"
-                                           "QPushButton:hover {\n"
-                                           "    background-color: #FFD0D1;\n"
-                                           "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button_2.setObjectName("cancel_button_2")
         self.path_place = QtWidgets.QTextEdit(self.page)
         self.path_place.setGeometry(QtCore.QRect(210, 150, 281, 25))
@@ -270,21 +280,21 @@ class Ui_MainWindow(object):
         self.locate_folder.setGeometry(QtCore.QRect(410, 180, 75, 23))
         self.locate_folder.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.locate_folder.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.locate_folder.setObjectName("locate_folder")
         self.back_button = QtWidgets.QPushButton(self.page)
         self.back_button.setGeometry(QtCore.QRect(270, 300, 75, 23))
         self.back_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.back_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                       "}\n"
-                                       "\n"
-                                       "QPushButton:hover {\n"
-                                       "    background-color: #FFD0D1;\n"
-                                       "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.back_button.setObjectName("back_button")
         self.line_2 = QtWidgets.QFrame(self.page)
         self.line_2.setGeometry(QtCore.QRect(190, 290, 331, 1))
@@ -312,12 +322,6 @@ class Ui_MainWindow(object):
         self.line_7.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_7.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_7.setObjectName("line_7")
-        self.space_req = QtWidgets.QLineEdit(self.page)
-        self.space_req.setGeometry(QtCore.QRect(210, 250, 291, 20))
-        self.space_req.setStyleSheet("background-color: rgb(240, 240, 240);")
-        self.space_req.setFrame(False)
-        self.space_req.setReadOnly(True)
-        self.space_req.setObjectName("space_req")
         self.stackedWidget.addWidget(self.page)
         self.page_5 = QtWidgets.QWidget()
         self.page_5.setObjectName("page_5")
@@ -362,22 +366,22 @@ class Ui_MainWindow(object):
         self.next_button_5.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.next_button_5.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.next_button_5.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.next_button_5.setObjectName("next_button_5")
         self.cancel_button_5 = QtWidgets.QPushButton(self.page_5)
         self.cancel_button_5.setEnabled(False)
         self.cancel_button_5.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_5.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_5.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                           "}\n"
-                                           "\n"
-                                           "QPushButton:hover {\n"
-                                           "    background-color: #FFD0D1;\n"
-                                           "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button_5.setObjectName("cancel_button_5")
         self.label = QtWidgets.QLabel(self.page_5)
         self.label.setGeometry(QtCore.QRect(210, 86, 91, 20))
@@ -434,21 +438,21 @@ class Ui_MainWindow(object):
         self.reinstall_button.setGeometry(QtCore.QRect(350, 300, 75, 23))
         self.reinstall_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.reinstall_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QPushButton:hover {\n"
-                                            "    background-color: #FFD0D1;\n"
-                                            "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.reinstall_button.setObjectName("reinstall_button")
         self.cancel_button_6 = QtWidgets.QPushButton(self.page_6)
         self.cancel_button_6.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.cancel_button_6.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.cancel_button_6.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                           "}\n"
-                                           "\n"
-                                           "QPushButton:hover {\n"
-                                           "    background-color: #FFD0D1;\n"
-                                           "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.cancel_button_6.setObjectName("cancel_button_6")
         self.reinstall_low = QtWidgets.QTextBrowser(self.page_6)
         self.reinstall_low.setGeometry(QtCore.QRect(210, 130, 281, 35))
@@ -506,11 +510,11 @@ class Ui_MainWindow(object):
         self.finish_button.setGeometry(QtCore.QRect(430, 300, 75, 23))
         self.finish_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.finish_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton:hover {\n"
-                                         "    background-color: #FFD0D1;\n"
-                                         "}")
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
         self.finish_button.setObjectName("finish_button")
         self.launch_game = QtWidgets.QCheckBox(self.page_7)
         self.launch_game.setGeometry(QtCore.QRect(210, 200, 221, 21))
@@ -523,6 +527,69 @@ class Ui_MainWindow(object):
         self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
         self.stackedWidget.addWidget(self.page_7)
+        self.page_8 = QtWidgets.QWidget()
+        self.page_8.setObjectName("page_8")
+        self.textBrowser_19 = QtWidgets.QTextBrowser(self.page_8)
+        self.textBrowser_19.setGeometry(QtCore.QRect(210, 40, 281, 35))
+        self.textBrowser_19.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_19.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.textBrowser_19.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_19.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_19.setObjectName("textBrowser_19")
+        self.line_13 = QtWidgets.QFrame(self.page_8)
+        self.line_13.setGeometry(QtCore.QRect(190, 80, 331, 1))
+        self.line_13.setStyleSheet("border-top: 1px solid black;")
+        self.line_13.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_13.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_13.setObjectName("line_13")
+        self.textBrowser_18 = QtWidgets.QTextBrowser(self.page_8)
+        self.textBrowser_18.setGeometry(QtCore.QRect(210, 10, 281, 31))
+        self.textBrowser_18.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.textBrowser_18.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.textBrowser_18.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_18.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_18.setObjectName("textBrowser_18")
+        self.help_finish_button = QtWidgets.QPushButton(self.page_8)
+        self.help_finish_button.setEnabled(True)
+        self.help_finish_button.setGeometry(QtCore.QRect(414, 300, 91, 23))
+        self.help_finish_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.help_finish_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.help_finish_button.setObjectName("help_finish_button")
+        self.fix_1_button = QtWidgets.QPushButton(self.page_8)
+        self.fix_1_button.setEnabled(True)
+        self.fix_1_button.setGeometry(QtCore.QRect(210, 110, 281, 23))
+        self.fix_1_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.fix_1_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.fix_1_button.setObjectName("fix_1_button")
+        self.fix_2_button = QtWidgets.QPushButton(self.page_8)
+        self.fix_2_button.setEnabled(True)
+        self.fix_2_button.setGeometry(QtCore.QRect(210, 140, 281, 23))
+        self.fix_2_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.fix_2_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #FFD0D1;\n"
+"}")
+        self.fix_2_button.setObjectName("fix_2_button")
+        self.help_info = QtWidgets.QTextBrowser(self.page_8)
+        self.help_info.setGeometry(QtCore.QRect(210, 230, 281, 51))
+        self.help_info.setStyleSheet("background-color: rgb(240, 240, 240);")
+        self.help_info.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.help_info.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.help_info.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.help_info.setObjectName("help_info")
+        self.stackedWidget.addWidget(self.page_8)
         self.listWidget_5 = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget_5.setGeometry(QtCore.QRect(0, 0, 191, 291))
         self.listWidget_5.setStyleSheet("background-image: url(:/images/stallaris_ba (1).jpg);")
@@ -550,7 +617,7 @@ class Ui_MainWindow(object):
         self.dlc_list = QtWidgets.QListWidget(self.centralwidget)
         self.dlc_list.setGeometry(QtCore.QRect(510, 11, 201, 311))
         self.dlc_list.setStyleSheet("background-color: rgb(240, 240, 240);\n"
-                                    "border: 1px solid #B22222;")
+"border: 1px solid #B22222;")
         self.dlc_list.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.dlc_list.setObjectName("dlc_list")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -564,176 +631,172 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.next_button.setText(_translate("MainWindow", "Далее"))
         self.cancel_button.setText(_translate("MainWindow", "Отмена"))
-        self.hello_msg.setHtml(_translate("MainWindow",
-                                          "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                          "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                          "p, li { white-space: pre-wrap; }\n"
-                                          "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Вас приветствует Stellaris &quot;DLC Unlocker - Разблокировщик дополнений&quot; [unknown]</span></p></body></html>"))
-        self.hello2_msg.setHtml(_translate("MainWindow",
-                                           "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                           "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                           "p, li { white-space: pre-wrap; }\n"
-                                           "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                           "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Программа выполнит разблокировку дополнений для игры Stellaris версии [unknown]</p></body></html>"))
-        self.textBrowser_3.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Нажмите &quot;Далее&quot;, чтобы продолжить или &quot;Отмена&quot;, чтобы выйти из программы установки.</p></body></html>"))
+        self.hello_msg.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Вас приветствует Stellaris &quot;DLC Unlocker - Разблокировщик дополнений&quot; [unknown]</span></p></body></html>"))
+        self.hello2_msg.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Программа выполнит разблокировку дополнений для игры Stellaris версии [unknown]</p></body></html>"))
+        self.textBrowser_3.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Нажмите &quot;Далее&quot;, чтобы продолжить или &quot;Отмена&quot;, чтобы выйти из программы установки.</p></body></html>"))
+        self.help_button.setText(_translate("MainWindow", "Помогите, ничего не работает"))
         self.next_button_3.setText(_translate("MainWindow", "Далее"))
         self.cancel_button_3.setText(_translate("MainWindow", "Отмена"))
         self.back_button_2.setText(_translate("MainWindow", "Назад"))
-        self.textBrowser.setHtml(_translate("MainWindow",
-                                            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                            "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                            "p, li { white-space: pre-wrap; }\n"
-                                            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                            "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Информация</span></p></body></html>"))
-        self.textBrowser_2.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, прочитие следующую важную информацию пред тем, как продолжить.</p></body></html>"))
-        self.textBrowser_4.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   1. Данный разблокировщик распространяется абсолютно бесплатно. Любое коммерческое использование данного разблокировщика запрещается.</p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   2. ДАННЫЙ РАЗБЛОКИРОВЩИК ПОСТАВЛЯЕТСЯ ПО ПРИНЦИПУ «AS IS». НИКАКИХ ГАРАНТИЙ              НЕ ПРИЛАГАЕТСЯ И НЕ ПРЕДУСМАТРИВАЕТСЯ. ВЫ ИСПОЛЬЗУЕТЕ ЭТУ МОДИФИКАЦИЮ ОРИГИНАЛЬНОЙ ИГРЫ НА СВОЙ СТРАХ И РИСК. АВТОРЫ МОДИФИКАЦИИ НЕ БУДУТ ОТВЕЧАТЬ НИ ЗА КАКИЕ ПОТЕРИ ИЛИ ИСКАЖЕНИЯ ДАННЫХ, ЛЮБУЮ УПУЩЕННУЮ ВЫГОДУ В ПРОЦЕССЕ ИСПОЛЬЗОВАНИЯ ИЛИ НЕПРАВИЛЬНОГО ИСПОЛЬЗОВАНИЯ ДАННОЙ МОДИФИКАЦИИ.</p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   4. Все права, не предоставленные здесь явно, сохраняются за правообладателями.</p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   5. Установка и использование данной модификации означает, что вы ознакомились и понимаете положения настоящего лицензионного соглашения и согласны с ними.</p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.textBrowser.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Информация</span></p></body></html>"))
+        self.textBrowser_2.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, прочитие следующую важную информацию пред тем, как продолжить.</p></body></html>"))
+        self.textBrowser_4.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   1. Данный разблокировщик распространяется абсолютно бесплатно. Любое коммерческое использование данного разблокировщика запрещается.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   2. ДАННЫЙ РАЗБЛОКИРОВЩИК ПОСТАВЛЯЕТСЯ ПО ПРИНЦИПУ «AS IS». НИКАКИХ ГАРАНТИЙ              НЕ ПРИЛАГАЕТСЯ И НЕ ПРЕДУСМАТРИВАЕТСЯ. ВЫ ИСПОЛЬЗУЕТЕ ЭТУ МОДИФИКАЦИЮ ОРИГИНАЛЬНОЙ ИГРЫ НА СВОЙ СТРАХ И РИСК. АВТОРЫ МОДИФИКАЦИИ НЕ БУДУТ ОТВЕЧАТЬ НИ ЗА КАКИЕ ПОТЕРИ ИЛИ ИСКАЖЕНИЯ ДАННЫХ, ЛЮБУЮ УПУЩЕННУЮ ВЫГОДУ В ПРОЦЕССЕ ИСПОЛЬЗОВАНИЯ ИЛИ НЕПРАВИЛЬНОГО ИСПОЛЬЗОВАНИЯ ДАННОЙ МОДИФИКАЦИИ.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   4. Все права, не предоставленные здесь явно, сохраняются за правообладателями.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">   5. Установка и использование данной модификации означает, что вы ознакомились и понимаете положения настоящего лицензионного соглашения и согласны с ними.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.eula_true.setText(_translate("MainWindow", "Я  принимаю условия соглашения"))
         self.eula_false.setText(_translate("MainWindow", "Я не принимаю условия соглашения"))
         self.eula_true1.setText(_translate("MainWindow", "Я ничего не читал, но со всем согласен"))
         self.back_button_3.setText(_translate("MainWindow", "Назад"))
         self.next_button_4.setText(_translate("MainWindow", "Далее"))
-        self.textBrowser_5.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC Unlocker</span></p>\n"
-                                              "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Требования</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Лицензия</span><span style=\" font-size:10pt;\">: Steam.</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Установка</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Следуйте инструкциям инсталлятора. Установка почти полностью автоматическая. </span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;\"><br /></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Удаление</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Переустановите Paradox лаунчер, удалите папку &quot;dlc&quot; в директории игры. Не забудте заново скачать те dlc которые у вас приобретены.<br /><br />Сделано для всех, с любовью<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">GitHub<br /></span></a></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">Отдельная благодарность человеку, который все это время обновлял анлокер с ручной установкой</span></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/Temri1337\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">He11oThere</span></a></p>\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"@Temri1337\"><span style=\" font-size:8pt; text-decoration: underline; color:#000000;\"><br /></span></a><a href=\"https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">playground.ru Stellaris DLC Unlocker</span></a></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; color:#0000ff;\"><br /></p></body></html>"))
+        self.textBrowser_5.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Stellaris DLC Unlocker</span></p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Требования</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> </span><span style=\" font-size:9pt; font-weight:600;\">Лицензия</span><span style=\" font-size:10pt;\">: Steam.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:600; text-decoration: underline;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Установка</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Следуйте инструкциям инсталлятора. Установка почти полностью автоматическая. </span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600; text-decoration: underline;\">Удаление</span><span style=\" font-size:10pt; font-weight:600;\">:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\"> </span><span style=\" font-size:9pt;\"> Переустановите Paradox лаунчер, удалите папку &quot;dlc&quot; в директории игры. Не забудте заново скачать те dlc которые у вас приобретены.<br /><br />Сделано для всех, с любовью<br /></span><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/seuyh\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">seuyh</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">GitHub<br /></span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; color:#000000;\">Отдельная благодарность человеку, который все это время обновлял анлокер с ручной установкой</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/telegram (1).png\" /><a href=\"https://t.me/Temri1337\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">He11oThere</span></a></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><a href=\"@Temri1337\"><span style=\" font-size:8pt; text-decoration: underline; color:#000000;\"><br /></span></a><a href=\"https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040\"><span style=\" font-size:10pt; text-decoration: underline; color:#0000ff;\">playground.ru Stellaris DLC Unlocker</span></a></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; color:#0000ff;\"><br /></p></body></html>"))
         self.cancel_button_4.setText(_translate("MainWindow", "Отмена"))
-        self.textBrowser_6.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, прочитие следующую важную информацию пред тем, как продолжить.</p></body></html>"))
-        self.textBrowser_7.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Информация</span></p></body></html>"))
+        self.textBrowser_6.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, прочитие следующую важную информацию пред тем, как продолжить.</p></body></html>"))
+        self.textBrowser_7.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Информация</span></p></body></html>"))
         self.next_button_2.setText(_translate("MainWindow", "Далее"))
         self.cancel_button_2.setText(_translate("MainWindow", "Отмена"))
         self.locate_folder.setText(_translate("MainWindow", "Обзор..."))
         self.back_button.setText(_translate("MainWindow", "Назад"))
-        self.textBrowser_8.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Выбор папки игры</span></p></body></html>"))
-        self.textBrowser_9.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, укажите папку с игрой, если мы не смогли найти ее автоматически.</p></body></html>"))
-        self.space_req.setText(_translate("MainWindow", "Требуется дополнительно %nan%  места"))
-        self.textBrowser_10.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, подождите пока мы загрузим все нужные файлы с сервера.</p></body></html>"))
-        self.textBrowser_11.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Загрузка DLC</span></p></body></html>"))
+        self.textBrowser_8.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Выбор папки игры</span></p></body></html>"))
+        self.textBrowser_9.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, укажите папку с игрой, если мы не смогли найти ее автоматически.</p></body></html>"))
+        self.textBrowser_10.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Пожалуйста, подождите пока мы загрузим все нужные файлы с сервера.</p></body></html>"))
+        self.textBrowser_11.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Загрузка DLC</span></p></body></html>"))
         self.download_text.setText(_translate("MainWindow", "Подключение к серверу..."))
         self.next_button_5.setText(_translate("MainWindow", "Далее"))
         self.cancel_button_5.setText(_translate("MainWindow", "Отмена"))
         self.label.setText(_translate("MainWindow", "Загрузка DLC:"))
         self.label_2.setText(_translate("MainWindow", "Генерация creamapi:"))
         self.speed_label.setText(_translate("MainWindow", "Скорость: %nan%"))
-        self.label_3.setText(_translate("MainWindow", "Прогресс загрузки текущего DLC:"))
-        self.textBrowser_12.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Переустановка лаунчера</span></p></body></html>"))
-        self.textBrowser_13.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Необходимо переустановить Paradox лаунчер для корректной работы.</p></body></html>"))
+        self.label_3.setText(_translate("MainWindow", "Прогресс загрузки теущего DLC:"))
+        self.textBrowser_12.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Переустановка лаунчера</span></p></body></html>"))
+        self.textBrowser_13.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Необходимо переустановить Paradox лаунчер для корректной работы.</p></body></html>"))
         self.reinstall_button.setText(_translate("MainWindow", "Хорошо"))
         self.cancel_button_6.setText(_translate("MainWindow", "Отмена"))
-        self.reinstall_low.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Программа почти все сделает автоматически, вам нужно лишь следовать указаниям на экране.</p></body></html>"))
+        self.reinstall_low.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Программа почти все сделает автоматически, вам нужно лишь следовать указаниям на экране.</p></body></html>"))
         self.reinstall_up.setText(_translate("MainWindow", "Сейчас нужно будет переустановить Paradox лаунчер"))
         self.progress_label.setText(_translate("MainWindow", "Прогресс переустановки:"))
         self.now_reinstalling.setText(_translate("MainWindow", "Ждем"))
-        self.finish_text.setHtml(_translate("MainWindow",
-                                            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                            "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                            "p, li { white-space: pre-wrap; }\n"
-                                            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                            "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Перезаписываем оставшиеся файлы.<br /><br />Пожалуйста подождите немного.</p></body></html>"))
-        self.textBrowser_16.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Завершение</span></p></body></html>"))
-        self.textBrowser_17.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Мы уже почти все сделали, осталось немного подождать.</p></body></html>"))
+        self.finish_text.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Перезаписываем оставшиеся файлы.<br /><br />Пожалуйста подождите немного.</p></body></html>"))
+        self.textBrowser_16.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Завершение</span></p></body></html>"))
+        self.textBrowser_17.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Мы уже почти все сделали, осталось немного подождать.</p></body></html>"))
         self.finish_button.setText(_translate("MainWindow", "Готово"))
         self.launch_game.setText(_translate("MainWindow", "Запустить игру"))
         self.checkBox.setText(_translate("MainWindow", "Автор крутой"))
+        self.textBrowser_19.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Исправление неоторых известных ошибок</p></body></html>"))
+        self.textBrowser_18.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Исправление</span></p></body></html>"))
+        self.help_finish_button.setText(_translate("MainWindow", "Готово"))
+        self.fix_1_button.setText(_translate("MainWindow", "Лаунчер видит dlc, но в игре их нет"))
+        self.fix_2_button.setText(_translate("MainWindow", "Лаунчер не может проверить dlc"))
+        self.help_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Данные исправления не гарантируют, что все будет работать нормально, но в большинстве случаев должны помочь</p></body></html>"))
         self.version.setText(_translate("MainWindow", "version %nan%"))
-        self.textBrowser_15.setHtml(_translate("MainWindow",
-                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                               "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                               "p, li { white-space: pre-wrap; }\n"
-                                               "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                               "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><span style=\" font-size:10pt; color:#000000;\"> </span><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:10pt; text-decoration: underline; color:#000000;\">GitHub</span></a></p></body></html>"))
-
-
+        self.textBrowser_15.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/images/GitHub-Logo.wine (1).png\" /><span style=\" font-size:10pt; color:#000000;\"> </span><a href=\"https://github.com/seuyh/stellaris-dlc-unlocker\"><span style=\" font-size:10pt; text-decoration: underline; color:#000000;\">GitHub</span></a></p></body></html>"))
