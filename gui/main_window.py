@@ -2,13 +2,14 @@ import json
 import os
 import webbrowser
 from time import sleep
+from shutil import rmtree
 from sys import argv, exit
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QMainWindow, QProgressDialog, QListWidgetItem, QPushButton
 from gui.cream_api_maker import CreamAPI
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QDesktopServices, QColor
 
-from libs.server_data import gameversion, version, get_remote_file_size, url, server_msg, dlc_data
+from libs.server_data import gameversion, version, url, server_msg, dlc_data
 from libs.game_path import stellaris_path, launcher_path
 from gui.DownloadThread import DownloaderThread
 from libs.launcher_reinstall import ReinstallThread
@@ -33,6 +34,10 @@ class MainWindow(QMainWindow):
         self.next_button_3.clicked.connect(self.switch_to_next)
         self.next_button_4.clicked.connect(self.switch_to_next)
         self.next_button_5.clicked.connect(self.minimizeWindow)
+        self.help_button.clicked.connect(lambda: self.switch_to_tab(7))
+        self.help_finish_button.clicked.connect(lambda: self.switch_to_tab(0))
+        self.fix_2_button.clicked.connect(self.download_launcher)
+        self.fix_1_button.clicked.connect(self.in_game_fix)
         self.cancel_button.clicked.connect(self.cancel)
         self.cancel_button_2.clicked.connect(self.cancel)
         self.cancel_button_3.clicked.connect(self.cancel)
@@ -56,12 +61,14 @@ class MainWindow(QMainWindow):
         self.translations = self.load_translations(language)
         self.is_downloading = False
         self.game_path = None
+        self.launcher_downloaded = 0
+        self.downloaded_launcher_dir = None
         self.progress_label.setVisible(False)
         self.reinstall_progress.setVisible(False)
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '1.12'
+        self.iversion = '1.13'
 
         # -------------------------------------------- #
 
@@ -70,7 +77,7 @@ class MainWindow(QMainWindow):
         self.version_change()
         self.server_msg()
         self.gameversion_change()
-        self.space_req_change()
+        # self.space_req_change()
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
         self.path_change()
@@ -97,6 +104,69 @@ class MainWindow(QMainWindow):
 
     def switch_to_back(self):
         self.stackedWidget.setCurrentIndex(self.stackedWidget.currentIndex() - 1)
+
+    def switch_to_tab(self, index):
+        self.stackedWidget.setCurrentIndex(index)
+
+    def in_game_fix(self):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle(self.translations.get("warning_title_title", ""))
+        msg_box.setText(self.translations.get("documents_remove_text", ""))
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        msg_box.setDefaultButton(QMessageBox.Yes)
+        yes_button = msg_box.button(QMessageBox.Yes)
+        yes_button.setText(self.translations.get("yes_button", ""))
+        cancel_button = msg_box.button(QMessageBox.Cancel)
+        cancel_button.setText(self.translations.get("cancel_button", ""))
+        reply = msg_box.exec_()
+        if reply == QMessageBox.Yes:
+            user_home = os.path.expanduser("~")
+            rmtree(os.path.join(user_home, "Documents", "Paradox Interactive", "Stellaris"))
+            if self.ok_dialog(self.translations.get("after_launcher_download_title", ""),
+                              self.translations.get("after_documents_remove_text", ""), QMessageBox.Information):
+                pass
+
+    def download_launcher(self):
+        file = argv[0]
+        dir = os.path.dirname(file)
+        self.downloaded_launcher_dir = f'{dir}/launcher-installer-windows_2024.8.msi'
+        progress_dialog = QProgressDialog(self.translations.get("launcher_download_text", ""), None, 0, 100)
+        progress_dialog.setWindowTitle(self.translations.get("launcher_download_title", ""))
+        progress_dialog.setWindowModality(2)
+        progress_dialog.show()
+
+        try:
+            response = get(
+                f"{decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')}/launcher-installer-windows_2024.8.msi",
+                stream=True)
+            total_size_in_bytes = int(response.headers.get('content-length', 0))
+            block_size = 1024
+            downloaded_bytes = 0
+
+            with open(self.downloaded_launcher_dir, 'wb') as file:
+                for data in response.iter_content(block_size):
+                    download_breaked = 0
+                    if progress_dialog.wasCanceled():
+                        download_breaked = 1
+                        break
+                    file.write(data)
+                    downloaded_bytes += len(data)
+                    progress = int(downloaded_bytes / total_size_in_bytes * 100)
+                    progress_dialog.setValue(progress)
+
+        except Exception as e:
+            if self.ok_dialog("error", e, QMessageBox.Critical):
+                exit(1)
+        finally:
+            progress_dialog.close()
+            if not download_breaked:
+                self.launcher_downloaded = 1
+
+                if self.ok_dialog(self.translations.get("after_launcher_download_title", ""),
+                                  self.translations.get("after_launcher_download_text", ""),
+                                  QMessageBox.Information):
+                    pass
 
     def updateApplication(self, download_url):
         old_file = argv[0]
@@ -195,10 +265,10 @@ class MainWindow(QMainWindow):
         new_text = self.hello2_msg.toHtml().replace("[unknown]", gameversion)
         self.hello2_msg.setText(new_text)
 
-    def space_req_change(self):
-        new_text = self.space_req.text().replace("%nan%", get_remote_file_size(
-            decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')))
-        # self.space_req.setText(new_text)
+    # def space_req_change(self):
+    # new_text = self.space_req.text().replace("%nan%", get_remote_file_size(
+    # decrypt(url, 'LPrVJDjMXGx1ToihooozyFX4-toGjKcCr8pjZFmq62c=')))
+    # self.space_req.setText(new_text)
 
     def on_radio_button_toggled(self):
         if self.eula_true.isChecked() or self.eula_true1.isChecked():
@@ -390,7 +460,7 @@ class MainWindow(QMainWindow):
         paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4 = launcher_path()
 
         self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
-                                                paradox_folder4)
+                                                paradox_folder4, self.launcher_downloaded, self.downloaded_launcher_dir)
         self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
         self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
         self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)
