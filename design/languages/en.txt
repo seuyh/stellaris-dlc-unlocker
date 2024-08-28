@@ -33,3 +33,10 @@ unzip_error_title: Unzip error
 unzip_error_text: An error occurred while unpacking the archive: a corrupted archive.\nWe will delete the downloaded archives, please restart the program.\nIf the error persists, please delete the "dlc" folder from the root folder of the game.
 yes_button: Yes
 cancel_button: No
+launcher_download_title: Launcher downloading
+launcher_download_text: Download the patched launcher...
+after_launcher_download_title: Completed
+after_launcher_download_text: We've downloaded the corrected launcher,\nnow go back using the “Done” button and continue the installation as normal,\nThe Launcher will be swapped during the installation process
+warning_title: Warning!
+documents_remove_text: Warning!\nThis action will delete the folder with all game saves and mod presets in the launcher.\nAre you sure you want to continue?
+after_documents_remove_text: Done! You can continue with the installation.
