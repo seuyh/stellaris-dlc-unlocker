@@ -33,3 +33,10 @@ unzip_error_title: 文件解压错误
 unzip_error_text: 解压DLC压缩文件时发生错误：压缩文件已损坏。\n我们将删除已下载的压缩文件，请重启程序后再试。\n如果错误持续存在，请从游戏的根目录中删除整个“dlc”文件夹。
 yes_button: 确认
 cancel_button: 取消
+launcher_download_title: 下载启动器
+launcher_download_text: 下载已打补丁的启动器...
+after_launcher_download_title: 已完成
+after_launcher_download_text: 我们已经下载了正确的启动器，现在点击 “完成 ”按钮并继续正常安装，\n启动器将在安装过程中被替换。
+warning_title: 警告！
+documents_remove_text: 警告！\n此操作将删除启动器中包含所有游戏保存和模式预设的文件夹。\n你确定要继续吗？
+after_documents_remove_text: 完成！您可以继续安装。
