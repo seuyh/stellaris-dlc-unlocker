@@ -40,3 +40,4 @@ after_launcher_download_text: 我们已经下载了正确的启动器，现在�
 warning_title: 警告！
 documents_remove_text: 警告！\n此操作将删除启动器中包含所有游戏保存和模式预设的文件夹。\n你确定要继续吗？
 after_documents_remove_text: 完成！您可以继续安装。
+new_launcher_error: 重新安装错误！\尝试在开始屏幕上按"帮助"并选择第二个选项

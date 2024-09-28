@@ -1,4 +1,3 @@
-import json
 import os
 import webbrowser
 from time import sleep
@@ -68,7 +67,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '1.13'
+        self.iversion = '1.14'
 
         # -------------------------------------------- #
 
@@ -492,7 +491,10 @@ class MainWindow(QMainWindow):
         try:
             self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         except Exception as e:
-            raise e
+            if self.ok_dialog(self.translations.get("error", ""),
+                              self.translations.get("new_launcher_error", ""),
+                              QMessageBox.Critical):
+                self.close()
 
     def replace_files(self, launcher_folder):
         # try:

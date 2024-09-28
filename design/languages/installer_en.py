@@ -668,9 +668,9 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2. THIS UNLOCKER IS PROVIDED &quot;AS IS&quot;. NO WARRANTIES ARE PROVIDED OR IMPLIED. YOU USE THIS MODIFICATION OF THE ORIGINAL GAME AT YOUR OWN RISK. THE AUTHORS OF THE MODIFICATION WILL NOT BE LIABLE FOR ANY LOSSES OR DATA CORRUPTION, ANY LOST PROFITS IN THE PROCESS OF USE OR MISUSE OF THIS MODIFICATION.</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">4. All rights not expressly granted here are reserved by the copyright holders.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">3. All rights not expressly granted here are reserved by the copyright holders.</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">5. Installation and use of this modification implies that you have read and understand the terms of this license agreement and agree to them.</p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">4. Installation and use of this modification implies that you have read and understand the terms of this license agreement and agree to them.</p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.eula_true.setText(_translate("MainWindow", "I accept the terms of the agreement"))
         self.eula_false.setText(_translate("MainWindow", "I do not accept the terms of the agreement"))

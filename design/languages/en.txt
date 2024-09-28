@@ -40,3 +40,4 @@ after_launcher_download_text: We've downloaded the corrected launcher,\nnow go b
 warning_title: Warning!
 documents_remove_text: Warning!\nThis action will delete the folder with all game saves and mod presets in the launcher.\nAre you sure you want to continue?
 after_documents_remove_text: Done! You can continue with the installation.
+new_launcher_error: Reinstallation error!\try pressing "help" on the start screen and select the second option.

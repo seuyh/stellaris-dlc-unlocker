@@ -17,7 +17,6 @@ def show_crash_message():
 
     QTimer.singleShot(0, lambda: sys.exit(2))
 
-# test
 def excepthookk(exctype, value, tb):
     """Обработчик исключений для перехвата ошибок."""
     crashlog_path = "unlocker_crashlog.txt"
