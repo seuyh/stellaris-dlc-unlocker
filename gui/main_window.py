@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         self.now_reinstalling.setVisible(False)
         self.next_button_5.setEnabled(False)
 
-        self.iversion = '1.14'
+        self.iversion = '1.15'
 
         # -------------------------------------------- #
 
@@ -162,10 +162,10 @@ class MainWindow(QMainWindow):
             if not download_breaked:
                 self.launcher_downloaded = 1
 
-                if self.ok_dialog(self.translations.get("after_launcher_download_title", ""),
-                                  self.translations.get("after_launcher_download_text", ""),
-                                  QMessageBox.Information):
-                    pass
+                # if self.ok_dialog(self.translations.get("after_launcher_download_title", ""),
+                #                   self.translations.get("after_launcher_download_text", ""),
+                #                   QMessageBox.Information):
+                #     pass
 
     def updateApplication(self, download_url):
         old_file = argv[0]
@@ -457,7 +457,7 @@ class MainWindow(QMainWindow):
         self.cancel_button_6.setEnabled(False)
         self.now_reinstalling.setText(self.translations.get('launcher_uninstall', ''))
         paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4 = launcher_path()
-
+        self.download_launcher()
         self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
                                                 paradox_folder4, self.launcher_downloaded, self.downloaded_launcher_dir)
         self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)

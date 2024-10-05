@@ -563,7 +563,7 @@ class Ui_MainWindow(object):
         self.line_13.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_13.setObjectName("line_13")
         self.fix_2_button = QtWidgets.QPushButton(self.page_8)
-        self.fix_2_button.setEnabled(True)
+        self.fix_2_button.setEnabled(False)
         self.fix_2_button.setGeometry(QtCore.QRect(210, 140, 281, 23))
         self.fix_2_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.fix_2_button.setStyleSheet("QPushButton {border: 1px solid #B22222;\n"
