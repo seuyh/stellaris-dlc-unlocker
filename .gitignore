@@ -1,14 +1,7 @@
-/design/languages/installer_ru.ui
-/design/languages/installer_en.ui
-/design/resources.qrc
 /venv/
 /output/
 /.idea/
-/unused_resources/
-/data.json
 /.banner/
 /.github/
-/gui/__pycache__
-/libs/__pycache__
-/design/languages/__pycache__
 /presset.json
+README.md
