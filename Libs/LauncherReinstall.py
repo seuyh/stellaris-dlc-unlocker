@@ -4,10 +4,11 @@ from subprocess import Popen
 from PyQt5 import QtCore
 from time import sleep
 from glob import glob
+from re import search
 
 
 class ReinstallThread(QtCore.QThread):
-    progress_signal = QtCore.pyqtSignal(int)
+    # progress_signal = QtCore.pyqtSignal(int)
     error_signal = QtCore.pyqtSignal(Exception)
     continue_reinstall = QtCore.pyqtSignal(str)
 
@@ -23,22 +24,46 @@ class ReinstallThread(QtCore.QThread):
         self.downloaded_launcher_dir = downloaded_launcher_dir
 
     def run(self):
+
+        latest_file = None
+        latest_version = (0, 0)
+        def extract_version(filename):
+            match = search(r'launcher-installer-windows_(\d+\.\d+)', filename)
+            if match:
+                return tuple(map(int, match.group(1).split('.')))
+            return None
         msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
+        if self.launcher_downloaded:
+            print('Alt unlock. Deleting all other launches')
+            try:
+                for file_path in msi_files:
+                    try:
+                        os.remove(file_path)
+                        print(f"Delete {file_path}")
+                    except Exception as e:
+                        print(f"Unable to delete {file_path}: {e}")
+            except:
+                pass
+            try:
+                move(self.downloaded_launcher_dir, self.msi_path)
+                print(f"Launcher moved: {self.msi_path}")
+            except Exception as e:
+                print(f"Unable to move launcher: {e}")
+                self.error_signal.emit(e)
+            msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
+
         if msi_files:
             msi_path = msi_files[0]
+
         else:
             msi_path = os.path.join(self.msi_path, "launcher-installer-windows.msi")
             if os.path.exists(msi_path):
                 pass
             else:
                 self.error_signal.emit('launcher_installer not found!')
-        print(f'Требуется ли подмена лаунчера: {self.launcher_downloaded}')
-        if self.launcher_downloaded:
-            os.remove(msi_path)
-            move(self.downloaded_launcher_dir, msi_path)
-        print(f'Путь к игре: {self.msi_path}')
-        print(f'Путь к лаунчеру: {msi_path}\nСуществует ли путь: {os.path.exists(msi_path)}')
-        print(f'Выполнение удаления')
+        print(f'Game path: {self.msi_path}')
+        print(f'Launcher Path: {msi_path}\nPath exists: {os.path.exists(msi_path)}')
+        print(f'Deleting launcher...')
         try:
             self.paradox_remove(self.paradox_folder1, self.paradox_folder2, self.paradox_folder3, self.paradox_folder4)
 
@@ -49,9 +74,9 @@ class ReinstallThread(QtCore.QThread):
             #     print("Произошла ошибка при удалении:", error.decode())
 
             uninstall.wait()
-            self.progress_signal.emit(33)
+            # self.progress_signal.emit(33)
             sleep(1)
-            print(f'Выполнение установки')
+            print(f'Installing launcher...')
             install = Popen(
                 ['cmd.exe', '/c', 'msiexec', '/package', msi_path,
                  '/quiet', 'CREATE_DESKTOP_SHORTCUT=0'], shell=True)
@@ -59,7 +84,6 @@ class ReinstallThread(QtCore.QThread):
             # if uninstall.returncode != 0:
             #     print("Произошла ошибка при установке:", error.decode())
             install.wait()
-            self.progress_signal.emit(66)
             self.continue_reinstall.emit(self.paradox_folder1)
         except Exception as e:
             self.error_signal.emit(e)
@@ -73,15 +97,20 @@ class ReinstallThread(QtCore.QThread):
         # paradox_folder4 = os.path.join(user_home, "AppData", "Roaming", "paradox-launcher-v2")
         try:
             if os.path.exists(paradox_folder1):
+                print(f'Removing {paradox_folder1}')
                 rmtree(paradox_folder1)
 
             if os.path.exists(paradox_folder2):
+                print(f'Removing {paradox_folder2}')
                 rmtree(paradox_folder2)
 
             if os.path.exists(paradox_folder3):
+                print(f'Removing {paradox_folder3}')
                 rmtree(paradox_folder3)
 
             if os.path.exists(paradox_folder4):
+                print(f'Removing {paradox_folder4}')
                 rmtree(paradox_folder4)
-        except Exception:
+        except Exception as e:
+            print(f'Cant delete {e}')
             pass

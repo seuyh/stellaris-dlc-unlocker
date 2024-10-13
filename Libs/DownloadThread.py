@@ -7,7 +7,7 @@ from time import time
 class DownloaderThread(QtCore.QThread):
     progress_signal = QtCore.pyqtSignal(int, bool)
     progress_signal_2 = QtCore.pyqtSignal(int)
-    text_signal = QtCore.pyqtSignal(str)
+    # text_signal = QtCore.pyqtSignal(str)
     error_signal = QtCore.pyqtSignal(Exception)
     speed_signal = QtCore.pyqtSignal(float)
     finished = QtCore.pyqtSignal()
@@ -25,7 +25,7 @@ class DownloaderThread(QtCore.QThread):
         request = urllib.request.Request(self.file_url, headers={"User-Agent": "Mozilla/5.0"})
         request.add_header('Range', f'bytes={self.downloaded_bytes}-')
         try:
-            with urllib.request.urlopen(request, timeout=10) as response:
+            with urllib.request.urlopen(request, timeout=25) as response:
                 total_size = int(response.headers.get('content-length', 0)) + self.downloaded_bytes
                 start_time = time()
 
@@ -56,7 +56,7 @@ class DownloaderThread(QtCore.QThread):
         finally:
             progress_percentage = int((self.dlc_downloaded / self.dlc_count) * 100)
             self.progress_signal.emit(progress_percentage, True)
-            self.text_signal.emit(path.basename(self.save_path))
+            # self.text_signal.emit(path.basename(self.save_path))
             self.finished.emit()
 
     def cancel(self):
