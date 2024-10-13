@@ -367,19 +367,21 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.download_queue = []
 
             def start_next_download():
+                # Проверяем, есть ли файлы в очереди для скачивания
                 if self.download_queue:
-                    file_url, save_path = self.download_queue.pop(0)
+                    file_url, save_path = self.download_queue.pop(0)  # Берем первый файл из очереди
                     self.download_thread = DownloaderThread(file_url, save_path, self.dlc_downloaded, self.dlc_count)
+
+                    # Подключаем сигналы к обработчикам
                     self.download_thread.progress_signal.connect(self.update_progress)
                     self.download_thread.progress_signal_2.connect(self.update_progress_2)
                     self.download_thread.error_signal.connect(self.show_error)
-                    # self.download_thread.text_signal.connect(self.download_text_dlc)
                     self.download_thread.speed_signal.connect(self.show_download_speed)
-                    self.download_thread.finished.connect(start_next_download)
-                    self.download_thread.start()
+                    self.download_thread.finished.connect(
+                        start_next_download)  # Запускаем следующий файл после завершения текущего
+                    self.download_thread.start()  # Запускаем поток
 
-
-
+            # Сначала заполняем очередь
             for item in dlc_data:
                 if 'dlc_folder' in item and item['dlc_folder']:
                     self.dlc_count += 1
@@ -394,14 +396,14 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                     if os.path.exists(save_path) and os.path.getsize(save_path) == 0:
                         os.remove(save_path)
                     self.download_queue.append((file_url, save_path))
-
                 else:
                     self.dlc_downloaded += 1
                     self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
-                if self.download_queue:
-                    print(f'Downloading {dlc_folder}')
-                    start_next_download()
-                    print(f'Downloaded {dlc_folder}')
+
+            # Запускаем первый файл из очереди
+            if self.download_queue:  # Проверяем, есть ли файлы для скачивания
+                print('Starting downloads...')
+                start_next_download()
 
     def update_creamapi_progress(self, value):
             if value == 100:
