@@ -4,7 +4,7 @@ from sys import argv
 from zipfile import ZipFile
 
 import requests
-from PyQt5.QtGui import QDesktopServices, QColor, QBrush
+from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
 from subprocess import run, CREATE_NO_WINDOW
@@ -79,6 +79,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.connection_thread.server_status_checked.connect(self.handle_server_status)
 
         self.setWindowTitle("Stellaris DLC Unlocker")
+        self.setWindowIcon(QIcon(f'{self.parent_directory}/UI/icons/stellaris.png'))
 
         self.bn_bug.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
         self.path_choose_button.clicked.connect(self.browse_folder)
