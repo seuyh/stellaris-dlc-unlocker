@@ -154,5 +154,13 @@
     {
         "dlc_name": "Rick the Cube Species Portrait",
         "dlc_folder": "dlc035_rick_the_cube"
+    },
+    {
+        "dlc_name": "Grand Archive",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Cosmic Storms",
+        "dlc_folder": "dlc033_cosmic_storms"
     }
 ]
