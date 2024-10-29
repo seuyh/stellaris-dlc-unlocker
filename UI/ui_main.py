@@ -414,7 +414,7 @@ class Ui_MainWindow(object):
         self.label_4.setStyleSheet("QLabel {\n"
 "    color:rgb(255,255,255);\n"
 "}")
-        self.label_4.setText("简体")
+        self.label_4.setText("简中")
         self.label_4.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
         self.label_4.setObjectName("label_4")
         self.gridLayout_3.addWidget(self.label_4, 0, 3, 1, 1)
