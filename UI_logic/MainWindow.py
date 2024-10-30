@@ -241,7 +241,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             if self.dialogexec(self.tr('Connection error'), self.tr(
                     'Cant establish connection with server\nCheck your connection or you can try download DLC directly\nUnzip downloaded "dlc" folder to game folder\nThen you can continue'),
                                self.tr("Exit"), self.tr("Open")):
-                self.open_link_in_browser('https://mega.nz/file/cmNjTaqB#xGVxV0ZMDButCvSEgbul07p4OCWR3pNDcLZAs7Q_AaI')
+                self.open_link_in_browser('https://mega.nz/folder/4zFRnD6a#aVGAK32ZHPxCp7bMtG87BA')
                 self.alternative_unloc_checkbox.setEnabled(False)
             else:
                 self.close()
@@ -298,7 +298,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         try:
             response = requests.get(
-                "https://seuyh.ru/unlocker/launcher-installer-windows_2024.13.msi",
+                "https://stlunlocker.pro/unlocker/launcher-installer-windows_2024.13.msi",
                 stream=True)
             total_size_in_bytes = int(response.headers.get('content-length', 0))
             block_size = 1024
@@ -389,7 +389,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 dlc_folder = dlc['dlc_folder']
                 if dlc_folder == '':
                     continue
-                file_url = f"{'https://seuyh.ru/unlocker/'}{dlc_folder}.zip"
+                file_url = f"{'https://stlunlocker.pro/unlocker/'}{dlc_folder}.zip"
                 save_path = os.path.join(self.game_path, 'dlc', f'{dlc_folder}.zip')
                 dlc_path = os.path.join(self.game_path, 'dlc', dlc_folder)
                 if not os.path.exists(dlc_path) and (not os.path.exists(save_path) or os.path.getsize(save_path) == 0):

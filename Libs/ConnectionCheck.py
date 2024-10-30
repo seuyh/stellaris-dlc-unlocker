@@ -16,7 +16,7 @@ class ConnectionCheckThread(QThread):
             self.github_status_checked.emit(False)
 
         try:
-            response = requests.get('https://seuyh.ru', timeout=10)
+            response = requests.get('https://stlunlocker.pro', timeout=10)
             if response.status_code == 200:
                 self.server_status_checked.emit(True)
             else:
