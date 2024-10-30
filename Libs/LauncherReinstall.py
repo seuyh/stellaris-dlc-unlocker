@@ -24,7 +24,9 @@ class ReinstallThread(QtCore.QThread):
         self.downloaded_launcher_dir = downloaded_launcher_dir
 
     def run(self):
-
+        user_home = os.path.expanduser("~")
+        if self.paradox_folder1 == self.msi_path:
+            self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
         latest_file = None
         latest_version = (0, 0)
         def extract_version(filename):
