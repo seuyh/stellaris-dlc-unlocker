@@ -40,11 +40,11 @@ Stellaris DLC Unlocker - это программа, разработана дл�
 
 ## Известные проблемы
 
-- Загрузка зависает на "x" процентах. Так как сейчас все файлы находится на достаточно слабеньком сервере, это означает, что он просто перестал отвечать. Перезапустите программу и желательно подождите некоторое время перед повторным запуском. Если все будет совсем плохо я сменю сервер.
+- Загрузка зависает на "x" процентах. Скорее всего сервер с dlc просто перестал отвечать. Перезапустите программу и желательно подождите некоторое время перед повторным запуском.
   
 - Антивирусник жалуется/удаляет приложение. Я сделал все возможное, чтобы это предотвратить, но по какой-то причине в редких случаях Windows Defender начинает жаловаться или может даже удалить файл после перезагрузки компьютера ничего вам при этом не сказав.
 
-- Если после анлока и лаунчер выдает ошибку запуска и просит проверить целостность файлов, сделайте это, анлокер еще раз открывать не нужно. *Я это исправил, все должно работать нормально, но пусть на всякий случай будет написано.*
+- Не работает мультиплеер. Помогает включение кроссплатформеного режима в лаунчере игры.
 
 ## Лицензия
 
@@ -101,11 +101,11 @@ Stellaris DLC Unlocker is a program designed to simplify the process of unlockin
 
 ## Known Issues
 
-- Download hangs at "x" percent. Since all files are currently on a rather weak server, this means it simply stopped responding. Restart the program and preferably wait for some time before restarting. If everything goes really bad, I will change the server.
+- Download hangs at "x" percent. This means what the server stopped responding. Restart the program and preferably wait for some time before restarting.
   
 - Antivirus complains/removes the application. I've done everything possible to prevent this, but for some reason, in rare cases, Windows Defender starts to complain or may even delete the file after restarting the computer without saying anything to you.
 
-- If after unlocking, the launcher throws a launch error and asks to check the integrity of the files, do it, the unlocker does not need to be opened again. *I fixed this, everything should work fine, but just in case, it's better to write about it.*
+- Multiplayer does not work. Enabling cross-platform mode in the game launcher helps.
 
 ## License
 
@@ -159,11 +159,11 @@ Stellaris DLC 解锁器是一个旨在简化为游戏 Stellaris 解锁 DLC（可
 
 ## 已知问题
 
- - 下载在“x”百分比时挂起。由于所有文件目前都在一个相对较弱的服务器上，这意味着它简单地停止响应了。重启程序，并在重新启动前最好等待一段时间。如果情况真的很糟，我将更换服务器。
+ - 下载在“x”百分比时挂起。由于所有文件目前都在一个相对较弱的服务器上，这意味着它简单地停止响应了。重启程序，并在重新启动前最好等待一段时间。
 
  - 杀毒软件报告/删除应用程序。我已尽一切可能防止这种情况，但出于某种原因，罕见情况下，Windows Defender 开始报告，甚至可能在重新启动电脑后在未告知您的情况下删除文件。
 
- - 如果在解锁后，启动器出现启动错误并要求检查文件的完整性，请执行此操作，无需再次打开解锁器。我已修复这个问题，一切应该都能正常工作，但以防万一，最好写下来。
+ - 多人游戏不起作用。 在游戏启动器中启用跨平台模式会有所帮助。
 
 ## 许可证
 
