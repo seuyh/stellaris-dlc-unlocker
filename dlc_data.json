@@ -162,5 +162,25 @@
     {
         "dlc_name": "Cosmic Storms",
         "dlc_folder": "dlc033_cosmic_storms"
+    },
+    {
+        "dlc_name": "Infernals Species Pack",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "BioGenesis",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Shadows of the Shroud",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Stargazer Species Portrait",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Season 09 - Expansion Pass",
+        "dlc_folder": ""
     }
 ]
