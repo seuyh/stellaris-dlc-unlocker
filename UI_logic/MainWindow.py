@@ -392,8 +392,9 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 file_url = f"{'https://stlunlocker.pro/unlocker/'}{dlc_folder}.zip"
                 save_path = os.path.join(self.game_path, 'dlc', f'{dlc_folder}.zip')
                 dlc_path = os.path.join(self.game_path, 'dlc', dlc_folder)
-                if not os.path.exists(dlc_path) and (not os.path.exists(save_path) or os.path.getsize(save_path) == 0):
-                    if os.path.exists(save_path) and os.path.getsize(save_path) == 0:
+                
+                if not os.path.exists(dlc_path) and self.is_invalid_zip(save_path):
+                    if os.path.exists(save_path):
                         os.remove(save_path)
                     self.download_queue.append((file_url, save_path))
                 else:
@@ -409,6 +410,20 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             if value == 100:
                 self.creamapidone = True
                 self.download_complete()
+
+    @staticmethod
+    def is_invalid_zip(path):
+                    if not os.path.exists(path):
+                        return True
+                    if os.path.getsize(path) == 0:
+                        return True
+                    try:
+                        with zipfile.ZipFile(path, 'r') as zf:
+                            if zf.testzip() is not None:
+                                return True  # Corrupted file found
+                    except zipfile.BadZipFile:
+                        return True  # Not even a zip
+                    return False
 
     def update_progress(self, value, by_download=False):
         self.dlc_download_progress_bar.setValue(value)
