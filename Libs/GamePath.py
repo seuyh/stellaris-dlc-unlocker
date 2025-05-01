@@ -1,10 +1,14 @@
 import os.path
-import winreg
+import platform
 from vdf import loads
 
 
 def get_steam_path():
-    return reg_search(r"Software\Valve\Steam", "SteamPath")
+    system = platform.system()
+    if system == "Windows":
+        return reg_search(r"Software\Valve\Steam", "SteamPath")
+    else:
+        return os.path.expanduser("~/.steam/steam")
 
 
 def stellaris_path():
@@ -44,6 +48,7 @@ def launcher_path():
 
 def reg_search(vaule_data, vaule_name):
     try:
+        import winreg
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, vaule_data)
         launcher_path, _ = winreg.QueryValueEx(key, vaule_name)
         winreg.CloseKey(key)
