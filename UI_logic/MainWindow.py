@@ -1,13 +1,17 @@
 import os
 from shutil import rmtree, copytree
+import stat
 from sys import argv
 from zipfile import ZipFile, BadZipFile
+import zipfile
 
 import requests
-from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
+from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon, QClipboard
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
-from subprocess import run, CREATE_NO_WINDOW
+from subprocess import run
+import subprocess
+import platform
 
 import UI.ui_main as ui_main
 from Libs.ConnectionCheck import ConnectionCheckThread
@@ -20,20 +24,37 @@ from Libs.ServerData import dlc_data
 from Libs.CreamApiMaker import CreamAPI
 from Libs.DownloadThread import DownloaderThread
 
-
 class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def __init__(self):
+        if platform.system() == "Windows":
+            self.win = True
+        else:
+            self.win = False
+
         super(MainWindow, self).__init__()
         self.translator = QTranslator()
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setupUi(self)
+        if not self.win:
+            self.skip_launcher_reinstall_checbox.setChecked(True)
+            self.skip_launcher_reinstall_checbox.setVisible(False)
+            self.skip_launcher_reinstall_tooltip.setVisible(False)
+            self.full_reinstall_checkbox.setVisible(False)
+            self.full_reinstall_tooltip.setVisible(False)
+            self.alternative_unloc_checkbox.setVisible(False)
+            self.label_2.setVisible(False)
+
         self.setWindowState(Qt.WindowActive)
 
         self.error = errorUi()
         self.diag = dialogUi()
         self.path_change()
-        self.kill_process('Paradox Launcher.exe')
-        self.kill_process('stellaris.exe')
+        if self.win:
+            self.kill_process('Paradox Launcher.exe')
+            self.kill_process('stellaris.exe')
+        else:
+            self.kill_process('dowser')
+            self.kill_process('stellaris')
 
         self.draggable_elements = [self.frame_user, self.server_status, self.gh_status, self.lappname_title,
                                    self.frame_top]
@@ -134,11 +155,13 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         print(f"Attempting to open URL: {url}")
         QDesktopServices.openUrl(QUrl(url))
 
-    @staticmethod
-    def kill_process(process_name):
+    def kill_process(self, process_name):
         print(f'Killing {process_name}')
         try:
-            run(["taskkill", "/F", "/IM", process_name], check=True, creationflags=CREATE_NO_WINDOW)
+            if self.win:
+                run(["taskkill", "/F", "/IM", process_name], check=True, creationflags=subprocess.CREATE_NO_WINDOW)
+            else:
+                run(["pkill", process_name], check=True)
         except:
             print(f'No process named {process_name}')
 
@@ -179,7 +202,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         directory = QFileDialog.getExistingDirectory(self, self.tr("Choose Stellaris path"),
                                                      self.game_path_line.text())
         if directory:
-            if os.path.isfile(os.path.join(directory, "stellaris.exe")):
+            if os.path.isfile(os.path.join(directory, "stellaris.exe")) or os.path.isfile(os.path.join(directory, "stellaris")):
                 self.game_path_line.setText(directory)
                 self.game_path = directory.replace("/", "\\")
                 print(f'Path browsed: {self.game_path}')
@@ -189,14 +212,17 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 self.errorexec(self.tr("This is not Stellaris path"), self.tr("Ok"))
 
     def path_check(self):
-        path = self.game_path_line.text().replace("/", "\\")
+        path = os.path.normpath(self.game_path_line.text())
         try:
-            if os.path.isfile(os.path.join(path, "stellaris.exe")):
+            if self.win and os.path.isfile(os.path.join(path, "stellaris.exe")):
+                print(f'Game path: {path}')
+                return path
+            if not self.win and os.path.isfile(os.path.join(path, "stellaris")):
                 print(f'Game path: {path}')
                 return path
         except:
             pass
-
+        print(f'win: {self.win} path: {path}')
         self.errorexec(self.tr("Please choose game path"), self.tr("Ok"))
         return False
 
@@ -331,7 +357,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not self.path_check():
             print('Error: incorrect path, return')
             return
-        self.game_path = self.game_path_line.text().replace("/", "\\")
+        self.game_path = os.path.normpath(self.game_path_line.text())
         print('Unlock started')
         print(
             f'Settings:\nPath: {self.game_path}\nFull reinstall: {self.full_reinstall_checkbox.isChecked()}\nAlt unlock: {self.alternative_unloc_checkbox.isChecked()}\nSkip reinstall: {self.skip_launcher_reinstall_checbox.isChecked()}')
@@ -472,6 +498,9 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.reinstall_2(paradox_folder1)
 
     def reinstall_2(self, paradox_folder1):
+        if not self.win:
+            self.replace_files_linux()
+            return
 
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
         launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
@@ -530,6 +559,64 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.done_button.setVisible(True)
         print('All done!')
 
+    def replace_files_linux(self):
+        self.launcher_reinstall_radio.setChecked(True)
+        print(f'Copy to path: {self.game_path}')
+        if self.install_creamlinux(281990, self.game_path, dlc_data):
+            self.copy_files_radio.setChecked(True)
+            if self.dialogexec(self.tr('Game unlocked!'),
+                                   self.tr('The game is unlocked!\nPlease manually add the following to the game launch options (if you haven''t already):') + '\nsh ./cream.sh %command%',
+                                   self.tr('Close'), self.tr('Copy')):
+                QApplication.clipboard().setText('sh ./cream.sh %command%')
+
+        print('Copy complete')
+        self.lauch_game_checkbox.setVisible(True)
+        self.done_button.setVisible(True)
+        print('All done!')
+
+
+    def install_creamlinux(self, app_id, game_install_dir, dlcs):
+        print(f"Installing CreamLinux for app_id {app_id} in {game_install_dir}, dlcs: {dlcs}")
+        zip_url = "https://github.com/anticitizn/creamlinux/releases/latest/download/creamlinux.zip"
+        zip_path = os.path.join(game_install_dir, "creamlinux.zip")
+
+        print(f"Downloading CreamLinux from {zip_url}")
+        response = requests.get(zip_url)
+        if response.status_code != 200:
+            raise Exception(
+                f"Failed to download CreamLinux (HTTP {response.status_code})"
+            )
+
+        print(f"Writing zip file to {zip_path}")
+        with open(zip_path, "wb") as f:
+            f.write(response.content)
+
+        print("Extracting CreamLinux files")
+        try:
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                zip_ref.extractall(game_install_dir)
+        except zipfile.BadZipFile:
+            raise Exception(
+                "Downloaded file is corrupted. Please try again."
+            )
+
+        os.remove(zip_path)
+
+        cream_sh_path = os.path.join(game_install_dir, "cream.sh")
+        print(f"Setting permissions for {cream_sh_path}")
+        try:
+            os.chmod(cream_sh_path, os.stat(cream_sh_path).st_mode | stat.S_IEXEC)
+        except OSError as e:
+            raise Exception(f"Failed to set execute permissions: {str(e)}")
+
+        cream_api_path = os.path.join(game_install_dir, "cream_api.ini")
+        print(f"Creating config at {cream_api_path}")
+        try:
+            copytree(f'{self.parent_directory}/creamapi_steam_files_linux', game_install_dir, dirs_exist_ok=True)
+        except IOError as e:
+            raise Exception(f"Failed to create config file: {str(e)}")
+
+        return True
 
     def unzip_and_replace(self, dlc_path):
         zip_path = os.path.join(self.game_path, 'dlc', dlc_path)
@@ -549,7 +636,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def finish(self):
         if self.lauch_game_checkbox.isChecked():
             try:
-                run('start steam://run/281990', shell=True, capture_output=True, text=True)
+                if self.win:
+                    run('start steam://run/281990', shell=True, capture_output=True, text=True)
+                else:
+                    run('xdg-open steam://run/281990', shell=True, capture_output=True, text=True)
             except:
                 pass
         self.close()
