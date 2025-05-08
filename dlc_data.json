@@ -1,11 +1,11 @@
 [
     {
         "dlc_name": "Symbols of Domination",
-        "dlc_folder": ""
+        "dlc_folder": "dlc001_symbols_of_domination"
     },
     {
         "dlc_name": "Sign-up Campaign Bonus",
-        "dlc_folder": ""
+        "dlc_folder": "dlc003_signup_bonus"
     },
     {
         "dlc_name": "Digital Artbook",
@@ -169,7 +169,7 @@
     },
     {
         "dlc_name": "BioGenesis",
-        "dlc_folder": ""
+        "dlc_folder": "dlc036_biogenesis"
     },
     {
         "dlc_name": "Shadows of the Shroud",
@@ -177,7 +177,7 @@
     },
     {
         "dlc_name": "Stargazer Species Portrait",
-        "dlc_folder": ""
+        "dlc_folder": "dlc039_stargazer"
     },
     {
         "dlc_name": "Season 09 - Expansion Pass",
