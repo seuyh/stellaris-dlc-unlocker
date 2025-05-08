@@ -414,7 +414,7 @@ class Ui_MainWindow(object):
         self.label_4.setStyleSheet("QLabel {\n"
 "    color:rgb(255,255,255);\n"
 "}")
-        self.label_4.setText("简中")
+        self.label_4.setText("简体")
         self.label_4.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
         self.label_4.setObjectName("label_4")
         self.gridLayout_3.addWidget(self.label_4, 0, 3, 1, 1)
@@ -620,13 +620,13 @@ class Ui_MainWindow(object):
         self.lab_bullet3 = QtWidgets.QLabel(self.frame_bug_main)
         self.lab_bullet3.setMaximumSize(QtCore.QSize(5, 16777215))
         self.lab_bullet3.setText("")
-        self.lab_bullet3.setPixmap(QtGui.QPixmap("UI\\Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
+        self.lab_bullet3.setPixmap(QtGui.QPixmap("UI\\../../../Desktop/unlocker-v2_design/Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
         self.lab_bullet3.setObjectName("lab_bullet3")
         self.gridLayout.addWidget(self.lab_bullet3, 3, 0, 1, 1)
         self.lab_bullet = QtWidgets.QLabel(self.frame_bug_main)
         self.lab_bullet.setMaximumSize(QtCore.QSize(5, 16777215))
         self.lab_bullet.setText("")
-        self.lab_bullet.setPixmap(QtGui.QPixmap("UI\\Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
+        self.lab_bullet.setPixmap(QtGui.QPixmap("UI\\../../../Desktop/unlocker-v2_design/Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
         self.lab_bullet.setAlignment(QtCore.Qt.AlignCenter)
         self.lab_bullet.setObjectName("lab_bullet")
         self.gridLayout.addWidget(self.lab_bullet, 0, 0, 1, 1)
@@ -695,7 +695,7 @@ class Ui_MainWindow(object):
         self.lab_bullet2 = QtWidgets.QLabel(self.frame_bug_main)
         self.lab_bullet2.setMaximumSize(QtCore.QSize(5, 16777215))
         self.lab_bullet2.setText("")
-        self.lab_bullet2.setPixmap(QtGui.QPixmap("UI\\Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
+        self.lab_bullet2.setPixmap(QtGui.QPixmap("UI\\../../../Desktop/unlocker-v2_design/Minimalistic-Flat-Modern-GUI-Template-master/icons/1x/bulletAsset 54.png"))
         self.lab_bullet2.setObjectName("lab_bullet2")
         self.gridLayout.addWidget(self.lab_bullet2, 1, 0, 1, 1)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
@@ -1122,6 +1122,62 @@ class Ui_MainWindow(object):
         self.horizontalLayout_21 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_21.setContentsMargins(-1, 10, -1, -1)
         self.horizontalLayout_21.setObjectName("horizontalLayout_21")
+        self.formLayout_2 = QtWidgets.QFormLayout()
+        self.formLayout_2.setContentsMargins(-1, -1, 10, -1)
+        self.formLayout_2.setObjectName("formLayout_2")
+        self.old_dlc_text = QtWidgets.QTextEdit(self.work_page)
+        self.old_dlc_text.setEnabled(False)
+        self.old_dlc_text.setMinimumSize(QtCore.QSize(590, 0))
+        self.old_dlc_text.setMaximumSize(QtCore.QSize(16777215, 40))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        self.old_dlc_text.setFont(font)
+        self.old_dlc_text.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.old_dlc_text.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.old_dlc_text.setUndoRedoEnabled(False)
+        self.old_dlc_text.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.old_dlc_text.setObjectName("old_dlc_text")
+        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.old_dlc_text)
+        self.update_dlc_button = QtWidgets.QCheckBox(self.work_page)
+        self.update_dlc_button.setMinimumSize(QtCore.QSize(300, 25))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(13)
+        self.update_dlc_button.setFont(font)
+        self.update_dlc_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.update_dlc_button.setStyleSheet("QCheckBox {\n"
+"        color:rgb(255,255,255);\n"
+"}\n"
+"\n"
+"QCheckBox::indicator {\n"
+"        width: 12px;\n"
+"        height: 12px;\n"
+"}\n"
+"\n"
+"QCheckBox::indicator:unchecked {\n"
+"        border:2px solid rgb(51,51,51);\n"
+"    background:rgb(91,90,90);\n"
+"}\n"
+"\n"
+"QCheckBox::indicator:unchecked:pressed {\n"
+"    border:2px solid rgb(51,51,51);\n"
+"       background:rgb(0,143,170);\n"
+"}\n"
+"\n"
+"QCheckBox::indicator:checked {\n"
+"    background-color:rgb(0,143,150);\n"
+"        border: 2px solid rgb(51,51,51);\n"
+"}\n"
+"\n"
+"QCheckBox::indicator:checked:pressed {\n"
+"        border:2px solid rgb(51,51,51);\n"
+"    background:rgb(91,90,90);\n"
+"}\n"
+"")
+        self.update_dlc_button.setChecked(True)
+        self.update_dlc_button.setObjectName("update_dlc_button")
+        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.update_dlc_button)
+        self.horizontalLayout_21.addLayout(self.formLayout_2)
         spacerItem16 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_21.addItem(spacerItem16)
         self.verticalLayout_10 = QtWidgets.QVBoxLayout()
@@ -1335,7 +1391,7 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\';\">  Follow the installer instructions. Installation is almost entirely automatic. <br /></span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-weight:600; text-decoration: underline; color:#008f96;\">Terms Of Use</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'MS Shell Dlg 2\'; color:#0000ff;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\';\">1. This unlocker is distributed absolutely free of charge. Any commercial use of this unlocker is prohibited. If you purchased from any source, please refund and give a negative review.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\';\">1. This unlocker is distributed absolutely free of charge. Any commercial use of this unlocker is prohibited.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\';\">2. THIS UNLOCKER IS PROVIDED &quot;AS IS&quot;. NO WARRANTIES ARE PROVIDED OR IMPLIED. YOU USE THIS MODIFICATION OF THE ORIGINAL GAME AT YOUR OWN RISK. THE AUTHORS OF THE MODIFICATION WILL NOT BE LIABLE FOR ANY LOSSES OR DATA CORRUPTION, ANY LOST PROFITS IN THE PROCESS OF USE OR MISUSE OF THIS MODIFICATION.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
@@ -1363,6 +1419,12 @@ class Ui_MainWindow(object):
         self.copy_files_radio.setText(_translate("MainWindow", "Copy files"))
         self.dlc_download_label.setText(_translate("MainWindow", "DLC Download progress"))
         self.current_dlc_label.setText(_translate("MainWindow", "Current DLC progress"))
+        self.old_dlc_text.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Segoe UI\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; color:#ff0000;\">Old DLCs detected! </span><span style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; color:#ffffff;\">You can just update it while unlocking</span></p></body></html>"))
+        self.update_dlc_button.setText(_translate("MainWindow", "Update old DLCs"))
         self.lauch_game_checkbox.setText(_translate("MainWindow", "Launch game"))
         self.done_button.setText(_translate("MainWindow", "Done"))
         self.bug_page_title.setText(_translate("MainWindow", "Log"))

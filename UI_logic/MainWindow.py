@@ -8,6 +8,7 @@ from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
 from subprocess import run, CREATE_NO_WINDOW
+from pathlib import Path
 
 import UI.ui_main as ui_main
 from Libs.ConnectionCheck import ConnectionCheckThread
@@ -19,6 +20,7 @@ from Libs.GamePath import stellaris_path, launcher_path
 from Libs.ServerData import dlc_data
 from Libs.CreamApiMaker import CreamAPI
 from Libs.DownloadThread import DownloaderThread
+from Libs.MD5Check import MD5
 
 
 class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
@@ -31,6 +33,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         self.error = errorUi()
         self.diag = dialogUi()
+        self.game_path = None
         self.path_change()
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
@@ -45,18 +48,16 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.is_dragging = False
         self.last_mouse_position = None
         self.launcher_downloaded = None
-        self.game_path = None
         self.continued = False
         self.downloaded_launcher_dir = None
         self.parent_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
         self.is_downloading = False
         self.download_thread = None
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.1'
+        self.current_version = '2.2'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -70,6 +71,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.lauch_game_checkbox.setVisible(False)
         self.done_button.setVisible(False)
         self.speed_label.setVisible(False)
+        self.update_dlc_button.setVisible(False)
+        self.old_dlc_text.setVisible(False)
         self.en_lang.toggled.connect(self.switch_to_english)
         self.ru_lang.toggled.connect(self.switch_to_russian)
         self.cn_lang.toggled.connect(self.switch_to_chinese)
@@ -98,12 +101,19 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.log_widget = self.log_widget
         self.log_widget.clear()
         print('GUI initialization complete')
+        print('Checking dlc updates...')
+        if self.not_updated_dlc:
+            print(f"Not updated DLCs: {self.not_updated_dlc}")
+            self.update_dlc_button.setVisible(True)
+            self.old_dlc_text.setVisible(True)
+        else:
+            print("All DlCs is up to date or server return error")
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
-        print('Start connection check in 5s')
+        print('Start connection check')
         QTimer.singleShot(5, self.start_connection_check)
-        print('Start updates check in 4s')
+        print('Start updates check')
         QTimer.singleShot(4, lambda: self.check_for_updates(self.current_version))
 
     def switch_to_russian(self):
@@ -118,6 +128,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def switch_to_english(self):
         if self.en_lang.isChecked():
             QApplication.removeTranslator(self.translator)
+            print("en-US translate Successfully loaded")
             self.retranslateUi(self)
 
     def switch_to_chinese(self):
@@ -171,6 +182,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             print(f'Auto detected game path: {path}')
             self.game_path_line.setText(path)
             self.game_path = path.replace("/", "\\")
+            self.not_updated_dlc = self.checkDLCUpdate()
             self.loadDLCNames()
         else:
             print(f'Cant detect game path')
@@ -201,24 +213,28 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         return False
 
     def check_for_updates(self, current_version):
-        response = requests.get(self.GITHUB_REPO)
-        if response.status_code == 200:
-            response.raise_for_status()
-            latest_release = response.json()
-            latest_version = latest_release['tag_name']
+        try:
+            response = requests.get(self.GITHUB_REPO)
+            if response.status_code == 200:
+                response.raise_for_status()
+                latest_release = response.json()
+                latest_version = latest_release['tag_name']
 
-            if latest_version != current_version:
-                print(f"Found new version: {latest_version}.")
-                if self.dialogexec(self.tr('New version'),
-                                   self.tr('New version found\nPlease update the program to correctly work '),
-                                   self.tr('Cancel'), self.tr('Update')):
-                    exe_asset_url = None
-                    for asset in latest_release['assets']:
-                        if asset['name'].endswith('.exe'):
-                            exe_asset_url = asset['browser_download_url']
-                    self.open_link_in_browser(exe_asset_url)
-            else:
-                print(f"Unlocker is up to date")
+                if latest_version != current_version:
+                    print(f"Found new version: {latest_version}.")
+                    if self.dialogexec(self.tr('New version'),
+                                       self.tr('New version found\nPlease update the program to correctly work '),
+                                       self.tr('Cancel'), self.tr('Update')):
+                        exe_asset_url = None
+                        for asset in latest_release['assets']:
+                            if asset['name'].endswith('.exe'):
+                                exe_asset_url = asset['browser_download_url']
+                        self.open_link_in_browser(exe_asset_url)
+                else:
+                    print(f"Unlocker is up to date")
+        except:
+            print("Cant check updates")
+            pass
 
     def start_connection_check(self):
         self.connection_thread.start()
@@ -257,19 +273,27 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             item = QListWidgetItem(dlc_name)
             status_color = self.checkDLCStatus(dlc.get('dlc_folder', ''))
 
-            if status_color != 'orange':
+            if status_color != 'black':
                 item.setForeground(QBrush(QColor(status_color)))
+                if status_color == "orange":
+                    item.setText(item.text() + " (old)")
                 self.dlc_status_widget.addItem(item)
 
     def checkDLCStatus(self, dlc_folder):
         if not dlc_folder:
-            return "orange"
+            return "black"
         dlc_path_folder = os.path.join(self.game_path, "dlc", dlc_folder)
         dlc_path_zip = os.path.join(self.game_path, "dlc", f'{dlc_folder}.zip')
         if os.path.exists(dlc_path_folder) or os.path.exists(dlc_path_zip):
+            if dlc_folder in self.not_updated_dlc:
+                return "orange"
             return "teal"
         else:
             return "LightCoral"
+
+    def checkDLCUpdate(self):
+        md5_checker = MD5(f"{self.game_path}\\dlc", "stlunlocker.pro")
+        return md5_checker.check_files()
 
     @staticmethod
     def full_reinstall():
@@ -341,6 +365,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.full_reinstall_checkbox.setEnabled(False)
         self.alternative_unloc_checkbox.setEnabled(False)
         self.skip_launcher_reinstall_checbox.setEnabled(False)
+        self.update_dlc_button.setEnabled(False)
         self.copy_files_radio.setVisible(True)
         self.download_files_radio.setVisible(True)
         self.launcher_reinstall_radio.setVisible(True)
@@ -358,6 +383,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             os.makedirs(os.path.join(self.game_path, "dlc"))
         if self.game_path:
             self.is_downloading = True
+            if self.update_dlc_button.isChecked():
+                print("Updating DLCs...")
+                self.delete_folders(f"{self.game_path}\\dlc", self.not_updated_dlc)
+                self.not_updated_dlc = []
             self.loadDLCNames()
             self.creamapi_maker = CreamAPI()
             self.creamapi_maker.progress_signal.connect(self.update_creamapi_progress)
@@ -367,9 +396,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.download_queue = []
 
             def start_next_download():
-                # Проверяем, есть ли файлы в очереди для скачивания
                 if self.download_queue:
-                    file_url, save_path = self.download_queue.pop(0)  # Берем первый файл из очереди
+                    file_url, save_path = self.download_queue.pop(0)
                     self.download_thread = DownloaderThread(file_url, save_path, self.dlc_downloaded, self.dlc_count)
 
                     # Подключаем сигналы к обработчикам
@@ -378,8 +406,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                     self.download_thread.error_signal.connect(self.show_error)
                     self.download_thread.speed_signal.connect(self.show_download_speed)
                     self.download_thread.finished.connect(
-                        start_next_download)  # Запускаем следующий файл после завершения текущего
-                    self.download_thread.start()  # Запускаем поток
+                        start_next_download)
+                    self.download_thread.start()
 
             # Сначала заполняем очередь
             for item in dlc_data:
@@ -401,15 +429,24 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                     self.dlc_downloaded += 1
                     self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
 
-            # Запускаем первый файл из очереди
-            if self.download_queue:  # Проверяем, есть ли файлы для скачивания
+            if self.download_queue:
                 print('Starting downloads...')
-                start_next_download()
+                if self.server_status.isChecked():
+                    start_next_download()
+                else:
+                    self.download_files_radio.setVisible(False)
+                    self.progress_label.setVisible(False)
+                    self.dlc_download_label.setVisible(False)
+                    self.dlc_download_progress_bar.setVisible(False)
+                    self.current_dlc_label.setVisible(False)
+                    self.current_dlc_progress_bar.setVisible(False)
+                    self.speed_label.setVisible(False)
+                    self.reinstall()
 
     def update_creamapi_progress(self, value):
-            if value == 100:
-                self.creamapidone = True
-                self.download_complete()
+        if value == 100:
+            self.creamapidone = True
+            self.download_complete()
 
     @staticmethod
     def is_invalid_zip(path):
@@ -420,10 +457,25 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         try:
             with ZipFile(path, 'r') as zf:
                 if zf.testzip() is not None:
-                    return True  # Corrupted file found
+                    return True
         except BadZipFile:
-            return True  # Not even a zip
+            return True
         return False
+
+    @staticmethod
+    def delete_folders(base_path, folders):
+        base_path = Path(base_path)
+
+        for name in folders:
+            dir_path = base_path / name
+            try:
+                if dir_path.is_dir():
+                    rmtree(dir_path)
+                    print(f"Deleted: {dir_path}")
+                else:
+                    pass
+            except Exception as e:
+                print(f"Can't delete {dir_path}: {e}")
 
     def update_progress(self, value, by_download=False):
         self.dlc_download_progress_bar.setValue(value)
@@ -462,7 +514,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4 = launcher_path()
         if not self.skip_launcher_reinstall_checbox.isChecked():
             self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
-                                                    paradox_folder4, self.launcher_downloaded, self.downloaded_launcher_dir)
+                                                    paradox_folder4, self.launcher_downloaded,
+                                                    self.downloaded_launcher_dir)
             # self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
             self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
             self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)
@@ -502,8 +555,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             print(f"Error while unzipping {e}")
             self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
 
-        if os.path.exists(os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')):
-            copy_to_path = os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')
+        if os.path.exists(
+                os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')):
+            copy_to_path = os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks',
+                                        'lib')
         elif os.path.exists(os.path.join(launcher_folder, 'resources', 'app', 'dist', 'main')):
             copy_to_path = os.path.join(launcher_folder, 'resources', 'app', 'dist', 'main')
         else:
@@ -511,15 +566,15 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.errorexec(self.tr("Error unknown launcher"), self.tr("Exit"), exitApp=True)
         print(f'Copy to path: {copy_to_path}')
         # try: # C:\Users\sp21\AppData\Local\Programs\Paradox Interactive\launcher\launcher-v2.2024.14\resources\app.asar.unpacked\node_modules\greenworks\lib
-            #o s.remove(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
+        # o s.remove(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
         # except:
-            # pass
+        # pass
         try:
             os.remove(f'{launcher_folder}/xdelta3.exe')
         except:
             pass
         # os.rename(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64.dll',
-                  # f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
+        # f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
         copytree(f'{self.parent_directory}/creamapi_launcher_files',
                  f'{copy_to_path}',
                  dirs_exist_ok=True)
@@ -529,7 +584,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.lauch_game_checkbox.setVisible(True)
         self.done_button.setVisible(True)
         print('All done!')
-
 
     def unzip_and_replace(self, dlc_path):
         zip_path = os.path.join(self.game_path, 'dlc', dlc_path)
