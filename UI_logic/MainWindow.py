@@ -34,6 +34,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.error = errorUi()
         self.diag = dialogUi()
         self.game_path = None
+        self.not_updated_dlc = []
         self.path_change()
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
@@ -57,7 +58,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.2'
+        self.current_version = '2.21'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -70,6 +71,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.current_dlc_progress_bar.setVisible(False)
         self.lauch_game_checkbox.setVisible(False)
         self.done_button.setVisible(False)
+
         self.speed_label.setVisible(False)
         self.update_dlc_button.setVisible(False)
         self.old_dlc_text.setVisible(False)
@@ -87,7 +89,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.bn_bug.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
         self.path_choose_button.clicked.connect(self.browse_folder)
         self.next_button.clicked.connect(
-            lambda: (setattr(self, 'continued', True) or self.stackedWidget.setCurrentIndex(1)))
+            lambda: (
+                setattr(self, 'continued', True),
+                self.stackedWidget.setCurrentIndex(1),
+                self.old_dlc_show()
+            )
+        )
         self.bn_home.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1 if self.continued else 0))
         self.unlock_button.clicked.connect(self.unlock)
         self.done_button.clicked.connect(self.finish)
@@ -100,14 +107,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.logger = Logger('unlocker.log', self.log_widget)
         self.log_widget = self.log_widget
         self.log_widget.clear()
-        print('GUI initialization complete')
-        print('Checking dlc updates...')
-        if self.not_updated_dlc:
-            print(f"Not updated DLCs: {self.not_updated_dlc}")
-            self.update_dlc_button.setVisible(True)
-            self.old_dlc_text.setVisible(True)
-        else:
-            print("All DlCs is up to date or server return error")
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
@@ -182,7 +181,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             print(f'Auto detected game path: {path}')
             self.game_path_line.setText(path)
             self.game_path = path.replace("/", "\\")
-            self.not_updated_dlc = self.checkDLCUpdate()
             self.loadDLCNames()
         else:
             print(f'Cant detect game path')
@@ -211,6 +209,15 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         self.errorexec(self.tr("Please choose game path"), self.tr("Ok"))
         return False
+
+    def old_dlc_show(self):
+        if self.not_updated_dlc:
+            print(f"Not updated DLCs: {self.not_updated_dlc}")
+            self.update_dlc_button.setVisible(True)
+            self.old_dlc_text.setVisible(True)
+        else:
+            self.update_dlc_button.setChecked(False)
+            print("All DlCs is up to date or server return error")
 
     def check_for_updates(self, current_version):
         try:
@@ -248,6 +255,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.errorexec(self.tr("Can't establish connection with GitHub. Check internet"), self.tr("Ok"),
                            exitApp=True)
 
+
     def handle_server_status(self, status):
         if status:
             self.server_status.setChecked(True)
@@ -264,6 +272,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
     def loadDLCNames(self):
         self.dlc_status_widget.clear()
+        self.not_updated_dlc = self.checkDLCUpdate()
 
         for dlc in dlc_data:
             dlc_name = dlc.get('dlc_name', '').strip()
@@ -271,6 +280,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 continue
 
             item = QListWidgetItem(dlc_name)
+
             status_color = self.checkDLCStatus(dlc.get('dlc_folder', ''))
 
             if status_color != 'black':
