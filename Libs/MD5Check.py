@@ -12,7 +12,7 @@ class MD5:
 
     def _load_server_hashes(self):
         try:
-            response = requests.get(self.hashes_url)
+            response = requests.get(self.hashes_url, timeout=10)
             response.raise_for_status()
             if not response.text.strip():
                 return None
