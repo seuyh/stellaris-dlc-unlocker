@@ -537,10 +537,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def reinstall_2(self, paradox_folder1):
 
         launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
-        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
-        # launcher_folder = os.path.join(os.path.join(paradox_folder1, launcher_folders[0]))
-        launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
-        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
+        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)), reverse=True)
         # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
         try:
             self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
