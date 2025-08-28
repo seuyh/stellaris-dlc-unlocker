@@ -19,7 +19,7 @@
         <location filename="ui_main.ui" line="915"/>
         <source>Welcome</source>
         <extracomment>main page title</extracomment>
-        <translation>Привтетсвуем</translation>
+        <translation>Приветствуем</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="1207"/>
