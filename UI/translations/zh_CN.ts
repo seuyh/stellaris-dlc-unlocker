@@ -7,13 +7,13 @@
         <location filename="ui_main.ui" line="283"/>
         <source>Server connection</source>
         <extracomment>Server connection radio</extracomment>
-        <translation>服务器连接</translation>
+        <translation>服务器连接状态</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="319"/>
         <source>Github conncection</source>
         <extracomment>GitHub connection radio</extracomment>
-        <translation>Github 连接</translation>
+        <translation>Github 连接状态</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="915"/>
@@ -55,16 +55,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;许可&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;: 已购买。&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600; text-decoration: underline;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600; text-decoration: underline;&quot;&gt;安装&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  请按照安装程序的说明操作。安装几乎是全自动的。 &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  安装过程几乎全自动化，您只需依照安装程序的提示进行操作。 &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600; text-decoration: underline; color:#008f96;&quot;&gt;使用条款&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; color:#0000ff;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;1. 此解锁器完全免费分发。禁止用于任何商业用途。如果您是从任何渠道购买，请退款并差评。&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;2. 此解锁器以按“原样”提供。不提供任何明示或暗示的保证。您使用此原版游戏的修改版需自行承担风险。修改作者对使用或误用本修改导致的任何损失、数据损坏或任何利润损失概不负责。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;2. 此解锁器按“原样”提供，不附带任何明示或暗示的保证，包括但不限于适销性、特定用途适用性或无侵权性的保证。在适用法律允许的最大范围内，作者在任何情况下均不对因使用或无法使用本修改而引起的任何直接、间接、附带、特殊或后续损害承担责任。这些损害包括但不限于数据丢失、经济损失、账号被封禁（包括 VAC 封禁或其他发行商采取的惩罚措施）。&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;3. 版权所有者保留所有未明确授予的权利。&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;4. 安装和使用此修改版即表示您已阅读并理解本许可协议的条款，并同意这些条款。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;4. 继续安装和使用此修改版即表示您已阅读并理解本许可协议的条款，并同意这些条款。&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -120,7 +120,7 @@ p, li { white-space: pre-wrap; }
         <location filename="ui_main.ui" line="1994"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function will delete all saves and presets of mods.&lt;/p&gt;&lt;p&gt;It is only needed if something did not work during the normal installation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <extracomment>full reinstall tooltip</extracomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;警告！此功能将删除所有存档和模组的预设。&lt;/p&gt;&lt;p&gt;请仅在在正常安装过程中出现问题时使用&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;警告！此功能将删除所有存档和模组播放集。&lt;/p&gt;&lt;p&gt;请仅在在正常安装过程中出现问题时使用&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="2088"/>
@@ -131,7 +131,7 @@ p, li { white-space: pre-wrap; }
         <location filename="ui_main.ui" line="2103"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;It is used if it is impossible to automatically reinstall the launcher.&lt;/p&gt;&lt;p&gt;The program will assume that the launcher has already been reinstalled before&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <extracomment>Skip launcher reinstall tooltip</extracomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;如果无法自动重新安装启动器时使用。&lt;/p&gt;&lt;p&gt;程序将假定启动器已在之前重新安装&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;请仅在无法自动重新安装启动器时使用。&lt;/p&gt;&lt;p&gt;解锁器将假定启动器已在之前重新安装&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="2180"/>
@@ -167,7 +167,7 @@ p, li { white-space: pre-wrap; }
         <location filename="ui_main.ui" line="2415"/>
         <source>Current DLC progress</source>
         <extracomment>Current DLC Download progress label</extracomment>
-        <translation>当前 DLC 进度</translation>
+        <translation>当前 DLC 下载进度</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="2559"/>
@@ -179,7 +179,7 @@ p, li { white-space: pre-wrap; }
         <location filename="ui_main.ui" line="2616"/>
         <source>Done</source>
         <extracomment>Done buttone</extracomment>
-        <translation>完成按钮</translation>
+        <translation>完成</translation>
     </message>
     <message>
         <location filename="ui_main.ui" line="2672"/>
@@ -210,12 +210,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Segoe UI&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; color:#ff0000;&quot;&gt;检测到旧的DLCs！ &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; color:#ffffff;&quot;&gt;你可以在解锁的时候更新它&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; color:#ff0000;&quot;&gt;检测到旧的DLCs！ &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; color:#ffffff;&quot;&gt;解锁的时将自动更新为最新版本&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="91"/>
         <source>Exit Unlocker?</source>
-        <translation>退出解锁器？</translation>
+        <translation>确认退出解锁器？</translation>
     </message>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="91"/>
@@ -272,7 +272,7 @@ Please update the program to correctly work </source>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="222"/>
         <source>Can&apos;t establish connection with GitHub. Check internet</source>
-        <translation>无法与 GitHub 建立连接。请检查网络</translation>
+        <translation>无法与 GitHub 建立连接。请检查网络，并且尝试使用加速器。</translation>
     </message>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="231"/>
@@ -318,12 +318,12 @@ Then you can continue</source>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="459"/>
         <source>Launcher reinstall error</source>
-        <translation>启动器重装错误</translation>
+        <translation>启动器重装发生错误</translation>
     </message>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="520"/>
         <source>Error while unzipping</source>
-        <translation>解压错误</translation>
+        <translation>解压发生错误</translation>
     </message>
     <message>
         <location filename="../../UI_logic/MainWindow.py" line="484"/>
