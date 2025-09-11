@@ -58,7 +58,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.21'
+        self.current_version = '2.22'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -309,7 +309,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def full_reinstall():
         try:
             print(f'Deleting documents folder...')
-            user_home = os.path.expanduser("~")
+            user_home = os.path.join("C:\\Users", os.getlogin())
             rmtree(os.path.join(user_home, "Documents", "Paradox Interactive", "Stellaris"))
         except Exception as e:
             print(f'Cant delete {e}')

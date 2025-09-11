@@ -27,7 +27,7 @@ def stellaris_path():
 
 
 def launcher_path():
-    user_home = os.path.expanduser("~")
+    user_home = os.path.join("C:\\Users", os.getlogin())
     launcher_path_1 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherInstallation")
     launcher_path_2 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherPathFolder")
 
