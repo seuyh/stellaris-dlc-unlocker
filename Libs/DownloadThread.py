@@ -52,6 +52,7 @@ class DownloaderThread(QtCore.QThread):
             file.close()
 
         except Exception as e:
+            self.cancelled = True
             self.error_signal.emit(e)
         finally:
             progress_percentage = int((self.dlc_downloaded / self.dlc_count) * 100)

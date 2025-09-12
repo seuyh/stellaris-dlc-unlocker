@@ -24,7 +24,7 @@ class ReinstallThread(QtCore.QThread):
         self.downloaded_launcher_dir = downloaded_launcher_dir
 
     def run(self):
-        user_home = os.path.expanduser("~")
+        user_home = os.path.join("C:\\Users", os.getlogin())
         if self.paradox_folder1 == self.msi_path:
             self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
         latest_file = None
@@ -67,6 +67,7 @@ class ReinstallThread(QtCore.QThread):
         print(f'Launcher Path: {msi_path}\nPath exists: {os.path.exists(msi_path)}')
         print(f'Deleting launcher...')
         try:
+
             self.paradox_remove(self.paradox_folder1, self.paradox_folder2, self.paradox_folder3, self.paradox_folder4)
 
             uninstall = Popen(['cmd.exe', '/c', 'msiexec', '/uninstall',
