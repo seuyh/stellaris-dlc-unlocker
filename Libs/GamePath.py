@@ -1,6 +1,18 @@
 import os.path
 import winreg
 from vdf import loads
+from subprocess import check_output
+
+
+def get_user_logon_name():
+    ps = "(Get-CimInstance -ClassName Win32_ComputerSystem).Username;"
+    res = check_output(
+        ["powershell", "-NoProfile", "-Command", ps],
+        universal_newlines=True
+    ).strip()
+    if "\\" in res:
+        res = res.rsplit("\\", 1)[1]
+    return res
 
 
 def get_steam_path():
@@ -27,7 +39,7 @@ def stellaris_path():
 
 
 def launcher_path():
-    user_home = os.path.join("C:\\Users", os.getlogin())
+    user_home = os.path.join("C:\\Users", get_user_logon_name())
     launcher_path_1 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherInstallation")
     launcher_path_2 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherPathFolder")
 

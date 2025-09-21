@@ -48,7 +48,6 @@ class DownloaderThread(QtCore.QThread):
                         self.speed_signal.emit(speed)
                         self.progress_signal_2.emit(progress_percentage_2)
 
-
             file.close()
 
         except Exception as e:

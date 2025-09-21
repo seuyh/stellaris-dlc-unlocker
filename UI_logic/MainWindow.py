@@ -4,6 +4,7 @@ from sys import argv
 from zipfile import ZipFile, BadZipFile
 
 import requests
+import winreg
 from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
@@ -16,8 +17,8 @@ from Libs.LauncherReinstall import ReinstallThread
 from Libs.logger import Logger
 from UI_logic.DialogWindow import dialogUi
 from UI_logic.ErrorWindow import errorUi
-from Libs.GamePath import stellaris_path, launcher_path
-from Libs.ServerData import dlc_data
+from Libs.GamePath import stellaris_path, launcher_path, get_user_logon_name
+from Libs.ServerData import get_dlc_data, get_server_data
 from Libs.CreamApiMaker import CreamAPI
 from Libs.DownloadThread import DownloaderThread
 from Libs.MD5Check import MD5
@@ -35,9 +36,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.diag = dialogUi()
         self.game_path = None
         self.not_updated_dlc = []
+        self.dlc_data = get_dlc_data()
+        self.server_url, self.server_alturl = (lambda d: (d['url'], d['alturl']))(get_server_data())
         self.path_change()
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
+
 
         self.draggable_elements = [self.frame_user, self.server_status, self.gh_status, self.lappname_title,
                                    self.frame_top]
@@ -58,7 +62,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.22'
+        self.current_version = '2.23'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -78,7 +82,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.en_lang.toggled.connect(self.switch_to_english)
         self.ru_lang.toggled.connect(self.switch_to_russian)
         self.cn_lang.toggled.connect(self.switch_to_chinese)
-        self.connection_thread = ConnectionCheckThread()
+        self.connection_thread = ConnectionCheckThread(self.server_url)
 
         self.connection_thread.github_status_checked.connect(self.handle_github_status)
         self.connection_thread.server_status_checked.connect(self.handle_server_status)
@@ -175,6 +179,27 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         errorUi.errorConstrict(self.error, heading, icon, btnOk, self, exitApp)
         self.error.exec_()
 
+    def remove_compatibility(self, exe_path):
+        exe_path = os.path.abspath(exe_path)
+        keys = [
+            (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"),
+            (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"),
+        ]
+
+        for root, subkey in keys:
+            try:
+                with winreg.OpenKey(root, subkey, 0, winreg.KEY_ALL_ACCESS) as key:
+                    try:
+                        value, regtype = winreg.QueryValueEx(key, exe_path)
+                        print(f"Found compatibility parameter: {value} in {root}\\{subkey}")
+                        winreg.DeleteValue(key, exe_path)
+                        print(f"Compatibility parameter deleted: {exe_path}")
+                    except FileNotFoundError:
+                        print(f"Сompatibility for ({subkey}) parameters are not set")
+                        pass
+            except FileNotFoundError:
+                continue
+
     def path_change(self):
         path = stellaris_path()
         if path:
@@ -265,7 +290,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             if self.dialogexec(self.tr('Connection error'), self.tr(
                     'Cant establish connection with server\nCheck your connection or you can try download DLC directly\nUnzip downloaded "dlc" folder to game folder\nThen you can continue'),
                                self.tr("Exit"), self.tr("Open")):
-                self.open_link_in_browser('https://mega.nz/folder/4zFRnD6a#aVGAK32ZHPxCp7bMtG87BA')
+                self.open_link_in_browser(self.server_alturl)
                 self.alternative_unloc_checkbox.setEnabled(False)
             else:
                 self.close()
@@ -274,7 +299,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.dlc_status_widget.clear()
         self.not_updated_dlc = self.checkDLCUpdate()
 
-        for dlc in dlc_data:
+        for dlc in self.dlc_data:
             dlc_name = dlc.get('dlc_name', '').strip()
             if not dlc_name:
                 continue
@@ -302,14 +327,14 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             return "LightCoral"
 
     def checkDLCUpdate(self):
-        md5_checker = MD5(f"{self.game_path}\\dlc", "stlunlocker.pro")
+        md5_checker = MD5(f"{self.game_path}\\dlc", self.server_url)
         return md5_checker.check_files()
 
     @staticmethod
     def full_reinstall():
         try:
             print(f'Deleting documents folder...')
-            user_home = os.path.join("C:\\Users", os.getlogin())
+            user_home = os.path.join("C:\\Users", get_user_logon_name())
             rmtree(os.path.join(user_home, "Documents", "Paradox Interactive", "Stellaris"))
         except Exception as e:
             print(f'Cant delete {e}')
@@ -332,7 +357,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         try:
             response = requests.get(
-                "https://stlunlocker.pro/unlocker/launcher-installer-windows_2024.13.msi",
+                f"https://{self.server_url}/unlocker/launcher-installer-windows_2024.13.msi",
                 stream=True)
             total_size_in_bytes = int(response.headers.get('content-length', 0))
             block_size = 1024
@@ -392,6 +417,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not os.path.exists(os.path.join(self.game_path, "dlc")):
             os.makedirs(os.path.join(self.game_path, "dlc"))
         if self.game_path:
+            self.remove_compatibility(f"{self.game_path}\stellaris.exe")
             self.is_downloading = True
             if self.update_dlc_button.isChecked():
                 print("Updating DLCs...")
@@ -420,14 +446,14 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                     self.download_thread.start()
 
             # Сначала заполняем очередь
-            for item in dlc_data:
+            for item in self.dlc_data:
                 if 'dlc_folder' in item and item['dlc_folder']:
                     self.dlc_count += 1
-            for dlc in dlc_data:
+            for dlc in self.dlc_data:
                 dlc_folder = dlc['dlc_folder']
                 if dlc_folder == '':
                     continue
-                file_url = f"{'https://stlunlocker.pro/unlocker/'}{dlc_folder}.zip"
+                file_url = f"https://{self.server_url}/unlocker/{dlc_folder}.zip"
                 save_path = os.path.join(self.game_path, 'dlc', f'{dlc_folder}.zip')
                 dlc_path = os.path.join(self.game_path, 'dlc', dlc_folder)
 
@@ -525,7 +551,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not self.skip_launcher_reinstall_checbox.isChecked():
             self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
                                                     paradox_folder4, self.launcher_downloaded,
-                                                    self.downloaded_launcher_dir)
+                                                    self.downloaded_launcher_dir, get_user_logon_name())
             # self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
             self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
             self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)

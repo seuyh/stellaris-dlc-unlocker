@@ -13,9 +13,10 @@ class ReinstallThread(QtCore.QThread):
     continue_reinstall = QtCore.pyqtSignal(str)
 
     def __init__(self, msi_path, paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4,
-                 launcher_downloaded, downloaded_launcher_dir):
+                 launcher_downloaded, downloaded_launcher_dir, user_logon_name):
         super().__init__()
         self.msi_path = msi_path
+        self.user_logon_name = user_logon_name
         self.paradox_folder1 = paradox_folder1
         self.paradox_folder2 = paradox_folder2
         self.paradox_folder3 = paradox_folder3
@@ -24,7 +25,7 @@ class ReinstallThread(QtCore.QThread):
         self.downloaded_launcher_dir = downloaded_launcher_dir
 
     def run(self):
-        user_home = os.path.join("C:\\Users", os.getlogin())
+        user_home = os.path.join("C:\\Users", self.user_logon_name)
         if self.paradox_folder1 == self.msi_path:
             self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
         latest_file = None
