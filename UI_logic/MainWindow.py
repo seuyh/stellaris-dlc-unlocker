@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgress
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
 from subprocess import run, CREATE_NO_WINDOW
 from pathlib import Path
+from locale import getlocale
 
 import UI.ui_main as ui_main
 from Libs.ConnectionCheck import ConnectionCheckThread
@@ -37,11 +38,11 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.game_path = None
         self.not_updated_dlc = []
         self.dlc_data = get_dlc_data()
+        self.user_logon_name = get_user_logon_name()
         self.server_url, self.server_alturl = (lambda d: (d['url'], d['alturl']))(get_server_data())
         self.path_change()
         self.kill_process('Paradox Launcher.exe')
         self.kill_process('stellaris.exe')
-
 
         self.draggable_elements = [self.frame_user, self.server_status, self.gh_status, self.lappname_title,
                                    self.frame_top]
@@ -82,6 +83,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.en_lang.toggled.connect(self.switch_to_english)
         self.ru_lang.toggled.connect(self.switch_to_russian)
         self.cn_lang.toggled.connect(self.switch_to_chinese)
+
         self.connection_thread = ConnectionCheckThread(self.server_url)
 
         self.connection_thread.github_status_checked.connect(self.handle_github_status)
@@ -112,8 +114,45 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.log_widget = self.log_widget
         self.log_widget.clear()
 
+    def get_app_language(self):
+        lang, _ = getlocale()
+        if not lang:
+            return "en"
+        lang = lang.lower()
+        if "russian" in lang:
+            return "ru"
+        elif "chinese" in lang:
+            return "zh"
+        else:
+            return "en"
+
+
+    def set_language_radio(self, lang):
+        if lang == "ru":
+            self.ru_lang.setChecked(True)
+        elif lang == "zh":
+            self.cn_lang.setChecked(True)
+        else:
+            self.en_lang.setChecked(True)
+
+        self.apply_language(lang)
+
+    def apply_language(self, lang):
+        app = QApplication.instance()
+        app.removeTranslator(self.translator)
+
+        if lang == "ru":
+            if self.translator.load(os.path.join("UI", "translations", "ru_RU.qm")):
+                app.installTranslator(self.translator)
+        elif lang == "zh":
+            if self.translator.load(os.path.join("UI", "translations", "zh_CN.qm")):
+                app.installTranslator(self.translator)
+
+        self.retranslateUi(self)
+
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
+        self.set_language_radio(self.get_app_language())
         print('Start connection check')
         QTimer.singleShot(5, self.start_connection_check)
         print('Start updates check')
@@ -280,7 +319,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.errorexec(self.tr("Can't establish connection with GitHub. Check internet"), self.tr("Ok"),
                            exitApp=True)
 
-
     def handle_server_status(self, status):
         if status:
             self.server_status.setChecked(True)
@@ -330,11 +368,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         md5_checker = MD5(f"{self.game_path}\\dlc", self.server_url)
         return md5_checker.check_files()
 
-    @staticmethod
-    def full_reinstall():
+    def full_reinstall(self):
         try:
             print(f'Deleting documents folder...')
-            user_home = os.path.join("C:\\Users", get_user_logon_name())
+            user_home = os.path.join("C:\\Users", self.user_logon_name)
             rmtree(os.path.join(user_home, "Documents", "Paradox Interactive", "Stellaris"))
         except Exception as e:
             print(f'Cant delete {e}')
@@ -417,7 +454,11 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not os.path.exists(os.path.join(self.game_path, "dlc")):
             os.makedirs(os.path.join(self.game_path, "dlc"))
         if self.game_path:
-            self.remove_compatibility(f"{self.game_path}\stellaris.exe")
+            try:
+                self.remove_compatibility(f"{self.game_path}\stellaris.exe")
+            except Exception as e:
+                print(f"Cant remove compatibility: {e}")
+                pass
             self.is_downloading = True
             if self.update_dlc_button.isChecked():
                 print("Updating DLCs...")
@@ -551,7 +592,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not self.skip_launcher_reinstall_checbox.isChecked():
             self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
                                                     paradox_folder4, self.launcher_downloaded,
-                                                    self.downloaded_launcher_dir, get_user_logon_name())
+                                                    self.downloaded_launcher_dir, self.user_logon_name)
             # self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
             self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
             self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)
@@ -618,6 +659,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         print('Copy complete')
         self.copy_files_radio.setChecked(True)
         self.lauch_game_checkbox.setVisible(True)
+        self.update_dlc_button.setVisible(False)
+        self.old_dlc_text.setVisible(False)
         self.done_button.setVisible(True)
         print('All done!')
 

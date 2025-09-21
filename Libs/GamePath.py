@@ -1,17 +1,25 @@
 import os.path
 import winreg
 from vdf import loads
-from subprocess import check_output
+import subprocess
 
 
 def get_user_logon_name():
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = subprocess.SW_HIDE
+
     ps = "(Get-CimInstance -ClassName Win32_ComputerSystem).Username;"
-    res = check_output(
+
+    res = subprocess.check_output(
         ["powershell", "-NoProfile", "-Command", ps],
-        universal_newlines=True
+        universal_newlines=True,
+        startupinfo=startupinfo
     ).strip()
+
     if "\\" in res:
-        res = res.rsplit("\\", 1)[1]
+        res = res = res.rsplit("\\", 1)[1]
+
     return res
 
 
