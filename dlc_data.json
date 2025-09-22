@@ -173,7 +173,7 @@
     },
     {
         "dlc_name": "Shadows of the Shroud",
-        "dlc_folder": ""
+        "dlc_folder": "dlc037_shadows_shroud"
     },
     {
         "dlc_name": "Stargazer Species Portrait",
@@ -184,3 +184,4 @@
         "dlc_folder": ""
     }
 ]
+
