@@ -304,6 +304,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                             if asset['name'].endswith('.exe'):
                                 exe_asset_url = asset['browser_download_url']
                         self.open_link_in_browser(exe_asset_url)
+                        self.close()
                 else:
                     print(f"Unlocker is up to date")
         except:
