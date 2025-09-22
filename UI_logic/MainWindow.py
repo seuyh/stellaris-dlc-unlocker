@@ -38,7 +38,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.game_path = None
         self.not_updated_dlc = []
         self.dlc_data = get_dlc_data()
-        self.user_logon_name = get_user_logon_name()
+        try:
+            self.user_logon_name = get_user_logon_name()
+        except:
+            self.user_logon_name = os.getlogin()
         self.server_url, self.server_alturl = (lambda d: (d['url'], d['alturl']))(get_server_data())
         self.path_change()
         self.kill_process('Paradox Launcher.exe')
