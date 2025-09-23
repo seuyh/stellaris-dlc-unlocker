@@ -6,7 +6,7 @@ from zipfile import ZipFile, BadZipFile
 import requests
 import winreg
 from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication, QCheckBox
 from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator, QLocale
 from subprocess import run, CREATE_NO_WINDOW
 from pathlib import Path
@@ -65,7 +65,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.263'
+        self.current_version = '2.27'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -90,6 +90,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         self.connection_thread.github_status_checked.connect(self.handle_github_status)
         self.connection_thread.server_status_checked.connect(self.handle_server_status)
+
+        # self.full_reinstall_checkbox.toggled.connect(self.on_full_reinstall_checkbox_toggled)
+        # self.alternative_unloc_checkbox.toggled.connect(self.alternative_unloc_checkbox)
+        # self.skip_launcher_reinstall_checbox.toggled.connect(self.skip_launcher_reinstall_checbox)
 
         self.setWindowTitle("Stellaris DLC Unlocker")
         self.setWindowIcon(QIcon(f'{self.parent_directory}/UI/icons/stellaris.png'))
@@ -158,6 +162,19 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             app.installTranslator(self.translator)
 
         self.retranslateUi(self)
+
+    def on_full_reinstall_checkbox_toggled(self, checked):
+        if checked:
+            self.skip_launcher_reinstall_checbox.setChecked(False)
+
+    def on_alternative_unloc_checkbox_toggled(self, checked):
+        if checked:
+            self.skip_launcher_reinstall_checbox.setChecked(False)
+
+    def on_skip_launcher_reinstall_checbox_toggled(self, checked):
+        if checked:
+            self.full_reinstall_checkbox.setChecked(False)
+            self.alternative_unloc_checkbox.setChecked(False)
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
