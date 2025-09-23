@@ -7,10 +7,9 @@ import requests
 import winreg
 from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
-from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator
+from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator, QLocale
 from subprocess import run, CREATE_NO_WINDOW
 from pathlib import Path
-from locale import getlocale
 
 import UI.ui_main as ui_main
 from Libs.ConnectionCheck import ConnectionCheckThread
@@ -66,7 +65,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.25'
+        self.current_version = '2.263'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -118,17 +117,20 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.log_widget.clear()
 
     def get_app_language(self):
-        lang, _ = getlocale()
+        lang = QLocale.system().name().lower()
+        print(f"Detected language: {lang}")
         if not lang:
             return "en"
         lang = lang.lower()
-        if "russian" in lang:
+        if lang.startswith("ru"):
             return "ru"
-        elif "chinese" in lang:
+        elif lang.startswith("zh"):
             return "zh"
         else:
             return "en"
 
+    def apply_initial_language(self):
+        self.set_language_radio(self.get_app_language())
 
     def set_language_radio(self, lang):
         if lang == "ru":
@@ -143,23 +145,27 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def apply_language(self, lang):
         app = QApplication.instance()
         app.removeTranslator(self.translator)
+        print(f"Trying to apply language: {lang}")
 
         if lang == "ru":
-            if self.translator.load(os.path.join("UI", "translations", "ru_RU.qm")):
-                app.installTranslator(self.translator)
+            ok = self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "ru_RU.qm"))
         elif lang == "zh":
-            if self.translator.load(os.path.join("UI", "translations", "zh_CN.qm")):
-                app.installTranslator(self.translator)
+            ok = self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "zh_CN.qm"))
+        else:
+            ok = False
+
+        if ok:
+            app.installTranslator(self.translator)
 
         self.retranslateUi(self)
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
-        self.set_language_radio(self.get_app_language())
+        self.apply_initial_language()
         print('Start connection check')
-        QTimer.singleShot(5, self.start_connection_check)
+        QTimer.singleShot(2, self.start_connection_check)
         print('Start updates check')
-        QTimer.singleShot(4, lambda: self.check_for_updates(self.current_version))
+        QTimer.singleShot(2, lambda: self.check_for_updates(self.current_version))
 
     def switch_to_russian(self):
         if self.ru_lang.isChecked():
@@ -294,7 +300,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 latest_release = response.json()
                 latest_version = latest_release['tag_name']
 
-                if latest_version != current_version:
+                if latest_version > current_version:
                     print(f"Found new version: {latest_version}.")
                     if self.dialogexec(self.tr('New version'),
                                        self.tr('New version found\nPlease update the program to correctly work '),
@@ -305,6 +311,9 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                                 exe_asset_url = asset['browser_download_url']
                         self.open_link_in_browser(exe_asset_url)
                         self.close()
+                elif latest_version < current_version:
+                    self.errorexec(self.tr("Beta"), self.tr("Ok"),
+                                   exitApp=False)
                 else:
                     print(f"Unlocker is up to date")
         except:
@@ -593,6 +602,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.download_files_radio.setChecked(True)
         print('Reinstalling')
         paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4 = launcher_path()
+        print(f"Launcher folders: [{paradox_folder1, paradox_folder2, paradox_folder3, paradox_folder4}]")
         if not self.skip_launcher_reinstall_checbox.isChecked():
             self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
                                                     paradox_folder4, self.launcher_downloaded,

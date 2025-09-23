@@ -27,14 +27,17 @@ class ReinstallThread(QtCore.QThread):
     def run(self):
         user_home = os.path.join("C:\\Users", self.user_logon_name)
         if self.paradox_folder1 == self.msi_path:
-            self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
+            self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive",
+                                                "launcher")
         latest_file = None
         latest_version = (0, 0)
+
         def extract_version(filename):
             match = search(r'launcher-installer-windows_(\d+\.\d+)', filename)
             if match:
                 return tuple(map(int, match.group(1).split('.')))
             return None
+
         msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
         if self.launcher_downloaded:
             print('Alt unlock. Deleting all other launches')
@@ -103,15 +106,27 @@ class ReinstallThread(QtCore.QThread):
             if os.path.exists(paradox_folder1):
                 print(f'Removing {paradox_folder1}')
                 rmtree(paradox_folder1)
+        except Exception as e:
+            print(f'Cant delete {e}')
+            pass
 
+        try:
             if os.path.exists(paradox_folder2):
                 print(f'Removing {paradox_folder2}')
                 rmtree(paradox_folder2)
+        except Exception as e:
+            print(f'Cant delete {e}')
+            pass
 
+        try:
             if os.path.exists(paradox_folder3):
                 print(f'Removing {paradox_folder3}')
                 rmtree(paradox_folder3)
+        except Exception as e:
+            print(f'Cant delete {e}')
+            pass
 
+        try:
             if os.path.exists(paradox_folder4):
                 print(f'Removing {paradox_folder4}')
                 rmtree(paradox_folder4)

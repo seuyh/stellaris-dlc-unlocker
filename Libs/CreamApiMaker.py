@@ -58,7 +58,7 @@ class CreamAPI(QtCore.QThread):
             "Upgrade-Insecure-Requests": "1"
         }
         try:
-            response = get(url, headers=headers, timeout=3)
+            response = get(url, headers=headers, timeout=8)
             data = response.json()
             dlc_list_json = data['data'][str(app_id)]['extended']['listofdlc']
             dlc_list = dlc_list_json.split(',')

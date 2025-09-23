@@ -46,19 +46,30 @@ def stellaris_path():
         return 0
 
 
+def is_drive_root(path: str) -> bool:
+    if not path:
+        return False
+    norm = os.path.normpath(path)
+    drive, tail = os.path.splitdrive(norm)
+    return bool(drive) and (tail in ("", os.sep))
+
+
 def launcher_path():
     try:
         user_logon_name = get_user_logon_name()
     except:
         user_logon_name = os.getlogin()
+
     user_home = os.path.join("C:\\Users", user_logon_name)
+
     launcher_path_1 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherInstallation")
     launcher_path_2 = reg_search(r"Software\Paradox Interactive\Paradox Launcher v2", "LauncherPathFolder")
 
-    if not launcher_path_1:
+    if (launcher_path_1 and is_drive_root(launcher_path_1)) or not launcher_path_1:
         launcher_path_1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive", "launcher")
-    if not launcher_path_2:
+    if (launcher_path_2 and is_drive_root(launcher_path_2)) or not launcher_path_2:
         launcher_path_2 = os.path.join(user_home, "AppData", "Local", "Paradox Interactive")
+
 
     launcher_path_3 = os.path.join(user_home, "AppData", "Roaming", "Paradox Interactive")
     launcher_path_4 = os.path.join(user_home, "AppData", "Roaming", "paradox-launcher-v2")
