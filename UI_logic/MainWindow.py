@@ -65,7 +65,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.27'
+        self.current_version = '2.28'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -655,13 +655,18 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         #     pass
         try:
             print('Unzipping...')
+            zip_file = None
             zip_files = [file for file in os.listdir(os.path.join(self.game_path, 'dlc')) if file.endswith('.zip')]
             if zip_files:
                 for zip_file in zip_files:
                     self.unzip_and_replace(zip_file)
         except Exception as e:
-            print(f"Error while unzipping {e}")
-            self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
+            if zip_file:
+                print(f"Error while unzipping {zip_file}, {e}")
+                self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
+            else:
+                print(f"Error before processing zip files: {e}")
+                self.errorexec(self.tr("Error while preparing to unzip"), self.tr("Exit"), exitApp=True)
 
         if os.path.exists(
                 os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')):

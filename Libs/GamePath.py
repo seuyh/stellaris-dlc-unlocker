@@ -4,22 +4,34 @@ from vdf import loads
 import subprocess
 
 
+def get_powershell_path():
+    candidates = [
+        r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+        r"C:\Program Files\PowerShell\7\pwsh.exe"
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
+
 def get_user_logon_name():
+    ps = "(Get-CimInstance -ClassName Win32_ComputerSystem).Username"
+    powershell = get_powershell_path()
+    if not powershell:
+        raise RuntimeError("PowerShell not found on this system")
+
     startupinfo = subprocess.STARTUPINFO()
     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     startupinfo.wShowWindow = subprocess.SW_HIDE
 
-    ps = "(Get-CimInstance -ClassName Win32_ComputerSystem).Username;"
-
     res = subprocess.check_output(
-        ["powershell", "-NoProfile", "-Command", ps],
+        [powershell, "-NoProfile", "-Command", ps],
         universal_newlines=True,
         startupinfo=startupinfo
     ).strip()
 
     if "\\" in res:
-        res = res = res.rsplit("\\", 1)[1]
-
+        res = res.rsplit("\\", 1)[1]
     return res
 
 
