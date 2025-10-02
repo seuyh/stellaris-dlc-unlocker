@@ -54,13 +54,11 @@ Stellaris DLC 解锁器是一款用于简化《群星（Stellaris）》游戏 DL
 
 ## 联系开发者
 
-如果您有任何问题、问题或建议，请通过 Telegram 联系我 [@kanuniya](https://t.me/kanuniya)。
-
-我重视您的意见，并将尽快回复！
+https://github.com/seuyh/stellaris-dlc-unlocker/issues
 
 ## 特别感谢
 
-该产品的灵感来自 [He11oThere](https://t.me/Temri1337)，他支持并更新了 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040)上关于手动 DLC 解锁的专题。
+该产品的灵感来自 [He11oThere](https://github.com/seuyh/stellaris-dlc-unlocker/issues)，他支持并更新了 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040)上关于手动 DLC 解锁的专题。
 
 翻译成简体中文 [wuyilingwei](https://github.com/wuyilingwei)。
 
