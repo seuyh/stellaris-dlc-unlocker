@@ -49,13 +49,11 @@ This project is licensed under the [Creative Commons Attribution-NonCommercial-N
 
 ## Contact the Developer
 
-If you have any questions, issues, or suggestions, please contact me on Telegram [@kanuniya](https://t.me/kanuniya).
-
-I value your opinion and will try to respond as soon as possible!
+https://github.com/seuyh/stellaris-dlc-unlocker/issues
 
 ## Special Thanks
 
-The idea for this product is inspired by [He11oThere](https://t.me/Temri1337), who supported and updated the topic dedicated to manual DLC unlocking on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
+The idea for this product is inspired by [He11oThere](https://github.com/seuyh/stellaris-dlc-unlocker/issues), who supported and updated the topic dedicated to manual DLC unlocking on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
 
 Translation into Simple Chinese: [wuyilingwei](https://github.com/wuyilingwei).
 
