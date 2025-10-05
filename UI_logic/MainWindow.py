@@ -6,8 +6,8 @@ from zipfile import ZipFile, BadZipFile
 import requests
 import winreg
 from PyQt5.QtGui import QDesktopServices, QColor, QBrush, QIcon
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication, QCheckBox
-from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator, QLocale
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from PyQt5.QtCore import Qt, QUrl, QTimer, QTranslator, QLocale, QObject, pyqtSignal, QThread
 from subprocess import run, CREATE_NO_WINDOW
 from pathlib import Path
 
@@ -24,6 +24,75 @@ from Libs.DownloadThread import DownloaderThread
 from Libs.MD5Check import MD5
 
 
+class SetupWorker(QObject):
+    log_message = pyqtSignal(str)
+    initial_data_ready = pyqtSignal(dict)
+    update_info = pyqtSignal(dict)
+    dlc_check_complete = pyqtSignal(list)
+    connection_check_ready = pyqtSignal(object)
+    finished = pyqtSignal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
+        self.server_url = None
+
+    def run(self):
+        dlc_data = get_dlc_data()
+        try:
+            user_logon_name = get_user_logon_name()
+        except:
+            user_logon_name = os.getlogin()
+
+        server_data = get_server_data()
+        self.server_url = server_data.get('url')
+        self.server_alturl = server_data.get('alturl')
+        self.alt_launcher_name = server_data.get('altlauncher')
+        path = stellaris_path()
+
+        initial_data = {
+            'dlc_data': dlc_data,
+            'user_logon_name': user_logon_name,
+            'server_url': self.server_url,
+            'server_alturl': self.server_alturl,
+            'alt_launcher_name': self.alt_launcher_name,
+            'path': path
+        }
+        self.initial_data_ready.emit(initial_data)
+
+        self.kill_process('Paradox Launcher.exe')
+        self.kill_process('stellaris.exe')
+
+        if self.server_url:
+            connection_thread = ConnectionCheckThread(self.server_url)
+            self.connection_check_ready.emit(connection_thread)
+
+        if path and self.server_url:
+            md5_checker = MD5(f"{path}\\dlc", self.server_url)
+            not_updated_dlc = md5_checker.check_files()
+            self.dlc_check_complete.emit(not_updated_dlc)
+        else:
+            self.dlc_check_complete.emit([])
+
+        try:
+            response = requests.get(self.GITHUB_REPO, timeout=5)
+            if response.status_code == 200:
+                self.update_info.emit(response.json())
+            else:
+                self.update_info.emit({})
+        except requests.RequestException:
+            self.update_info.emit({})
+
+        self.finished.emit()
+
+    def kill_process(self, process_name):
+        self.log_message.emit(f'Killing {process_name}')
+        try:
+            run(["taskkill", "/F", "/IM", process_name], check=True, creationflags=CREATE_NO_WINDOW)
+        except:
+            self.log_message.emit(f'No process named {process_name}')
+
+
 class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -36,15 +105,10 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.diag = dialogUi()
         self.game_path = None
         self.not_updated_dlc = []
-        self.dlc_data = get_dlc_data()
-        try:
-            self.user_logon_name = get_user_logon_name()
-        except:
-            self.user_logon_name = os.getlogin()
-        self.server_url, self.server_alturl = (lambda d: (d['url'], d['alturl']))(get_server_data())
-        self.path_change()
-        self.kill_process('Paradox Launcher.exe')
-        self.kill_process('stellaris.exe')
+        self.dlc_data = []
+        self.user_logon_name = ''
+        self.server_url, self.server_alturl, self.alt_launcher_name = '', '', ''
+        self.connection_thread = None
 
         self.draggable_elements = [self.frame_user, self.server_status, self.gh_status, self.lappname_title,
                                    self.frame_top]
@@ -64,9 +128,15 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.download_thread = None
         self.creamapidone = False
 
-        self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
         self.current_version = '2.29'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
+
+        self.next_button.setEnabled(False)
+        self.original_next_button_text = self.next_button.text()
+        self.spinner_chars = ['/', '-', '\\', '|']
+        self.spinner_index = 0
+        self.spinner_timer = QTimer(self)
+        self.spinner_timer.timeout.connect(self.update_spinner)
 
         self.copy_files_radio.setVisible(False)
         self.download_files_radio.setVisible(False)
@@ -78,22 +148,13 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.current_dlc_progress_bar.setVisible(False)
         self.lauch_game_checkbox.setVisible(False)
         self.done_button.setVisible(False)
-
         self.speed_label.setVisible(False)
         self.update_dlc_button.setVisible(False)
         self.old_dlc_text.setVisible(False)
+
         self.en_lang.toggled.connect(self.switch_to_english)
         self.ru_lang.toggled.connect(self.switch_to_russian)
         self.cn_lang.toggled.connect(self.switch_to_chinese)
-
-        self.connection_thread = ConnectionCheckThread(self.server_url)
-
-        self.connection_thread.github_status_checked.connect(self.handle_github_status)
-        self.connection_thread.server_status_checked.connect(self.handle_server_status)
-
-        # self.full_reinstall_checkbox.toggled.connect(self.on_full_reinstall_checkbox_toggled)
-        # self.alternative_unloc_checkbox.toggled.connect(self.alternative_unloc_checkbox)
-        # self.skip_launcher_reinstall_checbox.toggled.connect(self.skip_launcher_reinstall_checbox)
 
         self.setWindowTitle("Stellaris DLC Unlocker")
         self.setWindowIcon(QIcon(f'{self.parent_directory}/UI/icons/stellaris.png'))
@@ -110,15 +171,93 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.bn_home.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1 if self.continued else 0))
         self.unlock_button.clicked.connect(self.unlock)
         self.done_button.clicked.connect(self.finish)
-
         self.bn_close.clicked.connect(
             lambda: self.close() if self.dialogexec(self.tr("Close"), self.tr("Exit Unlocker?"), self.tr("No"),
                                                     self.tr("Yes")) else None)
-
         self.bottom_label_github.linkActivated.connect(self.open_link_in_browser)
+
         self.logger = Logger('unlocker.log', self.log_widget)
-        self.log_widget = self.log_widget
         self.log_widget.clear()
+
+        self.setup_thread = QThread()
+        self.setup_worker = SetupWorker()
+        self.setup_worker.moveToThread(self.setup_thread)
+
+        self.setup_thread.started.connect(self.setup_worker.run)
+        self.setup_worker.finished.connect(self.on_loading_complete)
+        self.setup_worker.finished.connect(self.setup_thread.quit)
+        self.setup_worker.finished.connect(self.setup_worker.deleteLater)
+        self.setup_thread.finished.connect(self.setup_thread.deleteLater)
+        self.setup_worker.initial_data_ready.connect(self.on_initial_data_ready)
+        self.setup_worker.dlc_check_complete.connect(self.on_dlc_check_complete)
+        self.setup_worker.update_info.connect(self.on_update_info_ready)
+        self.setup_worker.connection_check_ready.connect(self.on_connection_check_ready)
+        self.setup_worker.log_message.connect(self.add_log_message)
+
+    def add_log_message(self, message):
+        print(message)
+
+    def update_spinner(self):
+        self.spinner_index = (self.spinner_index + 1) % len(self.spinner_chars)
+        self.next_button.setText(self.spinner_chars[self.spinner_index])
+
+    def on_loading_complete(self):
+        print("All background tasks are complete.")
+        self.spinner_timer.stop()
+        self.next_button.setText(self.original_next_button_text)
+        self.retranslateUi(self)
+        self.next_button.setEnabled(True)
+
+    def on_initial_data_ready(self, data):
+        self.dlc_data = data['dlc_data']
+        self.user_logon_name = data['user_logon_name']
+        self.server_url = data['server_url']
+        self.server_alturl = data['server_alturl']
+        self.alt_launcher_name = data['alt_launcher_name']
+
+        if data['path']:
+            path = data['path']
+            print(f'Auto detected game path: {path}')
+            self.game_path_line.setText(path)
+            self.game_path = os.path.normpath(path)
+        else:
+            print('Cant detect game path')
+
+    def on_dlc_check_complete(self, not_updated_dlc):
+        self.not_updated_dlc = not_updated_dlc
+        if self.game_path:
+            self.loadDLCNames()
+
+    def on_connection_check_ready(self, connection_thread):
+        self.connection_thread = connection_thread
+        self.connection_thread.github_status_checked.connect(self.handle_github_status)
+        self.connection_thread.server_status_checked.connect(self.handle_server_status)
+        self.connection_thread.start()
+
+    def on_update_info_ready(self, latest_release):
+        if not latest_release:
+            print("Cant check updates")
+            return
+
+        latest_version = latest_release.get('tag_name')
+        current_version = self.current_version
+
+        if latest_version and latest_version > current_version:
+            print(f"Found new version: {latest_version}.")
+            if self.dialogexec(self.tr('New version'),
+                               self.tr('New version found\nPlease update the program to correctly work '),
+                               self.tr('Cancel'), self.tr('Update')):
+                exe_asset_url = None
+                for asset in latest_release.get('assets', []):
+                    if asset.get('name', '').endswith('.exe'):
+                        exe_asset_url = asset.get('browser_download_url')
+                if exe_asset_url:
+                    self.open_link_in_browser(exe_asset_url)
+                self.close()
+        elif latest_version and latest_version < current_version:
+            self.errorexec(self.tr("Beta"), self.tr("Ok"), exitApp=False)
+        else:
+            print(f"Unlocker is up to date")
 
     def get_app_language(self):
         lang = QLocale.system().name().lower()
@@ -143,30 +282,32 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.cn_lang.setChecked(True)
         else:
             self.en_lang.setChecked(True)
-
         self.apply_language(lang)
 
     def apply_language(self, lang):
         app = QApplication.instance()
         app.removeTranslator(self.translator)
         print(f"Trying to apply language: {lang}")
-
+        translation_path = ""
         if lang == "ru":
-            ok = self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "ru_RU.qm"))
+            translation_path = os.path.join(self.parent_directory, "UI", "translations", "ru_RU.qm")
         elif lang == "zh":
-            ok = self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "zh_CN.qm"))
-        else:
-            ok = False
+            translation_path = os.path.join(self.parent_directory, "UI", "translations", "zh_CN.qm")
 
-        if ok:
+        if translation_path and self.translator.load(translation_path):
             app.installTranslator(self.translator)
+            print(f"{lang} translate Successfully loaded")
+        else:
+            if translation_path:
+                print(f"Unable to load {lang}.qm")
 
         self.retranslateUi(self)
 
     def on_full_reinstall_checkbox_toggled(self, checked):
         if checked:
-            if self.dialogexec("", self.tr("<html><head/><body><p>This function will delete all saves and presets of mods.</p><p>It is only needed if something did not work during the normal installation</p></body></html>"), self.tr("No"),
-                               self.tr("Yes")):
+            if self.dialogexec("",
+                               self.tr("<html><head/><body><p>This function will delete all saves and presets of mods.</p><p>It is only needed if something did not work during the normal installation</p></body></html>"),
+                               self.tr("No"), self.tr("Yes")):
                 self.full_reinstall_checkbox.setChecked(True)
                 self.skip_launcher_reinstall_checbox.setChecked(False)
             else:
@@ -181,51 +322,34 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.full_reinstall_checkbox.setChecked(False)
             self.alternative_unloc_checkbox.setChecked(False)
 
-
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
         self.apply_initial_language()
         print('Start connection check')
-        QTimer.singleShot(2, self.start_connection_check)
+        if not self.setup_thread.isRunning():
+            self.spinner_timer.start(150)
+            self.setup_thread.start()
         print('Start updates check')
-        QTimer.singleShot(2, lambda: self.check_for_updates(self.current_version))
 
     def switch_to_russian(self):
         if self.ru_lang.isChecked():
-            if self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "ru_RU.qm")):
-                print("ru_RU translate Successfully loaded")
-                QApplication.installTranslator(self.translator)
-                self.retranslateUi(self)
-            else:
-                print("Unable to load ru_RU.qm")
+            self.apply_language("ru")
+            print("ru_RU translate Successfully loaded")
 
     def switch_to_english(self):
         if self.en_lang.isChecked():
-            QApplication.removeTranslator(self.translator)
+            self.apply_language("en")
             print("en-US translate Successfully loaded")
-            self.retranslateUi(self)
 
     def switch_to_chinese(self):
         if self.cn_lang.isChecked():
-            if self.translator.load(os.path.join(self.parent_directory, "UI", "translations", "zh_CN.qm")):
-                print("zh_CN translate Successfully loaded")
-                QApplication.installTranslator(self.translator)
-                self.retranslateUi(self)
-            else:
-                print("Unable to load zh_CN.qm")
+            self.apply_language("zh")
+            print("zh_CN translate Successfully loaded")
 
     @staticmethod
     def open_link_in_browser(url):
         print(f"Attempting to open URL: {url}")
         QDesktopServices.openUrl(QUrl(url))
-
-    @staticmethod
-    def kill_process(process_name):
-        print(f'Killing {process_name}')
-        try:
-            run(["taskkill", "/F", "/IM", process_name], check=True, creationflags=CREATE_NO_WINDOW)
-        except:
-            print(f'No process named {process_name}')
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -241,12 +365,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.is_dragging = False
 
     def dialogexec(self, heading, message, btn1, btn2, icon=":/icons/icons/1x/errorAsset 55.png"):
-        print(f'Dialog exec {heading, message, btn1, btn2, icon}')
+        print(f'Dialog exec {heading, message}')
         dialogUi.dialogConstrict(self.diag, heading, message, btn1, btn2, icon, self)
         return self.diag.exec_()
 
     def errorexec(self, heading, btnOk, icon=":/icons/icons/1x/closeAsset 43.png", exitApp=False):
-        print(f'Error exec {heading, btnOk, icon, exitApp}')
+        print(f'Error exec {heading, exitApp}')
         errorUi.errorConstrict(self.error, heading, icon, btnOk, self, exitApp)
         self.error.exec_()
 
@@ -266,43 +390,30 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                         winreg.DeleteValue(key, exe_path)
                         print(f"Compatibility parameter deleted: {exe_path}")
                     except FileNotFoundError:
-                        print(f"Сompatibility for ({subkey}) parameters are not set")
+                        print(f"Compatibility for ({subkey}) parameters are not set")
                         pass
             except FileNotFoundError:
                 continue
-
-    def path_change(self):
-        path = stellaris_path()
-        if path:
-            print(f'Auto detected game path: {path}')
-            self.game_path_line.setText(path)
-            self.game_path = path.replace("/", "\\")
-            self.loadDLCNames()
-        else:
-            print(f'Cant detect game path')
-
     def browse_folder(self):
         directory = QFileDialog.getExistingDirectory(self, self.tr("Choose Stellaris path"),
                                                      self.game_path_line.text())
-        if directory:
-            if os.path.isfile(os.path.join(directory, "stellaris.exe")):
-                self.game_path_line.setText(directory)
-                self.game_path = directory.replace("/", "\\")
-                print(f'Path browsed: {self.game_path}')
-                self.loadDLCNames()
-            else:
-                print('Path browsed incorrectly')
-                self.errorexec(self.tr("This is not Stellaris path"), self.tr("Ok"))
+        directory = os.path.normpath(directory)
+        if directory and os.path.isfile(os.path.join(directory, "stellaris.exe")):
+            self.game_path_line.setText(directory)
+            self.game_path = directory
+            print(f'Path browsed: {self.game_path}')
+            if self.server_url:
+                md5_checker = MD5(f"{self.game_path}\\dlc", self.server_url)
+                self.on_dlc_check_complete(md5_checker.check_files())
+        else:
+            print('Path browsed incorrectly')
+            self.errorexec(self.tr("This is not Stellaris path"), self.tr("Ok"))
 
     def path_check(self):
-        path = self.game_path_line.text().replace("/", "\\")
-        try:
-            if os.path.isfile(os.path.join(path, "stellaris.exe")):
-                print(f'Game path: {path}')
-                return path
-        except:
-            pass
-
+        path = os.path.normpath(self.game_path_line.text())
+        if path and os.path.isfile(os.path.join(path, "stellaris.exe")):
+            print(f'Game path: {path}')
+            return path
         self.errorexec(self.tr("Please choose game path"), self.tr("Ok"))
         return False
 
@@ -315,52 +426,17 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.update_dlc_button.setChecked(False)
             print("All DlCs is up to date or server return error")
 
-    def check_for_updates(self, current_version):
-        try:
-            response = requests.get(self.GITHUB_REPO)
-            if response.status_code == 200:
-                response.raise_for_status()
-                latest_release = response.json()
-                latest_version = latest_release['tag_name']
-
-                if latest_version > current_version:
-                    print(f"Found new version: {latest_version}.")
-                    if self.dialogexec(self.tr('New version'),
-                                       self.tr('New version found\nPlease update the program to correctly work '),
-                                       self.tr('Cancel'), self.tr('Update')):
-                        exe_asset_url = None
-                        for asset in latest_release['assets']:
-                            if asset['name'].endswith('.exe'):
-                                exe_asset_url = asset['browser_download_url']
-                        self.open_link_in_browser(exe_asset_url)
-                        self.close()
-                elif latest_version < current_version:
-                    self.errorexec(self.tr("Beta"), self.tr("Ok"),
-                                   exitApp=False)
-                else:
-                    print(f"Unlocker is up to date")
-        except:
-            print("Cant check updates")
-            pass
-
-    def start_connection_check(self):
-        self.connection_thread.start()
-
     def handle_github_status(self, status):
-        if status:
-            self.gh_status.setChecked(True)
-            print('GitHub connection established')
-        else:
-            print('GitHub connection cant be established')
+        self.gh_status.setChecked(status)
+        print('GitHub connection established' if status else 'GitHub connection cant be established')
+        if not status:
             self.errorexec(self.tr("Can't establish connection with GitHub. Check internet"), self.tr("Ok"),
                            exitApp=True)
 
     def handle_server_status(self, status):
-        if status:
-            self.server_status.setChecked(True)
-            print('Server connection established')
-        else:
-            print('Server connection cant be established')
+        self.server_status.setChecked(status)
+        print('Server connection established' if status else 'Server connection cant be established')
+        if not status:
             if self.dialogexec(self.tr('Connection error'), self.tr(
                     'Cant establish connection with server\nCheck your connection or you can try download DLC directly\nUnzip downloaded "dlc" folder to game folder\nThen you can continue'),
                                self.tr("Exit"), self.tr("Open")):
@@ -371,15 +447,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
     def loadDLCNames(self):
         self.dlc_status_widget.clear()
-        self.not_updated_dlc = self.checkDLCUpdate()
-
         for dlc in self.dlc_data:
             dlc_name = dlc.get('dlc_name', '').strip()
             if not dlc_name:
                 continue
 
             item = QListWidgetItem(dlc_name)
-
             status_color = self.checkDLCStatus(dlc.get('dlc_folder', ''))
 
             if status_color != 'black':
@@ -389,20 +462,14 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                 self.dlc_status_widget.addItem(item)
 
     def checkDLCStatus(self, dlc_folder):
-        if not dlc_folder:
+        if not dlc_folder or not self.game_path:
             return "black"
         dlc_path_folder = os.path.join(self.game_path, "dlc", dlc_folder)
         dlc_path_zip = os.path.join(self.game_path, "dlc", f'{dlc_folder}.zip')
         if os.path.exists(dlc_path_folder) or os.path.exists(dlc_path_zip):
-            if dlc_folder in self.not_updated_dlc:
-                return "orange"
-            return "teal"
+            return "orange" if dlc_folder in self.not_updated_dlc else "teal"
         else:
             return "LightCoral"
-
-    def checkDLCUpdate(self):
-        md5_checker = MD5(f"{self.game_path}\\dlc", self.server_url)
-        return md5_checker.check_files()
 
     def full_reinstall(self):
         try:
@@ -410,15 +477,19 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             user_home = os.path.join("C:\\Users", self.user_logon_name)
             rmtree(os.path.join(user_home, "Documents", "Paradox Interactive", "Stellaris"))
         except Exception as e:
-            print(f'Cant delete {e}')
-            pass
+            print(f'Cant delete documents folder: {e}')
+        try:
+            print(f'Deleting dlc folder...')
+            rmtree(os.path.join(self.game_path, "dlc"))
+        except Exception as e:
+            print(f'Cant delete dlc folder: {e}')
 
     def download_alt_method(self):
         print('Downloading alt launcher')
         file = argv[0]
         dir = os.path.dirname(file)
         print(f'Path to download: {dir}')
-        self.downloaded_launcher_dir = f'{dir}\\launcher-installer-windows_2024.13.msi'
+        self.downloaded_launcher_dir = f'{dir}\\{self.alt_launcher_name}'
         print(f'Download path {self.downloaded_launcher_dir}')
         print(f'Path exist: {os.path.isfile(self.downloaded_launcher_dir)}')
         if os.path.isfile(self.downloaded_launcher_dir):
@@ -427,10 +498,11 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         progress_dialog.setWindowTitle(self.tr('Downloading'))
         progress_dialog.setWindowModality(2)
         progress_dialog.show()
+        download_breaked = 0
 
         try:
             response = requests.get(
-                f"https://{self.server_url}/unlocker/launcher-installer-windows_2024.13.msi",
+                f"https://{self.server_url}/unlocker/{self.alt_launcher_name}",
                 stream=True)
             total_size_in_bytes = int(response.headers.get('content-length', 0))
             block_size = 1024
@@ -438,7 +510,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
             with open(self.downloaded_launcher_dir, 'wb') as file:
                 for data in response.iter_content(block_size):
-                    download_breaked = 0
                     if progress_dialog.wasCanceled():
                         download_breaked = 1
                         break
@@ -463,7 +534,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if not self.path_check():
             print('Error: incorrect path, return')
             return
-        self.game_path = self.game_path_line.text().replace("/", "\\")
+        self.game_path = os.path.normpath(self.game_path_line.text())
         print('Unlock started')
         print(
             f'Settings:\nPath: {self.game_path}\nFull reinstall: {self.full_reinstall_checkbox.isChecked()}\nAlt unlock: {self.alternative_unloc_checkbox.isChecked()}\nSkip reinstall: {self.skip_launcher_reinstall_checbox.isChecked()}')
@@ -491,7 +562,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             os.makedirs(os.path.join(self.game_path, "dlc"))
         if self.game_path:
             try:
-                self.remove_compatibility(f"{self.game_path}\stellaris.exe")
+                self.remove_compatibility(f"{self.game_path}\\stellaris.exe")
             except Exception as e:
                 print(f"Cant remove compatibility: {e}")
                 pass
@@ -511,18 +582,15 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             def start_next_download():
                 if self.download_queue:
                     file_url, save_path = self.download_queue.pop(0)
+                    print(f"Now downloading: {os.path.basename(file_url)}")
                     self.download_thread = DownloaderThread(file_url, save_path, self.dlc_downloaded, self.dlc_count)
-
-                    # Подключаем сигналы к обработчикам
                     self.download_thread.progress_signal.connect(self.update_progress)
                     self.download_thread.progress_signal_2.connect(self.update_progress_2)
                     self.download_thread.error_signal.connect(self.show_error)
                     self.download_thread.speed_signal.connect(self.show_download_speed)
-                    self.download_thread.finished.connect(
-                        start_next_download)
+                    self.download_thread.finished.connect(start_next_download)
                     self.download_thread.start()
 
-            # Сначала заполняем очередь
             for item in self.dlc_data:
                 if 'dlc_folder' in item and item['dlc_folder']:
                     self.dlc_count += 1
@@ -540,7 +608,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                     self.download_queue.append((file_url, save_path))
                 else:
                     self.dlc_downloaded += 1
-                    self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
+                    if self.dlc_count > 0:
+                        self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
 
             if self.download_queue:
                 print('Starting downloads...')
@@ -578,7 +647,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     @staticmethod
     def delete_folders(base_path, folders):
         base_path = Path(base_path)
-
         for name in folders:
             dir_path = base_path / name
             try:
@@ -594,7 +662,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.dlc_download_progress_bar.setValue(value)
         if by_download:
             self.dlc_downloaded += 1
-            self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
+            if self.dlc_count > 0:
+                self.update_progress(int((self.dlc_downloaded / self.dlc_count) * 100))
             self.loadDLCNames()
         if value == 100:
             self.speed_label.setText(f"")
@@ -630,7 +699,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             self.reinstall_thread = ReinstallThread(self.game_path, paradox_folder1, paradox_folder2, paradox_folder3,
                                                     paradox_folder4, self.launcher_downloaded,
                                                     self.downloaded_launcher_dir, self.user_logon_name)
-            # self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
             self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
             self.reinstall_thread.continue_reinstall.connect(self.finalize_reinstallation)
             self.reinstall_thread.start()
@@ -716,7 +784,6 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
         print("Copy complete.")
 
-        # Обновление интерфейса
         self.copy_files_radio.setChecked(True)
         self.lauch_game_checkbox.setVisible(True)
         self.update_dlc_button.setVisible(False)
@@ -727,14 +794,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def unzip_and_replace(self, dlc_path):
         zip_path = os.path.join(self.game_path, 'dlc', dlc_path)
         extract_folder = os.path.join(self.game_path, 'dlc')
-        if not os.path.exists(extract_folder):
-            os.makedirs(extract_folder)
+        os.makedirs(extract_folder, exist_ok=True)
 
         try:
             with ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(extract_folder)
             os.remove(zip_path)
-            return extract_folder
         except Exception as e:
             print(f'Error while unzipping {e}')
             self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
@@ -742,7 +807,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
     def finish(self):
         if self.lauch_game_checkbox.isChecked():
             try:
-                run('start steam://run/281990', shell=True, capture_output=True, text=True)
+                run('start steam://run/281990', shell=True, creationflags=CREATE_NO_WINDOW)
             except:
                 pass
         self.close()

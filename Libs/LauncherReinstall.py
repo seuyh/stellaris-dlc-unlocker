@@ -41,6 +41,7 @@ class ReinstallThread(QtCore.QThread):
         msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows_*.msi"))
         if self.launcher_downloaded:
             print('Alt unlock. Deleting all other launches')
+            msi_files = glob(os.path.join(self.msi_path, "launcher-installer-windows*.msi"))
             try:
                 for file_path in msi_files:
                     try:

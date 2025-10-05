@@ -73,7 +73,7 @@ class CreamAPI(QtCore.QThread):
     def run(self):
         print('Cream api creating...')
         dlc_list = self.get_dlc_list(281990)
-        print(dlc_list)
+        print(f"DLC list for Cream api {dlc_list}")
         if dlc_list:
             self.check_and_update_dlc_list(dlc_list,
                                            os.path.join(self.parent_directory, 'creamapi_steam_files', 'cream_api.ini'))

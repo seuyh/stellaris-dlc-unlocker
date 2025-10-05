@@ -43,9 +43,14 @@ class MD5:
         for relative_path, server_hash in self.server_hashes.items():
             local_path = os.path.join(self.game_path, relative_path)
 
-            if os.path.isfile(local_path):
-                local_hash = self.calculate_md5(local_path)
-                if local_hash != server_hash:
+            if os.path.isdir(local_path.split('/', 1)[0]):
+                if os.path.isfile(local_path):
+                    local_hash = self.calculate_md5(local_path)
+                    if local_hash != server_hash:
+                        folder = os.path.dirname(relative_path)
+                        if folder not in mismatched_folders:
+                            mismatched_folders.append(folder)
+                else:
                     folder = os.path.dirname(relative_path)
                     if folder not in mismatched_folders:
                         mismatched_folders.append(folder)
