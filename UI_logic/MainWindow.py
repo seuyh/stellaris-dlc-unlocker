@@ -65,7 +65,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.creamapidone = False
 
         self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
-        self.current_version = '2.28'
+        self.current_version = '2.29'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.copy_files_radio.setVisible(False)
@@ -165,7 +165,12 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
     def on_full_reinstall_checkbox_toggled(self, checked):
         if checked:
-            self.skip_launcher_reinstall_checbox.setChecked(False)
+            if self.dialogexec("", self.tr("<html><head/><body><p>This function will delete all saves and presets of mods.</p><p>It is only needed if something did not work during the normal installation</p></body></html>"), self.tr("No"),
+                               self.tr("Yes")):
+                self.full_reinstall_checkbox.setChecked(True)
+                self.skip_launcher_reinstall_checbox.setChecked(False)
+            else:
+                self.full_reinstall_checkbox.setChecked(False)
 
     def on_alternative_unloc_checkbox_toggled(self, checked):
         if checked:
@@ -175,6 +180,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         if checked:
             self.full_reinstall_checkbox.setChecked(False)
             self.alternative_unloc_checkbox.setChecked(False)
+
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
@@ -626,73 +632,91 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
                                                     self.downloaded_launcher_dir, self.user_logon_name)
             # self.reinstall_thread.progress_signal.connect(self.update_reinstall_progress)
             self.reinstall_thread.error_signal.connect(self.show_reinstall_error)
-            self.reinstall_thread.continue_reinstall.connect(self.reinstall_2)
+            self.reinstall_thread.continue_reinstall.connect(self.finalize_reinstallation)
             self.reinstall_thread.start()
         else:
             print('Reinstalling skipped')
-            self.reinstall_2(paradox_folder1)
+            self.finalize_reinstallation(paradox_folder1)
 
-    def reinstall_2(self, paradox_folder1):
-
-        launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
-        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
-        # launcher_folder = os.path.join(os.path.join(paradox_folder1, launcher_folders[0]))
-        launcher_folders = [item for item in os.listdir(paradox_folder1) if item.startswith("launcher")]
-        launcher_folders.sort(key=lambda x: os.path.getmtime(os.path.join(paradox_folder1, x)))
-        # self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
-        try:
-            self.replace_files(os.path.join(os.path.join(paradox_folder1, launcher_folders[0])))
-        except Exception as e:
-            print(f'Start replace files error: {e}')
-            self.errorexec(self.tr("Launcher reinstall error"), self.tr("Exit"), exitApp=True)
-
-    def replace_files(self, launcher_folder):
+    def finalize_reinstallation(self, paradox_folder1):
         self.launcher_reinstall_radio.setChecked(True)
-        print('Replacing files')
-        # try:
-        #     rmtree(f'{self.game_path}/dlc')
-        # except Exception:
-        #     pass
-        try:
-            print('Unzipping...')
-            zip_file = None
-            zip_files = [file for file in os.listdir(os.path.join(self.game_path, 'dlc')) if file.endswith('.zip')]
-            if zip_files:
-                for zip_file in zip_files:
-                    self.unzip_and_replace(zip_file)
-        except Exception as e:
-            if zip_file:
-                print(f"Error while unzipping {zip_file}, {e}")
-                self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
-            else:
-                print(f"Error before processing zip files: {e}")
-                self.errorexec(self.tr("Error while preparing to unzip"), self.tr("Exit"), exitApp=True)
+        print('Starting post-install file processing...')
 
-        if os.path.exists(
-                os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')):
-            copy_to_path = os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks',
-                                        'lib')
-        elif os.path.exists(os.path.join(launcher_folder, 'resources', 'app', 'dist', 'main')):
-            copy_to_path = os.path.join(launcher_folder, 'resources', 'app', 'dist', 'main')
-        else:
-            print('Error unknown launcher')
-            self.errorexec(self.tr("Error unknown launcher"), self.tr("Exit"), exitApp=True)
-        print(f'Copy to path: {copy_to_path}')
-        # try: # C:\Users\sp21\AppData\Local\Programs\Paradox Interactive\launcher\launcher-v2.2024.14\resources\app.asar.unpacked\node_modules\greenworks\lib
-        # o s.remove(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
-        # except:
-        # pass
         try:
-            os.remove(f'{launcher_folder}/xdelta3.exe')
-        except:
-            pass
-        # os.rename(f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64.dll',
-        # f'{launcher_folder}/resources/{old_path}/dist/main/steam_api64_o.dll')
-        copytree(f'{self.parent_directory}/creamapi_launcher_files',
-                 f'{copy_to_path}',
-                 dirs_exist_ok=True)
+            print('Unzipping DLC files...')
+            zip_files = [f for f in os.listdir(os.path.join(self.game_path, 'dlc')) if f.endswith('.zip')]
+            if not zip_files:
+                print("No .zip files found in DLC folder to unpack.")
+            for zip_file in zip_files:
+                self.unzip_and_replace(zip_file)
+        except Exception as e:
+            print(f"An error occurred during unzipping: {e}")
+            self.errorexec(self.tr("Error while unzipping"), self.tr("Exit"), exitApp=True)
+            return
+
+        try:
+            all_launcher_folders = [
+                os.path.join(paradox_folder1, item)
+                for item in os.listdir(paradox_folder1)
+                if item.startswith("launcher") and os.path.isdir(os.path.join(paradox_folder1, item))
+            ]
+        except FileNotFoundError:
+            self.errorexec(self.tr("Launcher directory not found!"), self.tr("Exit"), exitApp=True)
+            return
+
+        if not all_launcher_folders:
+            print("CRITICAL: No launcher folders found after installation.")
+            self.errorexec(self.tr("Error unknown launcher"), self.tr("Exit"), exitApp=True)
+            return
+
+        print(f"Found {len(all_launcher_folders)} launcher folder(s) to patch.")
+
+        was_any_folder_patched = False
+
+        for launcher_folder in all_launcher_folders:
+            print(f"\n--- Processing: {launcher_folder} ---")
+            copy_to_path = None
+
+            path1 = os.path.join(launcher_folder, 'resources', 'app.asar.unpacked', 'node_modules', 'greenworks', 'lib')
+            path2 = os.path.join(launcher_folder, 'resources', 'app', 'dist', 'main')
+
+            if os.path.exists(path1):
+                copy_to_path = path1
+            elif os.path.exists(path2):
+                copy_to_path = path2
+
+            if copy_to_path:
+                was_any_folder_patched = True
+                print(f"Valid target path found: {copy_to_path}")
+
+                try:
+                    copytree(f'{self.parent_directory}/creamapi_launcher_files', copy_to_path, dirs_exist_ok=True)
+                    print("Launcher-specific files copied successfully.")
+                except Exception as e:
+                    print(f"ERROR copying launcher files: {e}")
+                    self.errorexec(self.tr("Error copying files"), self.tr("Exit"), exitApp=True)
+                    return
+
+                try:
+                    xdelta_path = os.path.join(launcher_folder, 'xdelta3.exe')
+                    if os.path.exists(xdelta_path):
+                        os.remove(xdelta_path)
+                        print("xdelta3.exe removed.")
+                except OSError as e:
+                    print(f"Could not remove xdelta3.exe: {e}")
+            else:
+                print("No valid target path found in this folder. Skipping.")
+
+        if not was_any_folder_patched:
+            print("CRITICAL: Found launcher folders, but none contained a valid target path.")
+            self.errorexec(self.tr("Error unknown launcher"), self.tr("Exit"), exitApp=True)
+            return
+
+        print("\nCopying game-specific files...")
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
-        print('Copy complete')
+        print("Copy complete.")
+
+        # Обновление интерфейса
         self.copy_files_radio.setChecked(True)
         self.lauch_game_checkbox.setVisible(True)
         self.update_dlc_button.setVisible(False)
