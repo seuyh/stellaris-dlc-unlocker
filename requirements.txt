@@ -1,4 +1,4 @@
 PyQt5==5.15.11
-PyQt5_sip==12.13.0
+PyQt5_sip==12.15.0
 Requests==2.32.5
 vdf==3.4
