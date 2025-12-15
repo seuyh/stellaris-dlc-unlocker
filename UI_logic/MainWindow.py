@@ -34,56 +34,78 @@ class SetupWorker(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.GITHUB_REPO = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/releases/latest"
+        self.GITHUB_API_URL = "https://api.github.com/repos/seuyh/stellaris-dlc-unlocker"
         self.server_url = None
+        self.server_alturl = None
+        self.alt_launcher_name = None
+        self.latest_version = None
 
     def run(self):
-        dlc_data = get_dlc_data()
         try:
-            user_logon_name = get_user_logon_name()
-        except:
-            user_logon_name = os.getlogin()
+            dlc_data = get_dlc_data()
+            try:
+                user_logon_name = get_user_logon_name()
+            except:
+                user_logon_name = os.getlogin()
 
-        server_data = get_server_data()
-        self.server_url = server_data.get('url')
-        self.server_alturl = server_data.get('alturl')
-        self.alt_launcher_name = server_data.get('altlauncher')
-        path = stellaris_path()
+            server_data = get_server_data()
+            self.server_url = server_data.get('url')
+            self.server_alturl = server_data.get('alturl')
+            self.alt_launcher_name = server_data.get('altlauncher')
+            self.latest_version = server_data.get('version')
+            path = stellaris_path()
 
-        initial_data = {
-            'dlc_data': dlc_data,
-            'user_logon_name': user_logon_name,
-            'server_url': self.server_url,
-            'server_alturl': self.server_alturl,
-            'alt_launcher_name': self.alt_launcher_name,
-            'path': path
-        }
-        self.initial_data_ready.emit(initial_data)
+            initial_data = {
+                'dlc_data': dlc_data,
+                'user_logon_name': user_logon_name,
+                'server_url': self.server_url,
+                'server_alturl': self.server_alturl,
+                'alt_launcher_name': self.alt_launcher_name,
+                'latest_version': self.latest_version,
+                'path': path
+            }
+            self.initial_data_ready.emit(initial_data)
 
-        self.kill_process('Paradox Launcher.exe')
-        self.kill_process('stellaris.exe')
+            self.kill_process('Paradox Launcher.exe')
+            self.kill_process('stellaris.exe')
 
-        if self.server_url:
-            connection_thread = ConnectionCheckThread(self.server_url)
-            self.connection_check_ready.emit(connection_thread)
+            if self.server_url:
+                connection_thread = ConnectionCheckThread(self.server_url, self.GITHUB_API_URL)
+                self.connection_check_ready.emit(connection_thread)
 
-        if path and self.server_url:
-            md5_checker = MD5(f"{path}\\dlc", self.server_url)
-            not_updated_dlc = md5_checker.check_files()
-            self.dlc_check_complete.emit(not_updated_dlc)
-        else:
-            self.dlc_check_complete.emit([])
-
-        try:
-            response = requests.get(self.GITHUB_REPO, timeout=5)
-            if response.status_code == 200:
-                self.update_info.emit(response.json())
+            if path and self.server_url:
+                md5_checker = MD5(f"{path}\\dlc", self.server_url)
+                not_updated_dlc = md5_checker.check_files()
+                self.dlc_check_complete.emit(not_updated_dlc)
             else:
-                self.update_info.emit({})
-        except requests.RequestException:
-            self.update_info.emit({})
+                self.dlc_check_complete.emit([])
 
-        self.finished.emit()
+            try:
+                print(f"Checking updates via GitHub: {self.GITHUB_API_URL}")
+                releases_url = f"{self.GITHUB_API_URL}/releases/latest"
+                response = requests.get(releases_url, timeout=5)
+
+                if response.status_code == 200:
+                    update_info = response.json()
+                    update_info['source'] = 'github'
+                else:
+                    raise Exception(f"GitHub returned {response.status_code}")
+
+            except Exception as e:
+                print(f"Update check failed/skipped ({e}). Using server fallback.")
+                update_info = {
+                    'tag_name': self.latest_version,
+                    'source': 'server'
+                }
+
+            self.update_info.emit(update_info)
+
+        except Exception as e:
+            print(f"CRITICAL ERROR IN WORKER: {e}")
+            self.log_message.emit(f"Critical error: {e}")
+
+        finally:
+            self.finished.emit()
 
     def kill_process(self, process_name):
         self.log_message.emit(f'Killing {process_name}')
@@ -107,7 +129,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.not_updated_dlc = []
         self.dlc_data = []
         self.user_logon_name = ''
-        self.server_url, self.server_alturl, self.alt_launcher_name = '', '', ''
+        self.server_url, self.server_alturl, self.alt_launcher_name, self.latest_version = '', '', '', ''
         self.connection_thread = None
 
         self.draggable_elements = [self.frame_user, self.server_status, self.gh_status, self.lappname_title,
@@ -128,7 +150,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.download_thread = None
         self.creamapidone = False
 
-        self.current_version = '2.3'
+        self.current_version = '2.5'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.next_button.setEnabled(False)
@@ -152,6 +174,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.update_dlc_button.setVisible(False)
         self.old_dlc_text.setVisible(False)
 
+        #self.gh_status.setVisible(False)
+
         self.en_lang.toggled.connect(self.switch_to_english)
         self.ru_lang.toggled.connect(self.switch_to_russian)
         self.cn_lang.toggled.connect(self.switch_to_chinese)
@@ -174,7 +198,17 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.bn_close.clicked.connect(
             lambda: self.close() if self.dialogexec(self.tr("Close"), self.tr("Exit Unlocker?"), self.tr("No"),
                                                     self.tr("Yes")) else None)
+        self.bottom_label_github.setText(
+            '<html><head/><body><p>'
+            '<a href="https://github.com/seuyh/stellaris-dlc-unlocker">'
+            '<span style=" text-decoration: underline; color:#008f96;">GitHub Repo</span></a>'
+            ' | '
+            '<a href="https://stlunlocker.ru/">'
+            '<span style=" text-decoration: underline; color:#008f96;">stlunlocker.ru</span></a>'
+            '</p></body></html>'
+        )
         self.bottom_label_github.linkActivated.connect(self.open_link_in_browser)
+        #self.bottom_label_github.setVisible(False)
 
         self.logger = Logger('unlocker.log', self.log_widget)
         self.log_widget.clear()
@@ -214,6 +248,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.server_url = data['server_url']
         self.server_alturl = data['server_alturl']
         self.alt_launcher_name = data['alt_launcher_name']
+        self.latest_version = data['latest_version']
 
         if data['path']:
             path = data['path']
@@ -236,28 +271,35 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
     def on_update_info_ready(self, latest_release):
         if not latest_release:
-            print("Cant check updates")
             return
 
-        latest_version = latest_release.get('tag_name')
+        remote_version = latest_release.get('tag_name')
+        source = latest_release.get('source', 'server')
         current_version = self.current_version
 
-        if latest_version and latest_version > current_version:
-            print(f"Found new version: {latest_version}.")
+        if remote_version and remote_version > current_version:
             if self.dialogexec(self.tr('New version'),
-                               self.tr('New version found\nPlease update the program to correctly work '),
+                               self.tr(f'New version {remote_version} found!'),
                                self.tr('Cancel'), self.tr('Update')):
-                exe_asset_url = None
-                for asset in latest_release.get('assets', []):
-                    if asset.get('name', '').endswith('.exe'):
-                        exe_asset_url = asset.get('browser_download_url')
-                if exe_asset_url:
-                    self.open_link_in_browser(exe_asset_url)
+
+                url_to_open = None
+
+                if source == 'github':
+                    for asset in latest_release.get('assets', []):
+                        if asset.get('name', '').endswith('.exe'):
+                            url_to_open = asset.get('browser_download_url')
+                            break
+
+                if not url_to_open:
+                    url_to_open = f"https://{self.server_url}/unlocker/Stellaris-DLC-Unlocker.exe"
+
+                self.open_link_in_browser(url_to_open)
                 self.close()
-        elif latest_version and latest_version < current_version:
+
+        elif remote_version and remote_version < current_version:
             self.errorexec(self.tr("Beta"), self.tr("Ok"), exitApp=False)
         else:
-            print(f"Unlocker is up to date")
+            print(f"Unlocker is up to date. (Checked via {source})")
 
     def get_app_language(self):
         lang = QLocale.system().name().lower()
@@ -430,8 +472,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.gh_status.setChecked(status)
         print('GitHub connection established' if status else 'GitHub connection cant be established')
         if not status:
-            self.errorexec(self.tr("Can't establish connection with GitHub. Check internet"), self.tr("Ok"),
-                           exitApp=True)
+            print("Warning: GitHub is unavailable. Updates will be handled via fallback server.")
 
     def handle_server_status(self, status):
         self.server_status.setChecked(status)
