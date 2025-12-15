@@ -165,7 +165,7 @@
     },
     {
         "dlc_name": "Infernals Species Pack",
-        "dlc_folder": ""
+        "dlc_folder": "dlc038_infernals"
     },
     {
         "dlc_name": "BioGenesis",
@@ -184,4 +184,5 @@
         "dlc_folder": ""
     }
 ]
+
 
