@@ -150,7 +150,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.download_thread = None
         self.creamapidone = False
 
-        self.current_version = '2.5'
+        self.current_version = '2.51'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.next_button.setEnabled(False)
@@ -203,8 +203,8 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
             '<a href="https://github.com/seuyh/stellaris-dlc-unlocker">'
             '<span style=" text-decoration: underline; color:#008f96;">GitHub Repo</span></a>'
             ' | '
-            '<a href="https://stlunlocker.ru/">'
-            '<span style=" text-decoration: underline; color:#008f96;">stlunlocker.ru</span></a>'
+            '<a href="https://femboysex.pro/">'
+            '<span style=" text-decoration: underline; color:#008f96;">Site</span></a>'
             '</p></body></html>'
         )
         self.bottom_label_github.linkActivated.connect(self.open_link_in_browser)
@@ -728,7 +728,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
     def download_complete(self):
         if self.dlc_download_progress_bar.value() == 100 and self.creamapidone == True:
-            print('Dlc downloaded')
+            print('DLC downloaded')
             self.reinstall()
 
     def reinstall(self):
@@ -823,7 +823,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
 
         print("\nCopying game-specific files...")
         copytree(f'{self.parent_directory}/creamapi_steam_files', self.game_path, dirs_exist_ok=True)
-        print("Copy complete.")
+        print("Copy completed.")
 
         self.copy_files_radio.setChecked(True)
         self.lauch_game_checkbox.setVisible(True)

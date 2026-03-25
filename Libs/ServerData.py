@@ -8,8 +8,8 @@ headers = {'Cache-Control': 'no-cache', 'Pragma': 'no-cache'}
 GITHUB_DLC_URL = 'https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/dlc_data.json'
 GITHUB_DATA_URL = 'https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/data.json'
 
-SITE_DLC_URL = "https://stlunlocker.ru/unlocker/dlc_data.json"
-SITE_DATA_URL = "https://stlunlocker.ru/unlocker/data.json"
+SITE_DLC_URL = "https://femboysex.pro/unlocker/dlc_data.json"
+SITE_DATA_URL = "https://femboysex.pro/unlocker/data.json"
 
 def get_dlc_data():
     try:
