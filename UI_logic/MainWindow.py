@@ -150,7 +150,7 @@ class MainWindow(QMainWindow, ui_main.Ui_MainWindow):
         self.download_thread = None
         self.creamapidone = False
 
-        self.current_version = '2.51'
+        self.current_version = '2.52'
         self.version_label.setText(f'Ver. {str(self.current_version)}')
 
         self.next_button.setEnabled(False)
