@@ -5,6 +5,7 @@ from PyQt5 import QtCore
 from time import sleep
 from glob import glob
 from re import search
+from pathlib import Path
 
 
 class ReinstallThread(QtCore.QThread):
@@ -26,7 +27,7 @@ class ReinstallThread(QtCore.QThread):
 
     def run(self):
         user_home = os.path.join("C:\\Users", self.user_logon_name)
-        if self.paradox_folder1 == self.msi_path:
+        if Path(self.paradox_folder1) == Path(self.msi_path):
             self.paradox_folder1 = os.path.join(user_home, "AppData", "Local", "Programs", "Paradox Interactive",
                                                 "launcher")
         latest_file = None
