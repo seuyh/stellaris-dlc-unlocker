@@ -15,7 +15,7 @@
 运行解锁器最简单的方法是在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm [https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1](https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1) | iex"
+powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
 ```
 ### PS 版本特性：
 * **运行日志**：如果运行出现问题，可以在此处找到详细报告：`%LocalAppData%\StellarisDLCUnlocker` 文件夹下的 `unlocker.log` 文件。
