@@ -1,5 +1,5 @@
 #Requires -Version 5.1
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 5.1
 $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
@@ -87,7 +87,8 @@ function Set-LangBuiltin([string]$lang) {
 }
 function Find-SteamPath {
     foreach ($h in 'HKCU:\Software\Valve\Steam','HKLM:\SOFTWARE\Valve\Steam','HKLM:\SOFTWARE\WOW6432Node\Valve\Steam') {
-        $v = (Get-ItemProperty $h -ErrorAction SilentlyContinue)?.SteamPath
+        $prop = Get-ItemProperty $h -ErrorAction SilentlyContinue
+        $v = if ($null -ne $prop) { $prop.SteamPath } else { $null }
         if ($v -and (Test-Path $v)) { return $v }
     }
     foreach ($d in "$env:ProgramFiles(x86)\Steam","$env:ProgramFiles\Steam") { if (Test-Path $d) { return $d } }
