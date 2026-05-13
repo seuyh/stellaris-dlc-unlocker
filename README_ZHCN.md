@@ -6,59 +6,57 @@
 
 ---
 
-# 简介
-
-Stellaris DLC 解锁器是一款用于简化《群星（Stellaris）》游戏 DLC（可下载内容）解锁过程的工具。本软件可免费、自动解锁全部 DLC，并支持自动更新与从服务器下载文件。每当游戏或 DLC 发布新版本时，无需重新下载程序，工具将自动加载所需文件。
-
-## 功能
-- 解决 Steam 连接错误
-- 修复启动器中 DLC 的所有权验证
-- 避免启动器崩溃
-- 让游戏正确识别 DLC
-- 免去繁琐的手动配置
+## 项目描述
+用于自动解锁和安装 Stellaris（Steam 版）DLC 的工具。
 
 ## 使用方法
-1. **从本仓库下载[最新发布版本](https://github.com/seuyh/stellaris-dlc-unlocker/releases)。**  
-2. **关闭游戏和 Paradox 启动器。**  
-3. **运行 Stellaris DLC 解锁器，并按照安装程序提示完成操作。**  
-4. **完成！所有 DLC 已经可以在游戏中使用。**
+
+## 方法 1 - 🚀 快速启动 (PowerShell)
+运行解锁器最简单的方法是在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "irm [https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1](https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1) | iex"
+```
+### PS 版本特性：
+* **运行日志**：如果运行出现问题，可以在此处找到详细报告：`%LocalAppData%\StellarisDLCUnlocker` 文件夹下的 `unlocker.log` 文件。
+* **无需管理员权限**：在大多数情况下，不需要以管理员身份运行。但如果运行不正常，请尝试以管理员身份运行 PowerShell 并再次执行该命令。
+
+## 方法 2 - 下载已编译的程序
+**请从当前的 [仓库发布页面](https://github.com/seuyh/stellaris-dlc-unlocker/releases) 下载最新版本。**
+
+## 方法 3 - 🐍 通过 Python 运行
+1. **安装 Python**：确保已安装 Python 3.8 或更高版本。
+2. **下载仓库**：克隆或下载包含源代码的压缩包。
+3. **安装依赖**：在项目文件夹中打开终端并运行：
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. **启动程序**：
+    ```bash
+    python main.py
+    ```
 
 ## 系统要求
-- 必须拥有 Steam 版《群星》本体（需正版）
-- 如果可能，使用最新的游戏版本
-- 操作系统：仅在 Windows 10/11 上测试通过，不保证早期版本兼容性
-- 稳定的网络连接（需要能够访问Github/俄国服务器，为了您的最佳体验，请中国大陆用户使用加速器）
-- 至少 2 GB 可用磁盘空间
-- 能够阅读并理解屏幕提示
+- Steam 授权：Stellaris 正版游戏
+- 操作系统：Windows 10/11
+- 互联网访问
+- 约 2GB 的可用磁盘空间
+- 具备阅读屏幕文字的能力
 
+## 联系方式
+Telegram 频道：[https://t.me/stelka_unlocker](https://t.me/stelka_unlocker)
 
-## 已知问题
-- **下载卡在某个百分比**
-  由于当前文件托管在性能有限的服务器上，可能会出现响应中断。请重启程序，并在再次尝试前等待一段时间。
+## 关于杀毒软件误报
+此类问题源于用于打包代码的 PyInstaller 运行机制。如果您担心硬件安全，可以随时使用 PowerShell 方法，或者在阅读源代码后自行通过 Python 运行代码。此外，您也可以选择完全不使用本软件。请不要为此创建 Issue 或反馈相关信息。
 
-- **杀毒软件误报/删除文件**
-  已尽力避免此问题，但在极少数情况下，Windows Defender 可能会误报甚至在未提示的情况下删除文件。
+## 许可协议
+本项目采用 [知识共享署名-非商业性使用-禁止演绎 (CC BY-NC-ND) 4.0 许可协议](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh) 进行许可。
 
-- **多人游戏不可用**
-  在游戏启动器中启用跨平台模式可能在一定程度上缓解问题。
-
-## 许可证
-
-本项目根据[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
-
-## 关于中文翻译
-
-中文翻译由[@武乙凌薇](https://github.com/wuyilingwei)提供，以[知识共享署名-非商业性-禁止演绎 (CC BY-NC-ND) 许可证](https://creativecommons.org/licenses/by-nc-nd/4.0/)授权。
-
-为减轻工作量，部分翻译借助 AI 辅助完成，如有不当或遗漏，欢迎联系我。  
-
-## 联系开发者
-
+## 错误报告与建议请提交至
 https://github.com/seuyh/stellaris-dlc-unlocker/issues
 
-## 特别感谢
-
-该产品的灵感来自 [He11oThere](https://github.com/seuyh/stellaris-dlc-unlocker/issues)，他支持并更新了 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040)上关于手动 DLC 解锁的专题。
+## 特别鸣谢
+感谢在 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040) 上发布手动解锁 DLC 教程的作者。
 
 翻译成简体中文 [wuyilingwei](https://github.com/wuyilingwei)。
 
