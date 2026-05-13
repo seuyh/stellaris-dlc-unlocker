@@ -17,7 +17,7 @@
 Самый простой способ запустить анлокер — выполнить команду в терминале (PowerShell) либо нажать сочетание клавиш win+r и вставить код в открывшееся окно:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex" 
+powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
 ```
 ### Особенности PS версии:
 * **Логи работы**: Если что-то пошло не так, подробный отчет можно найти здесь: `%LocalAppData%\StellarisDLCUnlocker` в файле `unlocker.log`
