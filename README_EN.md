@@ -7,54 +7,57 @@
 ---
 
 ## Description
+A utility for automatic unlocking and installation of DLCs for Stellaris (Steam version).
 
-Stellaris DLC Unlocker is a program designed to simplify the process of unlocking DLC (Downloadable Content) for the game Stellaris. It allows users to unlock all DLC for FREE and AUTOMATICALLY. Thanks to auto-updates and the ability to download files from the server, the program does not need to be re-downloaded every time new versions of the game and DLC are released. Once downloaded, the program will automatically load the necessary files.
+## How to use
 
-#### What this will save you from:
-- Steam connection error
-- Authenticity check error for DLC in the launcher
-- Launcher crashes
-- Game's inability to detect DLC
-- Need to figure out anything
+## Method 1 - 🚀 Quick Start (PowerShell)
+The easiest way to run the unlocker is to execute a command in your terminal (PowerShell) or press `Win + R` and paste the following code into the window:
 
-## How to Use
+```powershell
+powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+### PS Version Features:
+* **Work Logs**: If something goes wrong, you can find a detailed report here: `%LocalAppData%\StellarisDLCUnlocker` in the `unlocker.log` file.
+* **No Admin Rights**: In most cases, running as administrator is not required. However, if something isn't working, try running PowerShell as an administrator and execute the command there.
 
-1. **Download the latest release from the current [repository](https://github.com/seuyh/stellaris-dlc-unlocker/releases).**
+## Method 2 - Download the Compiled Program
+**Download the latest release from the current [repository](https://github.com/seuyh/stellaris-dlc-unlocker/releases).**
 
-2. **Close the game and the Paradox launcher:**
-
-3. **Open the Stellaris DLC Unlocker program and follow the installer instructions on your device.**
-
-4. **Done! All DLCs are now unlocked and ready to use in the game Stellaris!**
+## Method 3 - 🐍 Running via Python
+1. **Install Python**: Ensure you have Python 3.8 or higher installed.
+2. **Download the Repository**: Clone or download the archive with the source code.
+3. **Install Dependencies**: Open a terminal in the project folder and run:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. **Launch the Program**:
+    ```bash
+    python main.py
+    ```
 
 ## Requirements
-
 - Steam License: Stellaris
-- Operating System: Tested on Windows 10/11. Compatibility with earlier versions is not ruled out.
-- Internet access
+- Operating System: Windows 10/11
+- Internet Access
 - Approximately 2GB of free disk space
 - Ability to read text on the screen
 
-## Known Issues
+## Contacts
+Telegram channel: [https://t.me/stelka_unlocker](https://t.me/stelka_unlocker)
 
-- Download hangs at "x" percent. This means what the server stopped responding. Restart the program and preferably wait for some time before restarting.
-  
-- Antivirus complains/removes the application. I've done everything possible to prevent this, but for some reason, in rare cases, Windows Defender starts to complain or may even delete the file after restarting the computer without saying anything to you.
-
-- Multiplayer does not work. Enabling cross-platform mode in the game launcher helps.
+## Regarding Antivirus Detections
+The issue lies in the behavior of PyInstaller, which was used to compile this code. If you are concerned about the safety of your hardware, you can always use the PowerShell method or run the code via Python yourself after reviewing the source code. Alternatively, you can choose not to use this software at all. Please do not create issues or write to us about this.
 
 ## License
-
 This project is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND) License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
-## Contact the Developer
-
+## Bug Reports and Suggestions
+Please submit them here:
 https://github.com/seuyh/stellaris-dlc-unlocker/issues
 
 ## Special Thanks
-
-The idea for this product is inspired by [He11oThere](https://github.com/seuyh/stellaris-dlc-unlocker/issues), who supported and updated the topic dedicated to manual DLC unlocking on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
-
+To the author of the manual DLC unlocking guide on [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040).
 Translation into Simple Chinese: [wuyilingwei](https://github.com/wuyilingwei).
 
 *Note: The unlocker is in the development stage and is provided "AS IS." The product may change, be supplemented, and improved in the future. The presence of bugs, shortcomings, crashes is not excluded.*

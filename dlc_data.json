@@ -180,7 +180,27 @@
         "dlc_folder": "dlc039_stargazer"
     },
     {
-        "dlc_name": "Season 09 - Expansion Pass",
+        "dlc_name": "Season 10",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Vipra the Vapor Species Portrait",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Nomads",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Willpower",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Scenario Pack 1",
+        "dlc_folder": ""
+    },
+    {
+        "dlc_name": "Scenario Pack 2",
         "dlc_folder": ""
     }
 ]
