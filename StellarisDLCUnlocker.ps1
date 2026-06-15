@@ -285,12 +285,25 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
             foreach ($item in $items) {
                 if ($item.type -eq 'file') {
                     $dest2 = Join-Path $pair.dest $item.name
-                    if (-not (Test-Path $dest2)) {
+                    $hashFile = "$dest2.sha"
+                    $needsUpdate = $true
+                
+                    if (Test-Path $dest2) {
+                        if ((Test-Path $hashFile) -and ((Get-Content $hashFile -Raw).Trim() -eq $item.sha)) {
+                            $needsUpdate = $false
+                        }
+                    }
+                
+                    if ($needsUpdate) {
                         _Log "  Downloading: $($item.name)"
                         $wc3 = [System.Net.WebClient]::new(); $wc3.Headers.Add('User-Agent','StellarisDLCUnlocker-PS/1.0')
                         $wc3.DownloadFile($item.download_url, $dest2); $wc3.Dispose()
+                        
+                        $item.sha | Out-File -FilePath $hashFile -Encoding ascii -Force
                         _Log "  OK: $($item.name)" 'OK'
-                    } else { _Log "  Cached: $($item.name)" }
+                    } else { 
+                        _Log "  Cached (Up to date): $($item.name)" 
+                    }
                 }
             }
         } finally { $wc2.Dispose() }
@@ -308,6 +321,9 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                 $exist = Get-Content $iniPath -Raw
                 $fs = [System.IO.File]::Open($iniPath,[System.IO.FileMode]::Append,[System.IO.FileAccess]::Write)
                 $sw = [System.IO.StreamWriter]::new($fs,[System.Text.Encoding]::UTF8); $added = 0
+                if ($exist -and -not $exist.EndsWith("`n")) {
+                    $sw.WriteLine()
+                }
                 try {
                     foreach ($id in ($csv -split ',')) {
                         $id = $id.Trim(); if (-not $id -or $exist -match $id) { continue }
