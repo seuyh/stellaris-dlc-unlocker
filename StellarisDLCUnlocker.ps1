@@ -314,8 +314,8 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
     foreach ($iniPath in @((Join-Path $steamCache 'cream_api.ini'),(Join-Path $launchCache 'cream_api.ini'))) {
         if (-not (Test-Path $iniPath)) { continue }
         try {
-            $wc4 = [System.Net.WebClient]::new(); $wc4.Headers.Add('User-Agent','StellarisDLCUnlocker-PS/1.0')
-            $data = ($wc4.DownloadString("$_STEAMCMD_API/$_APPID") | ConvertFrom-Json); $wc4.Dispose()
+            $req = [System.Net.HttpWebRequest]::Create("$_STEAMCMD_API/$_APPID"); $req.Timeout = 3000
+            $data = ([System.IO.StreamReader]::new($req.GetResponse().GetResponseStream()).ReadToEnd() | ConvertFrom-Json)
             $csv = $data.data."$_APPID".extended.listofdlc
             if ($csv) {
                 $exist = Get-Content $iniPath -Raw
@@ -327,8 +327,10 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                 try {
                     foreach ($id in ($csv -split ',')) {
                         $id = $id.Trim(); if (-not $id -or $exist -match $id) { continue }
-                        $wc5 = [System.Net.WebClient]::new(); $wc5.Headers.Add('User-Agent','StellarisDLCUnlocker-PS/1.0')
-                        $name = try { ($wc5.DownloadString("$_STEAMCMD_API/$id") | ConvertFrom-Json).data."$id".common.name; $wc5.Dispose() } catch { $id }
+                        $name = try { 
+                        $req2 = [System.Net.HttpWebRequest]::Create("$_STEAMCMD_API/$id"); $req2.Timeout = 3000
+                        ([System.IO.StreamReader]::new($req2.GetResponse().GetResponseStream()).ReadToEnd() | ConvertFrom-Json).data."$id".common.name
+                    } catch { $id }
                         $sw.WriteLine("$id = $name"); $added++
                     }
                 } finally { $sw.Dispose(); $fs.Dispose() }
