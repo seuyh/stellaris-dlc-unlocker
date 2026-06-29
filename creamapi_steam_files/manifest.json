@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Emulator64.dll",
+    "sha": "4128adfbcdd6fa8efc73e45debbc1f0c3233af64"
+  },
+  {
+    "name": "LinkNeverDie_Com_64.dll",
+    "sha": "6a9c423ee3a4af8ecca1d31556682dfc327baa27"
+  },
+  {
+    "name": "SWLoader.txt",
+    "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+  },
+  {
+    "name": "SWconfig.ini",
+    "sha": "fb927bcd92db3d89f1f64d31c56480f1d463ba84"
+  },
+  {
+    "name": "cream_api.ini",
+    "sha": "26dd85c4055f483cb742fd460ca88afa52c6c7b5"
+  },
+  {
+    "name": "steam_api64_org_game.dll",
+    "sha": "3b253860484ea18ecbfc4844303ee78bef6b9d46"
+  },
+  {
+    "name": "steam_api64_org_launcher.dll",
+    "sha": "00132885cb3270a0db68de55b0c4781b642f37f1"
+  }
+]

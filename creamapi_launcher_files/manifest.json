@@ -1,0 +1,18 @@
+[
+  {
+    "name": "cream_api.ini",
+    "sha": "d98c8ad7de27e0172e49aa0d770163a701dae06c"
+  },
+  {
+    "name": "sdkencryptedappticket64.dll",
+    "sha": "19bbbf3af4d0bda56c49e8ed7098bca80b2cf37e"
+  },
+  {
+    "name": "steam_api64.dll",
+    "sha": "8c49f53089d48959e46dd9ae2acea96d7870a75b"
+  },
+  {
+    "name": "steam_api64_o.dll",
+    "sha": "e1ca6923adda8e2cf8c520593ad069011f69646d"
+  }
+]
