@@ -5,7 +5,7 @@ import json
 import os
 
 REPO    = 'seuyh/stellaris-dlc-unlocker'
-FOLDERS = ['creamapi_steam_files', 'creamapi_launcher_files']
+FOLDERS = ['creamapi_steam_files', 'creamapi_launcher_files', 'creamlinux', 'creamlinux-proton']
 TOKEN   = os.environ.get('GITHUB_TOKEN', '')
 
 
