@@ -89,6 +89,8 @@ _t_en() {
         confirm_install) echo "Proceed? [Y/n]: " ;;
         cancelled) echo "Cancelled." ;;
         no_dlc_to_download) echo "All DLC up to date." ;;
+        hashes_skip) echo "Could not fetch hashes.json, skipping integrity check." ;;
+        dlc_outdated) echo "Outdated content, will re-download:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
         *) echo "$1" ;;
     esac
@@ -146,6 +148,8 @@ _t_ru() {
         confirm_install) echo "Продолжить? [Y/n]: " ;;
         cancelled) echo "Отменено." ;;
         no_dlc_to_download) echo "Все DLC актуальны." ;;
+        hashes_skip) echo "Не удалось получить hashes.json, проверка целостности пропущена." ;;
+        dlc_outdated) echo "Контент устарел, будет перекачан:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
         *) echo "$1" ;;
     esac
@@ -203,6 +207,8 @@ _t_zh() {
         confirm_install) echo "继续？[Y/n]: " ;;
         cancelled) echo "已取消。" ;;
         no_dlc_to_download) echo "所有 DLC 均为最新。" ;;
+        hashes_skip) echo "无法获取 hashes.json，跳过完整性检查。" ;;
+        dlc_outdated) echo "内容已过期，将重新下载:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
         *) echo "$1" ;;
     esac
@@ -541,9 +547,71 @@ update_cream_ini() {
     fi
 }
 
+DLC_HASHES_JSON=""
+
+fetch_dlc_hashes() {
+    DLC_HASHES_JSON=$(http_get "$GITHUB_HASHES_URL" 2>/dev/null) || true
+    if [ -z "$DLC_HASHES_JSON" ]; then
+        DLC_HASHES_JSON=$(http_get "$JSDELIVR_HASHES_URL" 2>/dev/null) || true
+    fi
+    [ -n "$DLC_HASHES_JSON" ]
+}
+
+dlc_hash_entries() {
+    if command -v jq >/dev/null 2>&1; then
+        echo "$DLC_HASHES_JSON" | jq -r 'to_entries[] | "\(.key)\t\(.value)"'
+    else
+        echo "$DLC_HASHES_JSON" | grep -oP '"[^"]+"\s*:\s*"[a-fA-F0-9]{32}"' \
+            | sed -E 's/^"([^"]+)"[[:space:]]*:[[:space:]]*"([a-fA-F0-9]{32})"$/\1\t\2/'
+    fi
+}
+
+mark_stale_dlc_folders() {
+    local dlc_dir="$1"
+    fetch_dlc_hashes || { log WARN "$(t hashes_skip)"; return; }
+
+    declare -A expected_hash=()
+    while IFS=$'\t' read -r relpath md5; do
+        [ -n "$relpath" ] && expected_hash["$relpath"]="$md5"
+    done < <(dlc_hash_entries)
+
+    [ ${#expected_hash[@]} -eq 0 ] && return
+
+    local stale_folders=()
+    local key
+    for key in "${!expected_hash[@]}"; do
+        local folder="${key%%/*}"
+        local already=0
+        local sf
+        for sf in "${stale_folders[@]:-}"; do
+            [ "$sf" = "$folder" ] && already=1 && break
+        done
+        [ "$already" -eq 1 ] && continue
+        [ -d "$dlc_dir/$folder" ] || continue
+
+        local localfile="$dlc_dir/$key"
+        if [ ! -f "$localfile" ]; then
+            stale_folders+=("$folder")
+            continue
+        fi
+        local actual
+        actual=$(md5sum "$localfile" 2>/dev/null | awk '{print $1}')
+        if [ "$actual" != "${expected_hash[$key]}" ]; then
+            stale_folders+=("$folder")
+        fi
+    done
+
+    for sf in "${stale_folders[@]}"; do
+        log WARN "$(t dlc_outdated) $sf"
+        rm -rf "$dlc_dir/$sf"
+    done
+}
+
 download_dlc_content() {
     local dlc_dir="$GAME_DIR/dlc"
     mkdir -p "$dlc_dir"
+
+    mark_stale_dlc_folders "$dlc_dir"
 
     local folders=()
     while IFS= read -r f; do
