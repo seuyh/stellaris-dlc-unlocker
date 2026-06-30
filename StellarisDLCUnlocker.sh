@@ -55,7 +55,7 @@ _t_en() {
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "Stellaris not found." ;;
         native_build) echo "Native Linux build." ;;
-        not_native) echo "Not a native Linux build. CreamLinux needs the native build, not Proton/Wine." ;;
+        not_native) echo "Not a native Linux build. Use the Proton unlocker instead." ;;
         downloading) echo "Downloading" ;;
         fetching_dlc_list) echo "Fetching DLC list..." ;;
         dlc_list_ok) echo "DLC list loaded." ;;
@@ -74,7 +74,7 @@ _t_en() {
         patch_localconfig_not_found) echo "localconfig.vdf not found." ;;
         patch_backup) echo "Backup:" ;;
         patch_done) echo "Launch options set." ;;
-        steam_running_prompt) echo "Steam is running and must be closed to apply launch options. Close it now? [y/N]: " ;;
+        steam_running_prompt) echo "Steam is running and must be closed to apply launch options. Close it now? [Y/n]: " ;;
         steam_closing) echo "Closing Steam..." ;;
         steam_close_ok) echo "Steam closed." ;;
         steam_close_fail) echo "Could not close Steam, aborting." ;;
@@ -86,7 +86,7 @@ _t_en() {
         invalid_steam_path) echo "Not a valid Steam folder (no 'steamapps' inside)." ;;
         invalid_choice) echo "Invalid choice." ;;
         log_empty) echo "Log is empty." ;;
-        confirm_install) echo "Proceed? [y/N]: " ;;
+        confirm_install) echo "Proceed? [Y/n]: " ;;
         cancelled) echo "Cancelled." ;;
         no_dlc_to_download) echo "All DLC up to date." ;;
         flatpak_steam) echo "(Flatpak)" ;;
@@ -112,7 +112,7 @@ _t_ru() {
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "Stellaris не найден." ;;
         native_build) echo "Нативная Linux-версия." ;;
-        not_native) echo "Не нативная Linux-версия. CreamLinux работает только с нативной сборкой, не с Proton/Wine." ;;
+        not_native) echo "Не нативная Linux-версия. Используйте анлокер для Proton." ;;
         downloading) echo "Скачивание" ;;
         fetching_dlc_list) echo "Получение списка DLC..." ;;
         dlc_list_ok) echo "Список DLC загружен." ;;
@@ -131,7 +131,7 @@ _t_ru() {
         patch_localconfig_not_found) echo "localconfig.vdf не найден." ;;
         patch_backup) echo "Бэкап:" ;;
         patch_done) echo "Параметры запуска установлены." ;;
-        steam_running_prompt) echo "Steam запущен, для применения параметров запуска его нужно закрыть. Закрыть сейчас? [y/N]: " ;;
+        steam_running_prompt) echo "Steam запущен, для применения параметров запуска его нужно закрыть. Закрыть сейчас? [Y/n]: " ;;
         steam_closing) echo "Закрытие Steam..." ;;
         steam_close_ok) echo "Steam закрыт." ;;
         steam_close_fail) echo "Не удалось закрыть Steam, отмена." ;;
@@ -143,7 +143,7 @@ _t_ru() {
         invalid_steam_path) echo "Это не папка Steam (внутри нет 'steamapps')." ;;
         invalid_choice) echo "Неверный выбор." ;;
         log_empty) echo "Лог пуст." ;;
-        confirm_install) echo "Продолжить? [y/N]: " ;;
+        confirm_install) echo "Продолжить? [Y/n]: " ;;
         cancelled) echo "Отменено." ;;
         no_dlc_to_download) echo "Все DLC актуальны." ;;
         flatpak_steam) echo "(Flatpak)" ;;
@@ -169,7 +169,7 @@ _t_zh() {
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "未找到 Stellaris。" ;;
         native_build) echo "原生 Linux 版本。" ;;
-        not_native) echo "非原生 Linux 版本。CreamLinux 仅支持原生版本，不支持 Proton/Wine。" ;;
+        not_native) echo "非原生 Linux 版本。请使用 Proton 解锁器。" ;;
         downloading) echo "下载中" ;;
         fetching_dlc_list) echo "正在获取 DLC 列表..." ;;
         dlc_list_ok) echo "DLC 列表已加载。" ;;
@@ -188,7 +188,7 @@ _t_zh() {
         patch_localconfig_not_found) echo "未找到 localconfig.vdf。" ;;
         patch_backup) echo "备份:" ;;
         patch_done) echo "启动选项已设置。" ;;
-        steam_running_prompt) echo "Steam 正在运行，需关闭后才能应用启动选项。现在关闭吗？[y/N]: " ;;
+        steam_running_prompt) echo "Steam 正在运行，需关闭后才能应用启动选项。现在关闭吗？[Y/n]: " ;;
         steam_closing) echo "正在关闭 Steam..." ;;
         steam_close_ok) echo "Steam 已关闭。" ;;
         steam_close_fail) echo "无法关闭 Steam，已中止。" ;;
@@ -200,7 +200,7 @@ _t_zh() {
         invalid_steam_path) echo "不是有效的 Steam 文件夹（内部没有 'steamapps'）。" ;;
         invalid_choice) echo "无效选择。" ;;
         log_empty) echo "日志为空。" ;;
-        confirm_install) echo "继续？[y/N]: " ;;
+        confirm_install) echo "继续？[Y/n]: " ;;
         cancelled) echo "已取消。" ;;
         no_dlc_to_download) echo "所有 DLC 均为最新。" ;;
         flatpak_steam) echo "(Flatpak)" ;;
@@ -413,6 +413,7 @@ ensure_steam_closed() {
         return 0
     fi
     ask "$(t steam_running_prompt)" ans
+    [ -z "$ans" ] && ans="y"
     if [[ "$ans" =~ ^[yYдД]$ ]]; then
         close_steam || return 1
         return 0
@@ -717,6 +718,7 @@ do_install() {
 
     echo
     ask "$(t confirm_install)" confirm
+    [ -z "$confirm" ] && confirm="y"
     if [[ ! "$confirm" =~ ^[yYдД]$ ]]; then
         log INFO "$(t cancelled)"
         pause; return 0
