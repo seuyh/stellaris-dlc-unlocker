@@ -88,7 +88,7 @@ $GITHUB_HASHES_URL   = 'https://raw.githubusercontent.com/seuyh/stellaris-dlc-un
 $JSDELIVR_DLC_URL    = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/dlc_data.json'
 $JSDELIVR_HASHES_URL = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/hashes.json'
 
-$SERVER_URL        = 'pub-0f87be5fdd68492c8328b66998eb46ad.r2.dev'
+$SERVER_URL        = 'yblocker.xyz'
 $ALT_LAUNCHERS     = @('launcher-installer-windows_2024.14.msi', 'launcher-installer-windows_2024.13.msi', 'launcher-installer-windows_2024.8.msi')
 
 $STEAMCMD_API      = 'https://api.steamcmd.net/v1/info'

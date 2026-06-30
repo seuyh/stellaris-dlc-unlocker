@@ -14,7 +14,7 @@ GITHUB_DLC_URL="$REPO_GITHUB_RAW/dlc_data.json"
 JSDELIVR_DLC_URL="$REPO_JSDELIVR/dlc_data.json"
 GITHUB_HASHES_URL="$REPO_GITHUB_RAW/hashes.json"
 JSDELIVR_HASHES_URL="$REPO_JSDELIVR/hashes.json"
-SERVER_URL="pub-0f87be5fdd68492c8328b66998eb46ad.r2.dev"
+SERVER_URL="yblocker.xyz"
 STEAMCMD_API="https://api.steamcmd.net/v1/info"
 
 CREAMLINUX_SUBDIR="creamlinux"
