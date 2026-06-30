@@ -43,6 +43,8 @@ _t_en() {
         menu_header) echo "MAIN MENU" ;;
         m_status) echo "Status" ;;
         m_install) echo "Install / Update" ;;
+        fetching_dlc_info) echo "Fetching DLC info:" ;;
+        fetching_file) echo "  -> In progress:" ;;
         m_steam_launch) echo "Set Steam launch options" ;;
         m_lang) echo "Language" ;;
         m_log) echo "Log" ;;
@@ -98,6 +100,8 @@ _t_ru() {
         menu_header) echo "ГЛАВНОЕ МЕНЮ" ;;
         m_status) echo "Статус" ;;
         m_install) echo "Установить / обновить" ;;
+        fetching_dlc_info) echo "Запрос данных DLC:" ;;
+        fetching_file) echo "  -> В процессе:" ;;
         m_steam_launch) echo "Прописать параметры запуска Steam" ;;
         m_lang) echo "Язык" ;;
         m_log) echo "Лог" ;;
@@ -153,6 +157,8 @@ _t_zh() {
         menu_header) echo "主菜单" ;;
         m_status) echo "状态" ;;
         m_install) echo "安装 / 更新" ;;
+        fetching_dlc_info) echo "正在获取 DLC 信息:" ;;
+        fetching_file) echo "  -> 正在处理:" ;;
         m_steam_launch) echo "设置 Steam 启动选项" ;;
         m_lang) echo "语言" ;;
         m_log) echo "日志" ;;
@@ -262,6 +268,7 @@ http_get() {
 download_with_fallback() {
     local rel="$1" dest="$2" label="${3:-$1}"
     mkdir -p "$(dirname "$dest")"
+    echo -e "${C_DIM}$(t fetching_file) ${C_WHITE}$label${C_RESET}"
     if curl -fsSL --retry 2 --connect-timeout 10 -o "$dest" "$REPO_GITHUB_RAW/$rel" 2>>"$LOG_FILE"; then
         log OK "  (GitHub) $label"
         return 0
@@ -507,6 +514,7 @@ update_cream_ini() {
         id="$(echo "$id" | xargs)"
         [ -z "$id" ] && continue
         grep -q "^$id " "$ini_path" 2>/dev/null && continue
+        printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
         local name="$id"
         local dlc_info
         dlc_info=$(http_get "$STEAMCMD_API/$id" 2>/dev/null) || true
@@ -524,6 +532,8 @@ update_cream_ini() {
         echo "$id = $name" >> "$ini_path"
         added=$((added+1))
     done
+    
+    [ "$added" -gt 0 ] && echo ""
 
     if [ "$added" -gt 0 ]; then
         log OK "$(t ini_updated) +$added"
