@@ -253,6 +253,10 @@ http_get() {
     curl -sL --fail --retry 1 --connect-timeout 5 --max-time 10 -A "StellarisDLCUnlocker-sh/1.0" "$1"
 }
 
+http_get_fast() {
+    curl -sL --fail --connect-timeout 3 --max-time 3 -A "StellarisDLCUnlocker-sh/1.0" "$1"
+}
+
 download_with_fallback() {
     local rel="$1" dest="$2" label="${3:-$1}"
     mkdir -p "$(dirname "$dest")"
@@ -268,6 +272,57 @@ download_with_fallback() {
     fi
     log ERROR "  Failed to fetch $label from GitHub and jsDelivr."
     return 1
+}
+
+get_github_dir_shas() {
+    local subdir="$1"
+    local api_url="https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/contents/$subdir"
+    http_get "$api_url" 2>/dev/null || true
+}
+
+get_manifest_shas() {
+    local subdir="$1"
+    local manifest
+    manifest=$(http_get "$REPO_GITHUB_RAW/$subdir/manifest.json" 2>/dev/null) || true
+    if [ -z "$manifest" ]; then
+        manifest=$(http_get "$REPO_JSDELIVR/$subdir/manifest.json" 2>/dev/null) || true
+    fi
+    echo "$manifest"
+}
+
+get_remote_sha() {
+    local filename="$1" api_json="$2" manifest_json="$3"
+    local sha=""
+    if command -v jq >/dev/null 2>&1; then
+        [ -n "$api_json" ] && sha=$(echo "$api_json" | jq -r --arg f "$filename" '.[] | select(.name==$f) | .sha // empty' 2>/dev/null)
+        if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
+            sha=$(echo "$manifest_json" | jq -r --arg f "$filename" '.[$f] // empty' 2>/dev/null)
+        fi
+    else
+        if [ -n "$api_json" ]; then
+            sha=$(echo "$api_json" | grep -A5 "\"name\": \"$filename\"" | grep -oP '"sha":\s*"\K[a-f0-9]+' | head -1)
+        fi
+        if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
+            sha=$(echo "$manifest_json" | grep -oP "\"$filename\":\\s*\"\\K[a-f0-9]+" | head -1)
+        fi
+    fi
+    echo "$sha"
+}
+
+download_with_cache() {
+    local rel="$1" dest="$2" label="${3:-$1}" remote_sha="${4:-}"
+    local sha_file="${dest}.sha"
+    if [ -n "$remote_sha" ] && [ -f "$dest" ] && [ -f "$sha_file" ]; then
+        local cached_sha
+        cached_sha=$(cat "$sha_file")
+        if [ "$cached_sha" = "$remote_sha" ]; then
+            log OK "  (cached) $label"
+            return 0
+        fi
+    fi
+    download_with_fallback "$rel" "$dest" "$label" || return 1
+    [ -n "$remote_sha" ] && echo "$remote_sha" > "$sha_file"
+    return 0
 }
 
 ask() {
@@ -327,12 +382,12 @@ find_game_dir() {
 
 find_prefix_dir() {
     [ -z "$GAME_DIR" ] && return 1
-    
+
     local lib_dir
     lib_dir="$(dirname "$(dirname "$(dirname "$GAME_DIR")")")"
     local candidate1="$lib_dir/steamapps/compatdata/$APPID/pfx"
     local candidate2="$STEAM_DIR/steamapps/compatdata/$APPID/pfx"
-    
+
     if [ -d "$candidate1/drive_c" ]; then
         PREFIX_DIR="$candidate1"
         return 0
@@ -401,12 +456,12 @@ get_launcher_bases() {
             win_path=$(cat "$pointer_file" | tr -d '\r\n')
             local lin_path="${win_path//\\//}"
             lin_path="${lin_path/[Cc]:/$PREFIX_DIR/drive_c}"
-            
+
             if [ -d "$lin_path" ]; then
                 echo "$lin_path"
             fi
         fi
-        
+
         echo "$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Programs/Paradox Interactive/launcher"
         echo "$PREFIX_DIR/drive_c/Program Files/Paradox Interactive/launcher"
         echo "$PREFIX_DIR/drive_c/Program Files (x86)/Paradox Interactive/launcher"
@@ -416,7 +471,7 @@ get_launcher_bases() {
 run_wine() {
     export WINEPREFIX="$PREFIX_DIR"
     export WINEDEBUG=-all
-    
+
     if [ -z "$PROTON_WINE" ]; then
         local p_paths=()
         while IFS= read -r line; do p_paths+=("$line"); done < <(ls -d "$STEAM_DIR/steamapps/common/Proton "* 2>/dev/null | sort -rV)
@@ -427,7 +482,7 @@ run_wine() {
             fi
         done
     fi
-    
+
     if [ -n "$PROTON_WINE" ] && [ -x "$PROTON_WINE" ]; then
         "$PROTON_WINE" "$@"
     elif command -v wine >/dev/null 2>&1; then
@@ -466,16 +521,29 @@ dlc_folders() {
 fetch_creamapi() {
     mkdir -p "$CACHE_DIR/creamapi_steam_files" "$CACHE_DIR/creamapi_launcher_files" "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR"
     log INFO "$(t fetching_creamapi)"
+
+    local api_steam manifest_steam api_launcher manifest_launcher api_proton manifest_proton
+    api_steam=$(get_github_dir_shas "creamapi_steam_files")
+    manifest_steam=$(get_manifest_shas "creamapi_steam_files")
+    api_launcher=$(get_github_dir_shas "creamapi_launcher_files")
+    manifest_launcher=$(get_manifest_shas "creamapi_launcher_files")
+    api_proton=$(get_github_dir_shas "$CREAMLINUX_PROTON_SUBDIR")
+    manifest_proton=$(get_manifest_shas "$CREAMLINUX_PROTON_SUBDIR")
+
     local ok=1
     for f in "${STEAM_FILES[@]}"; do
-        download_with_fallback "creamapi_steam_files/$f" "$CACHE_DIR/creamapi_steam_files/$f" "$f" || ok=0
+        local sha; sha=$(get_remote_sha "$f" "$api_steam" "$manifest_steam")
+        download_with_cache "creamapi_steam_files/$f" "$CACHE_DIR/creamapi_steam_files/$f" "$f" "$sha" || ok=0
     done
     for f in "${LAUNCHER_FILES[@]}"; do
-        download_with_fallback "creamapi_launcher_files/$f" "$CACHE_DIR/creamapi_launcher_files/$f" "$f" || ok=0
+        local sha; sha=$(get_remote_sha "$f" "$api_launcher" "$manifest_launcher")
+        download_with_cache "creamapi_launcher_files/$f" "$CACHE_DIR/creamapi_launcher_files/$f" "$f" "$sha" || ok=0
     done
     for f in "${CREAMLINUX_PROTON_FILES[@]}"; do
-        download_with_fallback "$CREAMLINUX_PROTON_SUBDIR/$f" "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR/$f" "$f" || ok=0
+        local sha; sha=$(get_remote_sha "$f" "$api_proton" "$manifest_proton")
+        download_with_cache "$CREAMLINUX_PROTON_SUBDIR/$f" "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR/$f" "$f" "$sha" || ok=0
     done
+
     if [ "$ok" -eq 1 ]; then
         log OK "$(t creamapi_ok)"
         return 0
@@ -518,7 +586,7 @@ update_cream_ini() {
             printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
             local name="$id"
             local dlc_info
-            dlc_info=$(http_get "$STEAMCMD_API/$id" 2>/dev/null) || true
+            dlc_info=$(http_get_fast "$STEAMCMD_API/$id" 2>/dev/null) || true
             if [ -n "$dlc_info" ]; then
                 if command -v jq >/dev/null 2>&1; then
                     local n
@@ -672,7 +740,7 @@ do_install() {
     else
         log ERROR "$(t not_proton)"; pause; return 1;
     fi
-    
+
     resolve_prefix_dir || { log ERROR "Proton prefix is required."; pause; return 1; }
     log OK "Proton prefix: $PREFIX_DIR"
 
@@ -757,13 +825,13 @@ do_install() {
                     cleaned_any=1
                 fi
             done < <(get_launcher_bases)
-            
+
             [ "$cleaned_any" -eq 1 ] && sleep 1
-            
+
             log INFO "  Running msiexec /package..."
             run_wine msiexec /package "Z:${msi_path//\//\\}" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0
             sleep 2
-            
+
             if [ -n "$pointer_backup" ] && [ ! -f "$pointer_file" ]; then
                 mkdir -p "$(dirname "$pointer_file")"
                 echo "$pointer_backup" > "$pointer_file"
@@ -781,7 +849,7 @@ do_install() {
     log INFO "$(t patching_launcher)"
     local found_launcher=0
     local processed_bases=()
-    
+
     while IFS= read -r l_base; do
         if [ -n "$l_base" ] && [ -d "$l_base" ]; then
             local skip=0
@@ -795,7 +863,7 @@ do_install() {
                 [ -d "$lf" ] || continue
                 found_launcher=1
                 log INFO "  Processing: $(basename "$lf") in $(basename "$(dirname "$l_base")")"
-                
+
                 if [ "$no_update" -eq 1 ]; then
                     rm -f "$lf/xdelta3.exe"
                     log OK "    Removed xdelta3.exe (auto-update disabled)."
@@ -804,7 +872,7 @@ do_install() {
                 local t1="$lf/resources/app.asar.unpacked/node_modules/greenworks/lib"
                 local t2="$lf/resources/app/dist/main"
                 local patched=0
-                
+
                 if [ -d "$t1" ]; then
                     cp -rf "$CACHE_DIR/creamapi_launcher_files/"* "$t1/"
                     patched=1
@@ -813,7 +881,7 @@ do_install() {
                     cp -rf "$CACHE_DIR/creamapi_launcher_files/"* "$t2/"
                     patched=1
                 fi
-                
+
                 if [ "$patched" -eq 1 ]; then
                     log OK "    Patched resources."
                 else
@@ -866,11 +934,11 @@ show_status() {
         else
             echo -e "${C_RED}$(t not_proton)${C_RESET}"
         fi
-        
+
         find_prefix_dir
         if [ -n "$PREFIX_DIR" ]; then
             echo -e "${C_GREEN}Proton Prefix:${C_RESET} $PREFIX_DIR"
-            
+
             local launcher_found=0
             while IFS= read -r l_base; do
                 if [ -n "$l_base" ] && [ -d "$l_base" ]; then

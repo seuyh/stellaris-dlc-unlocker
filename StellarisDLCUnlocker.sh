@@ -271,6 +271,10 @@ http_get() {
     curl -sL --fail --retry 1 --connect-timeout 5 --max-time 10 -A "StellarisDLCUnlocker-sh/1.0" "$1"
 }
 
+http_get_fast() {
+    curl -sL --fail --connect-timeout 3 --max-time 3 -A "StellarisDLCUnlocker-sh/1.0" "$1"
+}
+
 download_with_fallback() {
     local rel="$1" dest="$2" label="${3:-$1}"
     mkdir -p "$(dirname "$dest")"
@@ -286,6 +290,57 @@ download_with_fallback() {
     fi
     log ERROR "  Failed to fetch $label from GitHub and jsDelivr."
     return 1
+}
+
+get_github_dir_shas() {
+    local subdir="$1"
+    local api_url="https://api.github.com/repos/seuyh/stellaris-dlc-unlocker/contents/$subdir"
+    http_get "$api_url" 2>/dev/null || true
+}
+
+get_manifest_shas() {
+    local subdir="$1"
+    local manifest
+    manifest=$(http_get "$REPO_GITHUB_RAW/$subdir/manifest.json" 2>/dev/null) || true
+    if [ -z "$manifest" ]; then
+        manifest=$(http_get "$REPO_JSDELIVR/$subdir/manifest.json" 2>/dev/null) || true
+    fi
+    echo "$manifest"
+}
+
+get_remote_sha() {
+    local filename="$1" api_json="$2" manifest_json="$3"
+    local sha=""
+    if command -v jq >/dev/null 2>&1; then
+        [ -n "$api_json" ] && sha=$(echo "$api_json" | jq -r --arg f "$filename" '.[] | select(.name==$f) | .sha // empty' 2>/dev/null)
+        if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
+            sha=$(echo "$manifest_json" | jq -r --arg f "$filename" '.[$f] // empty' 2>/dev/null)
+        fi
+    else
+        if [ -n "$api_json" ]; then
+            sha=$(echo "$api_json" | grep -A5 "\"name\": \"$filename\"" | grep -oP '"sha":\s*"\K[a-f0-9]+' | head -1)
+        fi
+        if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
+            sha=$(echo "$manifest_json" | grep -oP "\"$filename\":\\s*\"\\K[a-f0-9]+" | head -1)
+        fi
+    fi
+    echo "$sha"
+}
+
+download_with_cache() {
+    local rel="$1" dest="$2" label="${3:-$1}" remote_sha="${4:-}"
+    local sha_file="${dest}.sha"
+    if [ -n "$remote_sha" ] && [ -f "$dest" ] && [ -f "$sha_file" ]; then
+        local cached_sha
+        cached_sha=$(cat "$sha_file")
+        if [ "$cached_sha" = "$remote_sha" ]; then
+            log OK "  (cached) $label"
+            return 0
+        fi
+    fi
+    download_with_fallback "$rel" "$dest" "$label" || return 1
+    [ -n "$remote_sha" ] && echo "$remote_sha" > "$sha_file"
+    return 0
 }
 
 ask() {
@@ -455,11 +510,20 @@ dlc_folders() {
 
 fetch_creamlinux() {
     local dest_dir="$CACHE_DIR/$CREAMLINUX_SUBDIR"
+    mkdir -p "$dest_dir"
     log INFO "$(t fetching_creamlinux)"
+
+    local api_json manifest_json
+    api_json=$(get_github_dir_shas "$CREAMLINUX_SUBDIR")
+    manifest_json=$(get_manifest_shas "$CREAMLINUX_SUBDIR")
+
     local ok=1
     for f in "${CREAMLINUX_FILES[@]}"; do
-        download_with_fallback "$CREAMLINUX_SUBDIR/$f" "$dest_dir/$f" "$f" || ok=0
+        local remote_sha
+        remote_sha=$(get_remote_sha "$f" "$api_json" "$manifest_json")
+        download_with_cache "$CREAMLINUX_SUBDIR/$f" "$dest_dir/$f" "$f" "$remote_sha" || ok=0
     done
+
     if [ "$ok" -eq 1 ]; then
         log OK "$(t creamlinux_ok)"
         return 0
@@ -524,7 +588,7 @@ update_cream_ini() {
         printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
         local name="$id"
         local dlc_info
-        dlc_info=$(http_get "$STEAMCMD_API/$id" 2>/dev/null) || true
+        dlc_info=$(http_get_fast "$STEAMCMD_API/$id" 2>/dev/null) || true
         if [ -n "$dlc_info" ]; then
             if command -v jq >/dev/null 2>&1; then
                 local n
@@ -539,7 +603,7 @@ update_cream_ini() {
         echo "$id = $name" >> "$ini_path"
         added=$((added+1))
     done
-    
+
     [ "$added" -gt 0 ] && echo ""
 
     if [ "$added" -gt 0 ]; then
