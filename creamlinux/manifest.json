@@ -1,0 +1,18 @@
+[
+  {
+    "name": "cream.sh",
+    "sha": "7947169426e250bc9d27802f3bdc5f204b4efaa3"
+  },
+  {
+    "name": "cream_api.ini",
+    "sha": "065462057495eb826b70a2c50144e10030465bbd"
+  },
+  {
+    "name": "lib32Creamlinux.so",
+    "sha": "643e4868030422a294e2f0f21bf999d887eee4a2"
+  },
+  {
+    "name": "lib64Creamlinux.so",
+    "sha": "f6b2e99e283b0cd4ffbde483250afd548ead081e"
+  }
+]
