@@ -250,7 +250,7 @@ download_file() {
 }
 
 http_get() {
-    curl -sL --fail --retry 2 --connect-timeout 10 -A "StellarisDLCUnlocker-sh/1.0" "$1"
+    curl -sL --fail --retry 1 --connect-timeout 5 --max-time 10 -A "StellarisDLCUnlocker-sh/1.0" "$1"
 }
 
 download_with_fallback() {

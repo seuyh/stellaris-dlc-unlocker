@@ -462,8 +462,8 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
         if (-not (Test-Path $iniPath)) { continue }
         try {
             $req = [System.Net.HttpWebRequest]::Create("$_STEAMCMD_API/$_APPID")
-            $req.Timeout = 2500
-            $req.ReadWriteTimeout = 2500
+            $req.Timeout = 10000
+            $req.ReadWriteTimeout = 10000
             $resp = $req.GetResponse()
             $stream = $resp.GetResponseStream()
             $reader = [System.IO.StreamReader]::new($stream)
@@ -482,7 +482,7 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                     $name = $id
                     try {
                         $req2 = [System.Net.HttpWebRequest]::Create("$_STEAMCMD_API/$id")
-                        $req2.Timeout = 1500; $req2.ReadWriteTimeout = 1500
+                        $req2.Timeout = 3000; $req2.ReadWriteTimeout = 3000
                         $resp2 = $req2.GetResponse()
                         $reader2 = [System.IO.StreamReader]::new($resp2.GetResponseStream())
                         $name = ($reader2.ReadToEnd() | ConvertFrom-Json).data."$id".common.name
