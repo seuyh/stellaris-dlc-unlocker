@@ -17,11 +17,8 @@ JSDELIVR_HASHES_URL="$REPO_JSDELIVR/hashes.json"
 SERVER_URL="pub-0f87be5fdd68492c8328b66998eb46ad.r2.dev"
 STEAMCMD_API="https://api.steamcmd.net/v1/info"
 
-STEAM_FILES=(Emulator64.dll LinkNeverDie_Com_64.dll SWLoader.txt SWconfig.ini cream_api.ini steam_api64_org_game.dll steam_api64_org_launcher.dll)
-LAUNCHER_FILES=(cream_api.ini sdkencryptedappticket64.dll steam_api64.dll steam_api64_o.dll)
-ALT_LAUNCHERS=("launcher-installer-windows_2024.14.msi" "launcher-installer-windows_2024.13.msi" "launcher-installer-windows_2024.8.msi")
-CREAMLINUX_PROTON_SUBDIR="creamlinux-proton"
-CREAMLINUX_PROTON_FILES=(creamlinux.json steam_api64.dll)
+CREAMLINUX_SUBDIR="creamlinux"
+CREAMLINUX_FILES=(cream.sh lib32Creamlinux.so lib64Creamlinux.so cream_api.ini)
 
 mkdir -p "$APP_DIR" "$CACHE_DIR"
 
@@ -42,12 +39,13 @@ t() {
 
 _t_en() {
     case "$1" in
-        title) echo "Stellaris DLC Unlocker (Proton)" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "MAIN MENU" ;;
         m_status) echo "Status" ;;
         m_install) echo "Install / Update" ;;
         fetching_dlc_info) echo "Fetching DLC info:" ;;
         fetching_file) echo "  -> In progress:" ;;
+        m_steam_launch) echo "Set Steam launch options" ;;
         m_lang) echo "Language" ;;
         m_log) echo "Log" ;;
         m_exit) echo "Exit" ;;
@@ -56,29 +54,36 @@ _t_en() {
         steam_not_found) echo "Steam not found." ;;
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "Stellaris not found." ;;
-        proton_build) echo "Windows executable found (Proton/Wine)." ;;
-        not_proton) echo "Not a Windows build. Use the Native Linux unlocker instead." ;;
+        native_build) echo "Native Linux build." ;;
+        not_native) echo "Not a native Linux build. Use the Proton unlocker instead." ;;
         downloading) echo "Downloading" ;;
         fetching_dlc_list) echo "Fetching DLC list..." ;;
         dlc_list_ok) echo "DLC list loaded." ;;
         dlc_list_fail) echo "Failed to fetch DLC list." ;;
-        fetching_creamapi) echo "Downloading CreamAPI files..." ;;
-        creamapi_ok) echo "CreamAPI files ready." ;;
-        patching_launcher) echo "Patching Paradox Launcher..." ;;
+        fetching_creamlinux) echo "Downloading CreamLinux files..." ;;
+        creamlinux_ok) echo "CreamLinux files ready." ;;
         copying_files) echo "Copying files to game folder..." ;;
         to_download) echo "DLC to download:" ;;
-        unpacking) echo "Unpacking archives..." ;;
+        unpacking) echo "Unpacking..." ;;
         updating_ini) echo "Updating cream_api.ini..." ;;
         ini_updated) echo "cream_api.ini: added" ;;
         ini_skip) echo "SteamCMD unavailable, skipped." ;;
-        install_done) echo "Done! Launch Stellaris via Steam." ;;
+        install_done) echo "Done." ;;
+        patch_launch_header) echo "Steam launch options" ;;
+        patch_userdata_not_found) echo "Steam userdata folder not found." ;;
+        patch_localconfig_not_found) echo "localconfig.vdf not found." ;;
+        patch_backup) echo "Backup:" ;;
+        patch_done) echo "Launch options set." ;;
+        steam_running_prompt) echo "Steam is running and must be closed to apply launch options. Close it now? [Y/n]: " ;;
+        steam_closing) echo "Closing Steam..." ;;
+        steam_close_ok) echo "Steam closed." ;;
+        steam_close_fail) echo "Could not close Steam, aborting." ;;
+        abort_steam_running) echo "Skipped: Steam is still running." ;;
         press_enter) echo "Press Enter to continue..." ;;
         enter_game_path) echo "Game path (or Enter to cancel): " ;;
         invalid_game_path) echo "Path does not exist." ;;
         enter_steam_path) echo "Steam not auto-detected. Enter Steam folder path (or Enter to cancel): " ;;
         invalid_steam_path) echo "Not a valid Steam folder (no 'steamapps' inside)." ;;
-        enter_prefix_path) echo "Proton prefix not found. Enter path to 'pfx' folder (e.g. .../compatdata/281990/pfx) or Enter to cancel: " ;;
-        invalid_prefix_path) echo "Invalid prefix path (no 'drive_c' found inside)." ;;
         invalid_choice) echo "Invalid choice." ;;
         log_empty) echo "Log is empty." ;;
         confirm_install) echo "Proceed? [Y/n]: " ;;
@@ -87,23 +92,19 @@ _t_en() {
         hashes_skip) echo "Could not fetch hashes.json, skipping integrity check." ;;
         dlc_outdated) echo "Outdated content, will re-download:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
-        opt_reinstall) echo "Reinstall Paradox Launcher? [Y/n]: " ;;
-        opt_ver) echo "Select launcher version (0=Default, 1=2024.14, 2=2024.13, 3=2024.8): " ;;
-        opt_noupdate) echo "Disable launcher auto-update (recommended)? [Y/n]: " ;;
-        opt_full) echo "Full reinstall (deletes saves and settings)? [y/N] (Default: No): " ;;
-        launcher_default) echo "Default (From game folder)" ;;
         *) echo "$1" ;;
     esac
 }
 
 _t_ru() {
     case "$1" in
-        title) echo "Stellaris DLC Unlocker (Proton)" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "ГЛАВНОЕ МЕНЮ" ;;
         m_status) echo "Статус" ;;
         m_install) echo "Установить / обновить" ;;
         fetching_dlc_info) echo "Запрос данных DLC:" ;;
         fetching_file) echo "  -> В процессе:" ;;
+        m_steam_launch) echo "Прописать параметры запуска Steam" ;;
         m_lang) echo "Язык" ;;
         m_log) echo "Лог" ;;
         m_exit) echo "Выход" ;;
@@ -112,29 +113,36 @@ _t_ru() {
         steam_not_found) echo "Steam не найден." ;;
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "Stellaris не найден." ;;
-        proton_build) echo "Найден Windows-исполняемый файл (Proton)." ;;
-        not_proton) echo "Не Windows-версия. Используйте нативный Linux-анлокер." ;;
+        native_build) echo "Нативная Linux-версия." ;;
+        not_native) echo "Не нативная Linux-версия. Используйте анлокер для Proton." ;;
         downloading) echo "Скачивание" ;;
         fetching_dlc_list) echo "Получение списка DLC..." ;;
         dlc_list_ok) echo "Список DLC загружен." ;;
         dlc_list_fail) echo "Не удалось получить список DLC." ;;
-        fetching_creamapi) echo "Скачивание файлов CreamAPI..." ;;
-        creamapi_ok) echo "Файлы CreamAPI готовы." ;;
-        patching_launcher) echo "Патчинг Paradox Launcher..." ;;
+        fetching_creamlinux) echo "Скачивание файлов CreamLinux..." ;;
+        creamlinux_ok) echo "Файлы CreamLinux готовы." ;;
         copying_files) echo "Копирование файлов в папку игры..." ;;
         to_download) echo "DLC к скачиванию:" ;;
-        unpacking) echo "Распаковка архивов..." ;;
+        unpacking) echo "Распаковка..." ;;
         updating_ini) echo "Обновление cream_api.ini..." ;;
         ini_updated) echo "cream_api.ini: добавлено" ;;
         ini_skip) echo "SteamCMD недоступен, пропущено." ;;
-        install_done) echo "Готово! Запускайте Stellaris через Steam." ;;
+        install_done) echo "Готово." ;;
+        patch_launch_header) echo "Параметры запуска Steam" ;;
+        patch_userdata_not_found) echo "Папка userdata Steam не найдена." ;;
+        patch_localconfig_not_found) echo "localconfig.vdf не найден." ;;
+        patch_backup) echo "Бэкап:" ;;
+        patch_done) echo "Параметры запуска установлены." ;;
+        steam_running_prompt) echo "Steam запущен, для применения параметров запуска его нужно закрыть. Закрыть сейчас? [Y/n]: " ;;
+        steam_closing) echo "Закрытие Steam..." ;;
+        steam_close_ok) echo "Steam закрыт." ;;
+        steam_close_fail) echo "Не удалось закрыть Steam, отмена." ;;
+        abort_steam_running) echo "Пропущено: Steam всё ещё запущен." ;;
         press_enter) echo "Нажмите Enter для продолжения..." ;;
         enter_game_path) echo "Путь к игре (или Enter, чтобы отменить): " ;;
         invalid_game_path) echo "Такого пути не существует." ;;
-        enter_steam_path) echo "Steam не найден автоматически. Введите путь к папке (или Enter, чтобы отменить): " ;;
+        enter_steam_path) echo "Steam не найден автоматически. Введите путь к папке Steam (или Enter, чтобы отменить): " ;;
         invalid_steam_path) echo "Это не папка Steam (внутри нет 'steamapps')." ;;
-        enter_prefix_path) echo "Префикс Proton не найден. Введите путь к папке 'pfx' (например .../compatdata/281990/pfx) или Enter для отмены: " ;;
-        invalid_prefix_path) echo "Неверный путь к префиксу (внутри нет 'drive_c')." ;;
         invalid_choice) echo "Неверный выбор." ;;
         log_empty) echo "Лог пуст." ;;
         confirm_install) echo "Продолжить? [Y/n]: " ;;
@@ -143,23 +151,19 @@ _t_ru() {
         hashes_skip) echo "Не удалось получить hashes.json, проверка целостности пропущена." ;;
         dlc_outdated) echo "Контент устарел, будет перекачан:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
-        opt_reinstall) echo "Переустановить Paradox Launcher? [Y/n]: " ;;
-        opt_ver) echo "Выберите версию лаунчера (0=По умолчанию, 1=2024.14, 2=2024.13, 3=2024.8): " ;;
-        opt_noupdate) echo "Отключить авто-обновление лаунчера (рекомендуется)? [Y/n]: " ;;
-        opt_full) echo "Полная очистка DLC и сохранений? [y/N] (По умолчанию: Нет): " ;;
-        launcher_default) echo "По умолчанию (Из папки с игрой)" ;;
         *) echo "$1" ;;
     esac
 }
 
 _t_zh() {
     case "$1" in
-        title) echo "Stellaris DLC Unlocker (Proton)" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "主菜单" ;;
         m_status) echo "状态" ;;
         m_install) echo "安装 / 更新" ;;
         fetching_dlc_info) echo "正在获取 DLC 信息:" ;;
         fetching_file) echo "  -> 正在处理:" ;;
+        m_steam_launch) echo "设置 Steam 启动选项" ;;
         m_lang) echo "语言" ;;
         m_log) echo "日志" ;;
         m_exit) echo "退出" ;;
@@ -168,29 +172,36 @@ _t_zh() {
         steam_not_found) echo "未找到 Steam。" ;;
         game_found) echo "Stellaris:" ;;
         game_not_found) echo "未找到 Stellaris。" ;;
-        proton_build) echo "检测到 Windows 执行文件 (Proton)。" ;;
-        not_proton) echo "非 Windows 版本。请使用原生 Linux 解锁器。" ;;
+        native_build) echo "原生 Linux 版本。" ;;
+        not_native) echo "非原生 Linux 版本。请使用 Proton 解锁器。" ;;
         downloading) echo "下载中" ;;
         fetching_dlc_list) echo "正在获取 DLC 列表..." ;;
         dlc_list_ok) echo "DLC 列表已加载。" ;;
         dlc_list_fail) echo "获取 DLC 列表失败。" ;;
-        fetching_creamapi) echo "正在下载 CreamAPI 文件..." ;;
-        creamapi_ok) echo "CreamAPI 文件已就绪。" ;;
-        patching_launcher) echo "正在修补 Paradox Launcher..." ;;
+        fetching_creamlinux) echo "正在下载 CreamLinux 文件..." ;;
+        creamlinux_ok) echo "CreamLinux 文件已就绪。" ;;
         copying_files) echo "正在复制文件到游戏目录..." ;;
         to_download) echo "待下载 DLC:" ;;
         unpacking) echo "正在解压..." ;;
         updating_ini) echo "正在更新 cream_api.ini..." ;;
         ini_updated) echo "cream_api.ini: 已添加" ;;
         ini_skip) echo "SteamCMD 不可用，已跳过。" ;;
-        install_done) echo "完成！请通过 Steam 启动 Stellaris。" ;;
+        install_done) echo "完成。" ;;
+        patch_launch_header) echo "Steam 启动选项" ;;
+        patch_userdata_not_found) echo "未找到 Steam userdata 目录。" ;;
+        patch_localconfig_not_found) echo "未找到 localconfig.vdf。" ;;
+        patch_backup) echo "备份:" ;;
+        patch_done) echo "启动选项已设置。" ;;
+        steam_running_prompt) echo "Steam 正在运行，需关闭后才能应用启动选项。现在关闭吗？[Y/n]: " ;;
+        steam_closing) echo "正在关闭 Steam..." ;;
+        steam_close_ok) echo "Steam 已关闭。" ;;
+        steam_close_fail) echo "无法关闭 Steam，已中止。" ;;
+        abort_steam_running) echo "已跳过：Steam 仍在运行。" ;;
         press_enter) echo "按 Enter 继续..." ;;
         enter_game_path) echo "游戏路径（直接 Enter 取消）: " ;;
         invalid_game_path) echo "路径不存在。" ;;
         enter_steam_path) echo "未自动检测到 Steam。请输入 Steam 文件夹路径（直接 Enter 取消）: " ;;
         invalid_steam_path) echo "不是有效的 Steam 文件夹（内部没有 'steamapps'）。" ;;
-        enter_prefix_path) echo "未找到 Proton 前缀。请输入 'pfx' 文件夹路径 (例如 .../compatdata/281990/pfx) 或直接 Enter 取消: " ;;
-        invalid_prefix_path) echo "无效的前缀路径 (未找到 'drive_c')。" ;;
         invalid_choice) echo "无效选择。" ;;
         log_empty) echo "日志为空。" ;;
         confirm_install) echo "继续？[Y/n]: " ;;
@@ -199,11 +210,6 @@ _t_zh() {
         hashes_skip) echo "无法获取 hashes.json，跳过完整性检查。" ;;
         dlc_outdated) echo "内容已过期，将重新下载:" ;;
         flatpak_steam) echo "(Flatpak)" ;;
-        opt_reinstall) echo "重装 Paradox Launcher？[Y/n]: " ;;
-        opt_ver) echo "选择启动器版本 (0=默认, 1=2024.14, 2=2024.13, 3=2024.8): " ;;
-        opt_noupdate) echo "禁用启动器自动更新（推荐）？[Y/n]: " ;;
-        opt_full) echo "完整重装（将删除存档和设置）？[y/N] (默认: 否): " ;;
-        launcher_default) echo "默认 (来自游戏目录)" ;;
         *) echo "$1" ;;
     esac
 }
@@ -235,6 +241,18 @@ header() {
 pause() {
     echo
     ask "$(t press_enter)" _dummy
+}
+
+progress_bar() {
+    local current="$1" total="$2" label="$3"
+    local width=30
+    local pct=0
+    [ "$total" -gt 0 ] && pct=$(( current * 100 / total ))
+    local filled=$(( pct * width / 100 ))
+    local empty=$(( width - filled ))
+    printf "\r${C_CYAN}[%-${width}s]${C_RESET} %3d%% %s" \
+        "$(printf '#%.0s' $(seq 1 $filled) 2>/dev/null)$(printf '.%.0s' $(seq 1 $empty) 2>/dev/null)" \
+        "$pct" "$label"
 }
 
 download_file() {
@@ -282,9 +300,7 @@ ask() {
 
 STEAM_DIR=""
 GAME_DIR=""
-PREFIX_DIR=""
 IS_FLATPAK_STEAM=0
-PROTON_WINE=""
 
 find_steam_dir() {
     local candidates=(
@@ -325,31 +341,17 @@ find_game_dir() {
     return 1
 }
 
-find_prefix_dir() {
-    [ -z "$GAME_DIR" ] && return 1
-    
-    local lib_dir
-    lib_dir="$(dirname "$(dirname "$(dirname "$GAME_DIR")")")"
-    local candidate1="$lib_dir/steamapps/compatdata/$APPID/pfx"
-    local candidate2="$STEAM_DIR/steamapps/compatdata/$APPID/pfx"
-    
-    if [ -d "$candidate1/drive_c" ]; then
-        PREFIX_DIR="$candidate1"
-        return 0
-    elif [ -d "$candidate2/drive_c" ]; then
-        PREFIX_DIR="$candidate2"
-        return 0
-    fi
-    return 1
-}
-
-is_proton_build() {
-    [ -f "$GAME_DIR/stellaris.exe" ]
+is_native_build() {
+    [ -f "$GAME_DIR/stellaris" ] && file "$GAME_DIR/stellaris" 2>/dev/null | grep -qi "ELF"
 }
 
 resolve_steam_dir() {
-    [ -n "$STEAM_DIR" ] && return 0
-    find_steam_dir && return 0
+    if [ -n "$STEAM_DIR" ]; then
+        return 0
+    fi
+    if find_steam_dir; then
+        return 0
+    fi
     while true; do
         ask "$(t enter_steam_path)" manual
         [ -z "$manual" ] && return 1
@@ -364,8 +366,9 @@ resolve_steam_dir() {
 }
 
 resolve_game_dir() {
-    [ -n "$GAME_DIR" ] && return 0
-    find_game_dir && return 0
+    if find_game_dir; then
+        return 0
+    fi
     while true; do
         ask "$(t enter_game_path)" manual
         [ -z "$manual" ] && return 1
@@ -378,64 +381,51 @@ resolve_game_dir() {
     done
 }
 
-resolve_prefix_dir() {
-    [ -n "$PREFIX_DIR" ] && return 0
-    find_prefix_dir && return 0
-    while true; do
-        ask "$(t enter_prefix_path)" manual
-        [ -z "$manual" ] && return 1
-        manual="${manual%/}"
-        if [ -d "$manual/drive_c" ]; then
-            PREFIX_DIR="$manual"
-            return 0
-        fi
-        log ERROR "$(t invalid_prefix_path)"
+is_steam_running() {
+    pgrep -x steam >/dev/null 2>&1 && return 0
+    pgrep -f "com.valvesoftware.Steam" >/dev/null 2>&1 && return 0
+    return 1
+}
+
+close_steam() {
+    log INFO "$(t steam_closing)"
+    if [ "$IS_FLATPAK_STEAM" = 1 ] && command -v flatpak >/dev/null 2>&1; then
+        flatpak kill com.valvesoftware.Steam >/dev/null 2>&1
+    fi
+    command -v steam >/dev/null 2>&1 && steam -shutdown >/dev/null 2>&1 &
+    pkill -x steam >/dev/null 2>&1
+
+    local waited=0
+    while is_steam_running && [ "$waited" -lt 15 ]; do
+        sleep 1
+        waited=$((waited+1))
     done
-}
 
-get_launcher_bases() {
-    if [ -n "$PREFIX_DIR" ]; then
-        local pointer_file="$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Paradox Interactive/launcherpath"
-        if [ -f "$pointer_file" ]; then
-            local win_path
-            win_path=$(cat "$pointer_file" | tr -d '\r\n')
-            local lin_path="${win_path//\\//}"
-            lin_path="${lin_path/[Cc]:/$PREFIX_DIR/drive_c}"
-            
-            if [ -d "$lin_path" ]; then
-                echo "$lin_path"
-            fi
-        fi
-        
-        echo "$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Programs/Paradox Interactive/launcher"
-        echo "$PREFIX_DIR/drive_c/Program Files/Paradox Interactive/launcher"
-        echo "$PREFIX_DIR/drive_c/Program Files (x86)/Paradox Interactive/launcher"
+    if is_steam_running; then
+        pkill -9 -x steam >/dev/null 2>&1
+        sleep 1
     fi
-}
 
-run_wine() {
-    export WINEPREFIX="$PREFIX_DIR"
-    export WINEDEBUG=-all
-    
-    if [ -z "$PROTON_WINE" ]; then
-        local p_paths=()
-        while IFS= read -r line; do p_paths+=("$line"); done < <(ls -d "$STEAM_DIR/steamapps/common/Proton "* 2>/dev/null | sort -rV)
-        for p in "${p_paths[@]}"; do
-            if [ -x "$p/files/bin/wine" ]; then
-                PROTON_WINE="$p/files/bin/wine"
-                break
-            fi
-        done
-    fi
-    
-    if [ -n "$PROTON_WINE" ] && [ -x "$PROTON_WINE" ]; then
-        "$PROTON_WINE" "$@"
-    elif command -v wine >/dev/null 2>&1; then
-        wine "$@"
-    else
-        log ERROR "Proton wine binary not found. Try running the game once via Steam."
+    if is_steam_running; then
+        log ERROR "$(t steam_close_fail)"
         return 1
     fi
+    log OK "$(t steam_close_ok)"
+    return 0
+}
+
+ensure_steam_closed() {
+    if ! is_steam_running; then
+        return 0
+    fi
+    ask "$(t steam_running_prompt)" ans
+    [ -z "$ans" ] && ans="y"
+    if [[ "$ans" =~ ^[yYдД]$ ]]; then
+        close_steam || return 1
+        return 0
+    fi
+    log WARN "$(t abort_steam_running)"
+    return 1
 }
 
 DLC_DATA_JSON=""
@@ -463,27 +453,45 @@ dlc_folders() {
     fi
 }
 
-fetch_creamapi() {
-    mkdir -p "$CACHE_DIR/creamapi_steam_files" "$CACHE_DIR/creamapi_launcher_files" "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR"
-    log INFO "$(t fetching_creamapi)"
+fetch_creamlinux() {
+    local dest_dir="$CACHE_DIR/$CREAMLINUX_SUBDIR"
+    log INFO "$(t fetching_creamlinux)"
     local ok=1
-    for f in "${STEAM_FILES[@]}"; do
-        download_with_fallback "creamapi_steam_files/$f" "$CACHE_DIR/creamapi_steam_files/$f" "$f" || ok=0
-    done
-    for f in "${LAUNCHER_FILES[@]}"; do
-        download_with_fallback "creamapi_launcher_files/$f" "$CACHE_DIR/creamapi_launcher_files/$f" "$f" || ok=0
-    done
-    for f in "${CREAMLINUX_PROTON_FILES[@]}"; do
-        download_with_fallback "$CREAMLINUX_PROTON_SUBDIR/$f" "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR/$f" "$f" || ok=0
+    for f in "${CREAMLINUX_FILES[@]}"; do
+        download_with_fallback "$CREAMLINUX_SUBDIR/$f" "$dest_dir/$f" "$f" || ok=0
     done
     if [ "$ok" -eq 1 ]; then
-        log OK "$(t creamapi_ok)"
+        log OK "$(t creamlinux_ok)"
         return 0
     fi
     return 1
 }
 
+copy_creamlinux_to_game() {
+    local src_dir="$CACHE_DIR/$CREAMLINUX_SUBDIR"
+    log INFO "$(t copying_files)"
+    for f in cream.sh lib32Creamlinux.so lib64Creamlinux.so; do
+        if [ -f "$src_dir/$f" ]; then
+            cp -f "$src_dir/$f" "$GAME_DIR/$f"
+        else
+            log WARN "Missing in CreamLinux package: $f"
+        fi
+    done
+    chmod +x "$GAME_DIR/cream.sh" 2>/dev/null
+    log OK "CreamLinux files copied to: $GAME_DIR"
+}
+
 update_cream_ini() {
+    local ini_path="$GAME_DIR/cream_api.ini"
+    local cached_ini="$CACHE_DIR/$CREAMLINUX_SUBDIR/cream_api.ini"
+
+    if [ -f "$cached_ini" ]; then
+        cp -f "$cached_ini" "$ini_path"
+        sed -i 's/\r$//' "$ini_path"
+    else
+        : > "$ini_path"
+    fi
+
     log INFO "$(t updating_ini)"
     local info
     info=$(http_get "$STEAMCMD_API/$APPID" 2>/dev/null) || true
@@ -503,43 +511,40 @@ update_cream_ini() {
         return 0
     fi
 
-    for ini_path in "$CACHE_DIR/creamapi_steam_files/cream_api.ini" "$CACHE_DIR/creamapi_launcher_files/cream_api.ini"; do
-        [ -f "$ini_path" ] || continue
-        if [ -s "$ini_path" ] && [ -n "$(tail -c1 "$ini_path")" ]; then
-            printf '\n' >> "$ini_path"
-        fi
+    if [ -s "$ini_path" ] && [ -n "$(tail -c1 "$ini_path")" ]; then
+        printf '\n' >> "$ini_path"
+    fi
 
-        local added=0
-        IFS=',' read -ra ids <<< "$csv"
-        for id in "${ids[@]}"; do
-            id="$(echo "$id" | xargs)"
-            [ -z "$id" ] && continue
-            grep -q "^$id " "$ini_path" 2>/dev/null && continue
-            printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
-            local name="$id"
-            local dlc_info
-            dlc_info=$(http_get "$STEAMCMD_API/$id" 2>/dev/null) || true
-            if [ -n "$dlc_info" ]; then
-                if command -v jq >/dev/null 2>&1; then
-                    local n
-                    n=$(echo "$dlc_info" | jq -r ".data[\"$id\"].common.name // empty")
-                    [ -n "$n" ] && name="$n"
-                else
-                    local n
-                    n=$(echo "$dlc_info" | grep -oP '"name"\s*:\s*"\K[^"]+' | head -1)
-                    [ -n "$n" ] && name="$n"
-                fi
+    local added=0
+    IFS=',' read -ra ids <<< "$csv"
+    for id in "${ids[@]}"; do
+        id="$(echo "$id" | xargs)"
+        [ -z "$id" ] && continue
+        grep -q "^$id " "$ini_path" 2>/dev/null && continue
+        printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
+        local name="$id"
+        local dlc_info
+        dlc_info=$(http_get "$STEAMCMD_API/$id" 2>/dev/null) || true
+        if [ -n "$dlc_info" ]; then
+            if command -v jq >/dev/null 2>&1; then
+                local n
+                n=$(echo "$dlc_info" | jq -r ".data[\"$id\"].common.name // empty")
+                [ -n "$n" ] && name="$n"
+            else
+                local n
+                n=$(echo "$dlc_info" | grep -oP '"name"\s*:\s*"\K[^"]+' | head -1)
+                [ -n "$n" ] && name="$n"
             fi
-            echo "$id = $name" >> "$ini_path"
-            added=$((added+1))
-        done
-
-        [ "$added" -gt 0 ] && echo ""
-        if [ "$added" -gt 0 ]; then
-            log OK "$(t ini_updated) +$added in $ini_path"
         fi
-        sed -i 's/\r$//; s/$/\r/' "$ini_path"
+        echo "$id = $name" >> "$ini_path"
+        added=$((added+1))
     done
+    
+    [ "$added" -gt 0 ] && echo ""
+
+    if [ "$added" -gt 0 ]; then
+        log OK "$(t ini_updated) +$added"
+    fi
 }
 
 DLC_HASHES_JSON=""
@@ -649,11 +654,108 @@ download_dlc_content() {
         base="$(basename "$z" .zip)"
         if unzip -oq "$z" -d "$dlc_dir"; then
             rm -f "$z"
-            log OK "  Unpacked: $base"
+            log OK "Unpacked: $base"
         else
-            log ERROR "  Unzip error: $base"
+            log ERROR "Unzip error: $base"
         fi
     done
+}
+
+patch_launch_options_core() {
+    resolve_steam_dir || { log ERROR "$(t steam_not_found)"; return 1; }
+
+    ensure_steam_closed || return 1
+
+    local userdata_dir="$STEAM_DIR/userdata"
+    if [ ! -d "$userdata_dir" ]; then
+        log ERROR "$(t patch_userdata_not_found)"
+        return 1
+    fi
+
+    local patched_any=0
+    for user_dir in "$userdata_dir"/*/; do
+        local vdf="${user_dir}config/localconfig.vdf"
+        [ -f "$vdf" ] || continue
+
+        local backup="${vdf}.bak.$(date +%Y%m%d%H%M%S)"
+        cp -f "$vdf" "$backup"
+        log INFO "$(t patch_backup) $backup"
+
+        local desired='sh ./cream.sh %command%'
+        local tmp
+        tmp=$(mktemp)
+
+        awk -v appid="\"$APPID\"" -v opt="$desired" '
+            BEGIN { in_block=0; depth=0; done=0 }
+            {
+                line=$0
+                trimmed=line
+                gsub(/^[ \t]+|[ \t]+$/, "", trimmed)
+
+                if (!in_block && trimmed == appid) {
+                    in_block=1
+                    print line
+                    next
+                }
+
+                if (in_block && depth==0 && trimmed == "{") {
+                    depth=1
+                    print line
+                    next
+                }
+
+                if (in_block && depth==1) {
+                    if (trimmed ~ /^"LaunchOptions"/) {
+                        sub(/"LaunchOptions".*/, "\"LaunchOptions\"\t\t\"" opt "\"", line)
+                        print line
+                        done=1
+                        next
+                    }
+                    if (trimmed == "{") { depth++; print line; next }
+                    if (trimmed == "}") {
+                        if (!done) {
+                            print "\t\t\t\"LaunchOptions\"\t\t\"" opt "\""
+                            done=1
+                        }
+                        in_block=0
+                        depth=0
+                        print line
+                        next
+                    }
+                }
+
+                if (in_block && depth>1) {
+                    if (trimmed == "{") depth++
+                    if (trimmed == "}") depth--
+                }
+
+                print line
+            }
+        ' "$vdf" > "$tmp"
+
+        if grep -q "$APPID" "$tmp"; then
+            mv "$tmp" "$vdf"
+            patched_any=1
+            log OK "$(t patch_done)"
+        else
+            rm -f "$tmp"
+            log WARN "AppID $APPID not found in $vdf"
+        fi
+    done
+
+    if [ "$patched_any" -eq 0 ]; then
+        log ERROR "$(t patch_localconfig_not_found)"
+        return 1
+    fi
+    return 0
+}
+
+patch_launch_options() {
+    header
+    echo -e "${C_BOLD}$(t patch_launch_header)${C_RESET}"
+    hr
+    patch_launch_options_core
+    pause
 }
 
 do_install() {
@@ -661,185 +763,45 @@ do_install() {
     echo -e "${C_BOLD}$(t m_install)${C_RESET}"
     hr
 
-    resolve_steam_dir || { log ERROR "$(t steam_not_found)"; pause; return 1; }
+    resolve_steam_dir
+    if [ -z "$STEAM_DIR" ]; then
+        log ERROR "$(t steam_not_found)"
+        pause; return 1
+    fi
     log OK "$(t steam_found) $STEAM_DIR $([ "$IS_FLATPAK_STEAM" = 1 ] && t flatpak_steam)"
 
-    resolve_game_dir || { log ERROR "$(t game_not_found)"; pause; return 1; }
+    resolve_game_dir
+    if [ -z "$GAME_DIR" ]; then
+        log ERROR "$(t game_not_found)"
+        pause; return 1
+    fi
     log OK "$(t game_found) $GAME_DIR"
 
-    if is_proton_build; then
-        log OK "$(t proton_build)"
+    if is_native_build; then
+        log OK "$(t native_build)"
     else
-        log ERROR "$(t not_proton)"; pause; return 1;
+        log ERROR "$(t not_native)"
+        pause; return 1
     fi
-    
-    resolve_prefix_dir || { log ERROR "Proton prefix is required."; pause; return 1; }
-    log OK "Proton prefix: $PREFIX_DIR"
-
-    echo
-    local reinstall_launcher=1
-    local launcher_ver=0
-    local no_update=1
-    local full_reinstall=0
-
-    ask "$(t opt_reinstall)" ans
-    [[ "$ans" =~ ^[nNнН]$ ]] && reinstall_launcher=0
-
-    if [ "$reinstall_launcher" -eq 1 ]; then
-        echo "0) $(t launcher_default)"
-        local idx=1
-        for alt in "${ALT_LAUNCHERS[@]}"; do
-            echo "$idx) $alt"
-            idx=$((idx+1))
-        done
-        ask "$(t opt_ver)" launcher_ver
-        [[ ! "$launcher_ver" =~ ^[0-3]$ ]] && launcher_ver=0
-    fi
-
-    ask "$(t opt_noupdate)" ans
-    [[ "$ans" =~ ^[nNнН]$ ]] && no_update=0
-
-    ask "$(t opt_full)" ans
-    [[ "$ans" =~ ^[yYдД]$ ]] && full_reinstall=1
 
     echo
     ask "$(t confirm_install)" confirm
     [ -z "$confirm" ] && confirm="y"
     if [[ ! "$confirm" =~ ^[yYдД]$ ]]; then
-        log INFO "$(t cancelled)"; pause; return 0
+        log INFO "$(t cancelled)"
+        pause; return 0
     fi
 
     fetch_dlc_data || { pause; return 1; }
-    fetch_creamapi || { pause; return 1; }
-    update_cream_ini
-
-    if [ "$full_reinstall" -eq 1 ]; then
-        log WARN "Full reinstall: removing Paradox Interactive Stellaris documents (saves and settings)..."
-        rm -rf "$PREFIX_DIR/drive_c/users/steamuser/Documents/Paradox Interactive/Stellaris"
-        rm -rf "$GAME_DIR/dlc"
-    fi
-
+    fetch_creamlinux || { pause; return 1; }
+    copy_creamlinux_to_game
     mkdir -p "$GAME_DIR/dlc"
-
-    if [ "$reinstall_launcher" -eq 1 ]; then
-        log INFO "Reinstalling Paradox Launcher (binary files only)..."
-        local msi_path=""
-        if [ "$launcher_ver" -gt 0 ]; then
-            local alt_name="${ALT_LAUNCHERS[$((launcher_ver-1))]}"
-            msi_path="$CACHE_DIR/$alt_name"
-            if [ ! -f "$msi_path" ]; then
-                download_file "https://$SERVER_URL/unlocker/$alt_name" "$msi_path" "$alt_name"
-            fi
-            log INFO "  Using alt launcher: $(basename "$msi_path")"
-        else
-            msi_path=$(ls -v "$GAME_DIR"/launcher-installer-windows*.msi 2>/dev/null | tail -n 1)
-            [ -n "$msi_path" ] && log INFO "  MSI selected (latest): $(basename "$msi_path")"
-        fi
-
-        if [ -n "$msi_path" ] && [ -f "$msi_path" ]; then
-            # Сохраняем launcherpath на случай, если деинсталлятор его снесет
-            local pointer_file="$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Paradox Interactive/launcherpath"
-            local pointer_backup=""
-            if [ -f "$pointer_file" ]; then
-                pointer_backup=$(cat "$pointer_file" | tr -d '\r\n')
-            fi
-
-            log INFO "  Removing old MSI registry keys (/uninstall)..."
-            run_wine msiexec /uninstall "Z:${msi_path//\//\\}" /quiet /norestart >/dev/null 2>&1 || true
-            sleep 2
-
-            # Удаляем только папки с бинарниками, AppData/Local/Paradox Interactive не трогаем!
-            local cleaned_any=0
-            while IFS= read -r l_base; do
-                if [ -n "$l_base" ] && [ -d "$l_base" ]; then
-                    log INFO "  Removing old binaries in: $l_base"
-                    rm -rf "$l_base"
-                    cleaned_any=1
-                fi
-            done < <(get_launcher_bases)
-            
-            [ "$cleaned_any" -eq 1 ] && sleep 1
-            
-            log INFO "  Running msiexec /package..."
-            run_wine msiexec /package "Z:${msi_path//\//\\}" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0
-            sleep 2
-            
-            if [ -n "$pointer_backup" ] && [ ! -f "$pointer_file" ]; then
-                mkdir -p "$(dirname "$pointer_file")"
-                echo "$pointer_backup" > "$pointer_file"
-                log INFO "  Restored launcherpath from backup."
-            fi
-
-            log OK "  Launcher reinstalled."
-        else
-            log WARN "  No MSI found — skipping launcher reinstall."
-        fi
-    else
-        log INFO "Launcher reinstall skipped."
-    fi
-
-    log INFO "$(t patching_launcher)"
-    local found_launcher=0
-    local processed_bases=()
-    
-    while IFS= read -r l_base; do
-        if [ -n "$l_base" ] && [ -d "$l_base" ]; then
-            local skip=0
-            for pb in "${processed_bases[@]}"; do
-                if [ "$pb" == "$l_base" ]; then skip=1; break; fi
-            done
-            [ "$skip" -eq 1 ] && continue
-            processed_bases+=("$l_base")
-
-            for lf in "$l_base"/launcher-*; do
-                [ -d "$lf" ] || continue
-                found_launcher=1
-                log INFO "  Processing: $(basename "$lf") in $(basename "$(dirname "$l_base")")"
-                
-                if [ "$no_update" -eq 1 ]; then
-                    rm -f "$lf/xdelta3.exe"
-                    log OK "    Removed xdelta3.exe (auto-update disabled)."
-                fi
-
-                local t1="$lf/resources/app.asar.unpacked/node_modules/greenworks/lib"
-                local t2="$lf/resources/app/dist/main"
-                local patched=0
-                
-                if [ -d "$t1" ]; then
-                    cp -rf "$CACHE_DIR/creamapi_launcher_files/"* "$t1/"
-                    patched=1
-                fi
-                if [ -d "$t2" ]; then
-                    cp -rf "$CACHE_DIR/creamapi_launcher_files/"* "$t2/"
-                    patched=1
-                fi
-                
-                if [ "$patched" -eq 1 ]; then
-                    log OK "    Patched resources."
-                else
-                    log WARN "    No patchable resources folder found in this version."
-                fi
-            done
-        fi
-    done < <(get_launcher_bases)
-
-    if [ "$found_launcher" -eq 0 ]; then
-        log WARN "  Launcher versions not found. Run the game once via Steam to initialize the launcher."
-    fi
-
-    log INFO "$(t copying_files)"
-    cp -rf "$CACHE_DIR/creamapi_steam_files/"* "$GAME_DIR/"
-    log OK "  Steam files copied."
-
-    if [ -f "$GAME_DIR/steam_api64.dll" ] && [ ! -f "$GAME_DIR/steam_api64_o.dll" ]; then
-        mv -f "$GAME_DIR/steam_api64.dll" "$GAME_DIR/steam_api64_o.dll"
-        log OK "  Original steam_api64.dll backed up to steam_api64_o.dll."
-    fi
-    cp -f "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR/creamlinux.json" "$GAME_DIR/creamlinux.json"
-    cp -f "$CACHE_DIR/$CREAMLINUX_PROTON_SUBDIR/steam_api64.dll" "$GAME_DIR/steam_api64.dll"
-    log OK "  creamlinux.json / steam_api64.dll copied."
-
+    update_cream_ini
     download_dlc_content
+
+    echo
+    echo -e "${C_BOLD}$(t patch_launch_header)${C_RESET}"
+    patch_launch_options_core
 
     echo
     log OK "$(t install_done)"
@@ -861,43 +823,20 @@ show_status() {
     find_game_dir
     if [ -n "$GAME_DIR" ]; then
         echo -e "${C_GREEN}$(t game_found)${C_RESET} $GAME_DIR"
-        if is_proton_build; then
-            echo -e "${C_GREEN}$(t proton_build)${C_RESET}"
+        if is_native_build; then
+            echo -e "${C_GREEN}$(t native_build)${C_RESET}"
         else
-            echo -e "${C_RED}$(t not_proton)${C_RESET}"
+            echo -e "${C_RED}$(t not_native)${C_RESET}"
         fi
-        
-        find_prefix_dir
-        if [ -n "$PREFIX_DIR" ]; then
-            echo -e "${C_GREEN}Proton Prefix:${C_RESET} $PREFIX_DIR"
-            
-            local launcher_found=0
-            while IFS= read -r l_base; do
-                if [ -n "$l_base" ] && [ -d "$l_base" ]; then
-                    for lf in "$l_base"/launcher-*; do
-                        if [ -d "$lf" ]; then
-                            launcher_found=1
-                            break 2
-                        fi
-                    done
-                fi
-            done < <(get_launcher_bases)
-
-            if [ "$launcher_found" -eq 1 ]; then
-                echo -e "${C_GREEN}Paradox Launcher:${C_RESET} Installed"
-            else
-                echo -e "${C_YELLOW}Paradox Launcher:${C_RESET} Not found in prefix"
-            fi
+        if [ -f "$GAME_DIR/cream.sh" ]; then
+            echo -e "${C_GREEN}cream.sh:${C_RESET} installed"
         else
-            echo -e "${C_YELLOW}Proton Prefix:${C_RESET} Not found (will ask during install)"
+            echo -e "${C_YELLOW}cream.sh:${C_RESET} not installed"
         fi
-
         if [ -f "$GAME_DIR/cream_api.ini" ]; then
             local cnt
             cnt=$(grep -c "=" "$GAME_DIR/cream_api.ini" 2>/dev/null || echo 0)
             echo -e "${C_GREEN}cream_api.ini:${C_RESET} $cnt DLC entries"
-        else
-            echo -e "${C_YELLOW}cream_api.ini:${C_RESET} not installed"
         fi
     else
         echo -e "${C_RED}$(t game_not_found)${C_RESET}"
@@ -940,10 +879,10 @@ check_deps() {
     done
     if [ ${#missing[@]} -gt 0 ]; then
         echo -e "${C_RED}Missing required tools: ${missing[*]}${C_RESET}"
-        echo "Install them with your package manager."
+        echo "Install them with your package manager, e.g.: sudo apt install ${missing[*]}"
         exit 1
     fi
-    command -v jq >/dev/null 2>&1 || log WARN "jq not found — falling back to grep JSON parsing."
+    command -v jq >/dev/null 2>&1 || log WARN "jq not found — falling back to grep/sed JSON parsing (less robust). Install jq for best reliability."
 }
 
 main_menu() {
@@ -953,16 +892,18 @@ main_menu() {
         hr
         echo -e "  ${C_CYAN}1)${C_RESET} $(t m_status)"
         echo -e "  ${C_CYAN}2)${C_RESET} $(t m_install)"
-        echo -e "  ${C_CYAN}3)${C_RESET} $(t m_lang)"
-        echo -e "  ${C_CYAN}4)${C_RESET} $(t m_log)"
+        echo -e "  ${C_CYAN}3)${C_RESET} $(t m_steam_launch)"
+        echo -e "  ${C_CYAN}4)${C_RESET} $(t m_lang)"
+        echo -e "  ${C_CYAN}5)${C_RESET} $(t m_log)"
         echo -e "  ${C_CYAN}0)${C_RESET} $(t m_exit)"
         hr
         ask "$(t choose)" choice
         case "$choice" in
             1) show_status ;;
             2) do_install ;;
-            3) change_language ;;
-            4) show_log ;;
+            3) patch_launch_options ;;
+            4) change_language ;;
+            5) show_log ;;
             0) exit 0 ;;
             *) log WARN "$(t invalid_choice)"; sleep 1 ;;
         esac
