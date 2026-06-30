@@ -39,52 +39,54 @@ t() {
 
 _t_en() {
     case "$1" in
-        title) echo "Stellaris DLC Unlocker — Linux Edition" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "MAIN MENU" ;;
-        m_status) echo "Status & paths" ;;
-        m_install) echo "Install / Update DLC unlocker" ;;
-        m_steam_launch) echo "Patch Steam launch options" ;;
-        m_lang) echo "Change language" ;;
-        m_log) echo "Show log" ;;
+        m_status) echo "Status" ;;
+        m_install) echo "Install / Update" ;;
+        m_steam_launch) echo "Set Steam launch options" ;;
+        m_lang) echo "Language" ;;
+        m_log) echo "Log" ;;
         m_exit) echo "Exit" ;;
-        choose) echo "Choose an option: " ;;
-        detect_steam) echo "Detecting Steam installation..." ;;
-        steam_found) echo "Steam found:" ;;
-        steam_not_found) echo "Steam installation not found." ;;
-        detect_game) echo "Detecting Stellaris installation..." ;;
-        game_found) echo "Stellaris found:" ;;
-        game_not_found) echo "Stellaris installation not found." ;;
-        native_build) echo "Native Linux build detected — CreamLinux is compatible." ;;
-        not_native) echo "Native Linux build NOT detected (no 'stellaris' ELF binary). CreamLinux requires the native build, not Proton/Wine." ;;
+        choose) echo "> " ;;
+        steam_found) echo "Steam:" ;;
+        steam_not_found) echo "Steam not found." ;;
+        game_found) echo "Stellaris:" ;;
+        game_not_found) echo "Stellaris not found." ;;
+        native_build) echo "Native Linux build." ;;
+        not_native) echo "Not a native Linux build. CreamLinux needs the native build, not Proton/Wine." ;;
         downloading) echo "Downloading" ;;
         fetching_dlc_list) echo "Fetching DLC list..." ;;
         dlc_list_ok) echo "DLC list loaded." ;;
-        dlc_list_fail) echo "Failed to fetch DLC list from GitHub and jsDelivr." ;;
-        fetching_creamlinux) echo "Downloading CreamLinux..." ;;
+        dlc_list_fail) echo "Failed to fetch DLC list." ;;
+        fetching_creamlinux) echo "Downloading CreamLinux files..." ;;
         creamlinux_ok) echo "CreamLinux files ready." ;;
-        copying_files) echo "Copying CreamLinux files into game folder..." ;;
-        checking_hashes) echo "Checking file integrity (hashes.json)..." ;;
-        to_download) echo "DLC archives to download:" ;;
-        unpacking) echo "Unpacking archives..." ;;
-        updating_ini) echo "Updating cream_api.ini via SteamCMD API..." ;;
-        ini_updated) echo "cream_api.ini updated, added DLC:" ;;
-        ini_skip) echo "SteamCMD API unavailable, skipped." ;;
-        install_done) echo "Installation complete!" ;;
-        patch_launch_header) echo "Patching Steam launch options" ;;
-        patch_userdata_not_found) echo "Could not find Steam userdata folder." ;;
-        patch_localconfig_not_found) echo "localconfig.vdf not found for any user." ;;
-        patch_backup) echo "Backup created:" ;;
-        patch_done) echo "Launch options set to: sh ./cream.sh %command%" ;;
-        patch_already) echo "Launch options already set correctly." ;;
-        patch_steam_running_warn) echo "WARNING: Steam appears to be running. Close Steam fully before/after patching, otherwise it may overwrite the change." ;;
+        copying_files) echo "Copying files to game folder..." ;;
+        to_download) echo "DLC to download:" ;;
+        unpacking) echo "Unpacking..." ;;
+        updating_ini) echo "Updating cream_api.ini..." ;;
+        ini_updated) echo "cream_api.ini: added" ;;
+        ini_skip) echo "SteamCMD unavailable, skipped." ;;
+        install_done) echo "Done." ;;
+        patch_launch_header) echo "Steam launch options" ;;
+        patch_userdata_not_found) echo "Steam userdata folder not found." ;;
+        patch_localconfig_not_found) echo "localconfig.vdf not found." ;;
+        patch_backup) echo "Backup:" ;;
+        patch_done) echo "Launch options set." ;;
+        steam_running_prompt) echo "Steam is running and must be closed to apply launch options. Close it now? [y/N]: " ;;
+        steam_closing) echo "Closing Steam..." ;;
+        steam_close_ok) echo "Steam closed." ;;
+        steam_close_fail) echo "Could not close Steam, aborting." ;;
+        abort_steam_running) echo "Skipped: Steam is still running." ;;
         press_enter) echo "Press Enter to continue..." ;;
-        enter_game_path) echo "Enter Stellaris game path manually (or press Enter to skip): " ;;
+        enter_game_path) echo "Game path (or Enter to cancel): " ;;
+        invalid_game_path) echo "Path does not exist." ;;
+        enter_steam_path) echo "Steam not auto-detected. Enter Steam folder path (or Enter to cancel): " ;;
+        invalid_steam_path) echo "Not a valid Steam folder (no 'steamapps' inside)." ;;
         invalid_choice) echo "Invalid choice." ;;
-        lang_set) echo "Language set to English." ;;
         log_empty) echo "Log is empty." ;;
-        confirm_install) echo "Proceed with installation? [y/N]: " ;;
+        confirm_install) echo "Proceed? [y/N]: " ;;
         cancelled) echo "Cancelled." ;;
-        no_dlc_to_download) echo "All DLC are up to date." ;;
+        no_dlc_to_download) echo "All DLC up to date." ;;
         flatpak_steam) echo "(Flatpak)" ;;
         *) echo "$1" ;;
     esac
@@ -92,50 +94,52 @@ _t_en() {
 
 _t_ru() {
     case "$1" in
-        title) echo "Stellaris DLC Unlocker — версия для Linux" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "ГЛАВНОЕ МЕНЮ" ;;
-        m_status) echo "Статус и пути" ;;
-        m_install) echo "Установить / обновить разблокировщик DLC" ;;
-        m_steam_launch) echo "Прописать параметры запуска в Steam" ;;
-        m_lang) echo "Сменить язык" ;;
-        m_log) echo "Показать лог" ;;
+        m_status) echo "Статус" ;;
+        m_install) echo "Установить / обновить" ;;
+        m_steam_launch) echo "Прописать параметры запуска Steam" ;;
+        m_lang) echo "Язык" ;;
+        m_log) echo "Лог" ;;
         m_exit) echo "Выход" ;;
-        choose) echo "Выберите пункт: " ;;
-        detect_steam) echo "Поиск установки Steam..." ;;
-        steam_found) echo "Steam найден:" ;;
-        steam_not_found) echo "Установка Steam не найдена." ;;
-        detect_game) echo "Поиск установки Stellaris..." ;;
-        game_found) echo "Stellaris найден:" ;;
-        game_not_found) echo "Установка Stellaris не найдена." ;;
-        native_build) echo "Обнаружена нативная Linux-версия — CreamLinux подходит." ;;
-        not_native) echo "Нативная Linux-версия не обнаружена (нет ELF-файла 'stellaris'). CreamLinux работает только с нативной версией, не с Proton/Wine." ;;
+        choose) echo "> " ;;
+        steam_found) echo "Steam:" ;;
+        steam_not_found) echo "Steam не найден." ;;
+        game_found) echo "Stellaris:" ;;
+        game_not_found) echo "Stellaris не найден." ;;
+        native_build) echo "Нативная Linux-версия." ;;
+        not_native) echo "Не нативная Linux-версия. CreamLinux работает только с нативной сборкой, не с Proton/Wine." ;;
         downloading) echo "Скачивание" ;;
         fetching_dlc_list) echo "Получение списка DLC..." ;;
         dlc_list_ok) echo "Список DLC загружен." ;;
-        dlc_list_fail) echo "Не удалось получить список DLC ни с GitHub, ни с jsDelivr." ;;
-        fetching_creamlinux) echo "Скачивание CreamLinux..." ;;
+        dlc_list_fail) echo "Не удалось получить список DLC." ;;
+        fetching_creamlinux) echo "Скачивание файлов CreamLinux..." ;;
         creamlinux_ok) echo "Файлы CreamLinux готовы." ;;
-        copying_files) echo "Копирование файлов CreamLinux в папку игры..." ;;
-        checking_hashes) echo "Проверка целостности файлов (hashes.json)..." ;;
-        to_download) echo "Архивов DLC к скачиванию:" ;;
-        unpacking) echo "Распаковка архивов..." ;;
-        updating_ini) echo "Обновление cream_api.ini через SteamCMD API..." ;;
-        ini_updated) echo "cream_api.ini обновлён, добавлено DLC:" ;;
-        ini_skip) echo "SteamCMD API недоступен, пропущено." ;;
-        install_done) echo "Установка завершена!" ;;
-        patch_launch_header) echo "Прописывание параметров запуска Steam" ;;
-        patch_userdata_not_found) echo "Не удалось найти папку userdata Steam." ;;
-        patch_localconfig_not_found) echo "Файл localconfig.vdf не найден ни для одного пользователя." ;;
-        patch_backup) echo "Создана резервная копия:" ;;
-        patch_done) echo "Параметры запуска установлены: sh ./cream.sh %command%" ;;
-        patch_already) echo "Параметры запуска уже выставлены верно." ;;
-        patch_steam_running_warn) echo "ВНИМАНИЕ: похоже, Steam запущен. Полностью закройте Steam до/после патчинга, иначе он может перезаписать изменение." ;;
+        copying_files) echo "Копирование файлов в папку игры..." ;;
+        to_download) echo "DLC к скачиванию:" ;;
+        unpacking) echo "Распаковка..." ;;
+        updating_ini) echo "Обновление cream_api.ini..." ;;
+        ini_updated) echo "cream_api.ini: добавлено" ;;
+        ini_skip) echo "SteamCMD недоступен, пропущено." ;;
+        install_done) echo "Готово." ;;
+        patch_launch_header) echo "Параметры запуска Steam" ;;
+        patch_userdata_not_found) echo "Папка userdata Steam не найдена." ;;
+        patch_localconfig_not_found) echo "localconfig.vdf не найден." ;;
+        patch_backup) echo "Бэкап:" ;;
+        patch_done) echo "Параметры запуска установлены." ;;
+        steam_running_prompt) echo "Steam запущен, для применения параметров запуска его нужно закрыть. Закрыть сейчас? [y/N]: " ;;
+        steam_closing) echo "Закрытие Steam..." ;;
+        steam_close_ok) echo "Steam закрыт." ;;
+        steam_close_fail) echo "Не удалось закрыть Steam, отмена." ;;
+        abort_steam_running) echo "Пропущено: Steam всё ещё запущен." ;;
         press_enter) echo "Нажмите Enter для продолжения..." ;;
-        enter_game_path) echo "Введите путь к игре Stellaris вручную (или Enter, чтобы пропустить): " ;;
+        enter_game_path) echo "Путь к игре (или Enter, чтобы отменить): " ;;
+        invalid_game_path) echo "Такого пути не существует." ;;
+        enter_steam_path) echo "Steam не найден автоматически. Введите путь к папке Steam (или Enter, чтобы отменить): " ;;
+        invalid_steam_path) echo "Это не папка Steam (внутри нет 'steamapps')." ;;
         invalid_choice) echo "Неверный выбор." ;;
-        lang_set) echo "Язык переключён на русский." ;;
         log_empty) echo "Лог пуст." ;;
-        confirm_install) echo "Продолжить установку? [y/N]: " ;;
+        confirm_install) echo "Продолжить? [y/N]: " ;;
         cancelled) echo "Отменено." ;;
         no_dlc_to_download) echo "Все DLC актуальны." ;;
         flatpak_steam) echo "(Flatpak)" ;;
@@ -145,50 +149,52 @@ _t_ru() {
 
 _t_zh() {
     case "$1" in
-        title) echo "Stellaris DLC 解锁器 — Linux 版" ;;
+        title) echo "Stellaris DLC Unlocker" ;;
         menu_header) echo "主菜单" ;;
-        m_status) echo "状态与路径" ;;
-        m_install) echo "安装 / 更新 DLC 解锁器" ;;
+        m_status) echo "状态" ;;
+        m_install) echo "安装 / 更新" ;;
         m_steam_launch) echo "设置 Steam 启动选项" ;;
-        m_lang) echo "切换语言" ;;
-        m_log) echo "查看日志" ;;
+        m_lang) echo "语言" ;;
+        m_log) echo "日志" ;;
         m_exit) echo "退出" ;;
-        choose) echo "请选择: " ;;
-        detect_steam) echo "正在检测 Steam 安装..." ;;
-        steam_found) echo "已找到 Steam:" ;;
-        steam_not_found) echo "未找到 Steam 安装。" ;;
-        detect_game) echo "正在检测 Stellaris 安装..." ;;
-        game_found) echo "已找到 Stellaris:" ;;
-        game_not_found) echo "未找到 Stellaris 安装。" ;;
-        native_build) echo "检测到原生 Linux 版本 — CreamLinux 兼容。" ;;
-        not_native) echo "未检测到原生 Linux 版本（缺少 'stellaris' ELF 文件）。CreamLinux 仅支持原生版本，不支持 Proton/Wine。" ;;
+        choose) echo "> " ;;
+        steam_found) echo "Steam:" ;;
+        steam_not_found) echo "未找到 Steam。" ;;
+        game_found) echo "Stellaris:" ;;
+        game_not_found) echo "未找到 Stellaris。" ;;
+        native_build) echo "原生 Linux 版本。" ;;
+        not_native) echo "非原生 Linux 版本。CreamLinux 仅支持原生版本，不支持 Proton/Wine。" ;;
         downloading) echo "下载中" ;;
         fetching_dlc_list) echo "正在获取 DLC 列表..." ;;
         dlc_list_ok) echo "DLC 列表已加载。" ;;
-        dlc_list_fail) echo "从 GitHub 和 jsDelivr 获取 DLC 列表均失败。" ;;
-        fetching_creamlinux) echo "正在下载 CreamLinux..." ;;
+        dlc_list_fail) echo "获取 DLC 列表失败。" ;;
+        fetching_creamlinux) echo "正在下载 CreamLinux 文件..." ;;
         creamlinux_ok) echo "CreamLinux 文件已就绪。" ;;
-        copying_files) echo "正在将 CreamLinux 文件复制到游戏目录..." ;;
-        checking_hashes) echo "正在校验文件完整性 (hashes.json)..." ;;
-        to_download) echo "待下载的 DLC 压缩包:" ;;
+        copying_files) echo "正在复制文件到游戏目录..." ;;
+        to_download) echo "待下载 DLC:" ;;
         unpacking) echo "正在解压..." ;;
-        updating_ini) echo "正在通过 SteamCMD API 更新 cream_api.ini..." ;;
-        ini_updated) echo "cream_api.ini 已更新，新增 DLC:" ;;
-        ini_skip) echo "SteamCMD API 不可用，已跳过。" ;;
-        install_done) echo "安装完成！" ;;
-        patch_launch_header) echo "设置 Steam 启动选项" ;;
+        updating_ini) echo "正在更新 cream_api.ini..." ;;
+        ini_updated) echo "cream_api.ini: 已添加" ;;
+        ini_skip) echo "SteamCMD 不可用，已跳过。" ;;
+        install_done) echo "完成。" ;;
+        patch_launch_header) echo "Steam 启动选项" ;;
         patch_userdata_not_found) echo "未找到 Steam userdata 目录。" ;;
-        patch_localconfig_not_found) echo "未找到任何用户的 localconfig.vdf。" ;;
-        patch_backup) echo "已创建备份:" ;;
-        patch_done) echo "启动选项已设置为: sh ./cream.sh %command%" ;;
-        patch_already) echo "启动选项已正确设置。" ;;
-        patch_steam_running_warn) echo "警告: Steam 似乎正在运行。请在修改前后完全关闭 Steam，否则更改可能被覆盖。" ;;
+        patch_localconfig_not_found) echo "未找到 localconfig.vdf。" ;;
+        patch_backup) echo "备份:" ;;
+        patch_done) echo "启动选项已设置。" ;;
+        steam_running_prompt) echo "Steam 正在运行，需关闭后才能应用启动选项。现在关闭吗？[y/N]: " ;;
+        steam_closing) echo "正在关闭 Steam..." ;;
+        steam_close_ok) echo "Steam 已关闭。" ;;
+        steam_close_fail) echo "无法关闭 Steam，已中止。" ;;
+        abort_steam_running) echo "已跳过：Steam 仍在运行。" ;;
         press_enter) echo "按 Enter 继续..." ;;
-        enter_game_path) echo "请手动输入 Stellaris 游戏路径（直接按 Enter 跳过）: " ;;
+        enter_game_path) echo "游戏路径（直接 Enter 取消）: " ;;
+        invalid_game_path) echo "路径不存在。" ;;
+        enter_steam_path) echo "未自动检测到 Steam。请输入 Steam 文件夹路径（直接 Enter 取消）: " ;;
+        invalid_steam_path) echo "不是有效的 Steam 文件夹（内部没有 'steamapps'）。" ;;
         invalid_choice) echo "无效选择。" ;;
-        lang_set) echo "语言已切换为中文。" ;;
         log_empty) echo "日志为空。" ;;
-        confirm_install) echo "是否继续安装？[y/N]: " ;;
+        confirm_install) echo "继续？[y/N]: " ;;
         cancelled) echo "已取消。" ;;
         no_dlc_to_download) echo "所有 DLC 均为最新。" ;;
         flatpak_steam) echo "(Flatpak)" ;;
@@ -324,6 +330,88 @@ find_game_dir() {
 
 is_native_build() {
     [ -f "$GAME_DIR/stellaris" ] && file "$GAME_DIR/stellaris" 2>/dev/null | grep -qi "ELF"
+}
+
+resolve_steam_dir() {
+    if [ -n "$STEAM_DIR" ]; then
+        return 0
+    fi
+    if find_steam_dir; then
+        return 0
+    fi
+    while true; do
+        ask "$(t enter_steam_path)" manual
+        [ -z "$manual" ] && return 1
+        manual="${manual%/}"
+        if [ -d "$manual/steamapps" ]; then
+            STEAM_DIR="$manual"
+            [[ "$manual" == *".var/app/com.valvesoftware.Steam"* || "$manual" == *"flatpak"* || "$manual" == *"snap/steam"* ]] && IS_FLATPAK_STEAM=1
+            return 0
+        fi
+        log ERROR "$(t invalid_steam_path)"
+    done
+}
+
+resolve_game_dir() {
+    if find_game_dir; then
+        return 0
+    fi
+    while true; do
+        ask "$(t enter_game_path)" manual
+        [ -z "$manual" ] && return 1
+        manual="${manual%/}"
+        if [ -d "$manual" ]; then
+            GAME_DIR="$manual"
+            return 0
+        fi
+        log ERROR "$(t invalid_game_path)"
+    done
+}
+
+is_steam_running() {
+    pgrep -x steam >/dev/null 2>&1 && return 0
+    pgrep -f "com.valvesoftware.Steam" >/dev/null 2>&1 && return 0
+    return 1
+}
+
+close_steam() {
+    log INFO "$(t steam_closing)"
+    if [ "$IS_FLATPAK_STEAM" = 1 ] && command -v flatpak >/dev/null 2>&1; then
+        flatpak kill com.valvesoftware.Steam >/dev/null 2>&1
+    fi
+    command -v steam >/dev/null 2>&1 && steam -shutdown >/dev/null 2>&1 &
+    pkill -x steam >/dev/null 2>&1
+
+    local waited=0
+    while is_steam_running && [ "$waited" -lt 15 ]; do
+        sleep 1
+        waited=$((waited+1))
+    done
+
+    if is_steam_running; then
+        pkill -9 -x steam >/dev/null 2>&1
+        sleep 1
+    fi
+
+    if is_steam_running; then
+        log ERROR "$(t steam_close_fail)"
+        return 1
+    fi
+    log OK "$(t steam_close_ok)"
+    return 0
+}
+
+ensure_steam_closed() {
+    if ! is_steam_running; then
+        return 0
+    fi
+    ask "$(t steam_running_prompt)" ans
+    if [[ "$ans" =~ ^[yYдД]$ ]]; then
+        close_steam || return 1
+        return 0
+    fi
+    log WARN "$(t abort_steam_running)"
+    return 1
 }
 
 DLC_DATA_JSON=""
@@ -494,23 +582,15 @@ download_dlc_content() {
     done
 }
 
-patch_launch_options() {
-    header
-    echo -e "${C_BOLD}$(t patch_launch_header)${C_RESET}"
-    hr
+patch_launch_options_core() {
+    resolve_steam_dir || { log ERROR "$(t steam_not_found)"; return 1; }
 
-    if [ -z "$STEAM_DIR" ]; then
-        find_steam_dir || { log ERROR "$(t steam_not_found)"; pause; return 1; }
-    fi
-
-    if pgrep -x steam >/dev/null 2>&1 || pgrep -f "com.valvesoftware.Steam" >/dev/null 2>&1; then
-        log WARN "$(t patch_steam_running_warn)"
-    fi
+    ensure_steam_closed || return 1
 
     local userdata_dir="$STEAM_DIR/userdata"
     if [ ! -d "$userdata_dir" ]; then
         log ERROR "$(t patch_userdata_not_found)"
-        pause; return 1
+        return 1
     fi
 
     local patched_any=0
@@ -577,17 +657,25 @@ patch_launch_options() {
         if grep -q "$APPID" "$tmp"; then
             mv "$tmp" "$vdf"
             patched_any=1
-            log OK "$(t patch_done)  ($user_dir)"
+            log OK "$(t patch_done)"
         else
             rm -f "$tmp"
-            log WARN "AppID $APPID not found in $vdf (game never launched from this Steam account?)"
+            log WARN "AppID $APPID not found in $vdf"
         fi
     done
 
     if [ "$patched_any" -eq 0 ]; then
         log ERROR "$(t patch_localconfig_not_found)"
+        return 1
     fi
+    return 0
+}
 
+patch_launch_options() {
+    header
+    echo -e "${C_BOLD}$(t patch_launch_header)${C_RESET}"
+    hr
+    patch_launch_options_core
     pause
 }
 
@@ -596,22 +684,17 @@ do_install() {
     echo -e "${C_BOLD}$(t m_install)${C_RESET}"
     hr
 
-    find_steam_dir
+    resolve_steam_dir
     if [ -z "$STEAM_DIR" ]; then
         log ERROR "$(t steam_not_found)"
         pause; return 1
     fi
     log OK "$(t steam_found) $STEAM_DIR $([ "$IS_FLATPAK_STEAM" = 1 ] && t flatpak_steam)"
 
-    find_game_dir
+    resolve_game_dir
     if [ -z "$GAME_DIR" ]; then
-        log WARN "$(t game_not_found)"
-        ask "$(t enter_game_path)" manual_path
-        if [ -n "$manual_path" ] && [ -d "$manual_path" ]; then
-            GAME_DIR="$manual_path"
-        else
-            pause; return 1
-        fi
+        log ERROR "$(t game_not_found)"
+        pause; return 1
     fi
     log OK "$(t game_found) $GAME_DIR"
 
@@ -637,8 +720,11 @@ do_install() {
     download_dlc_content
 
     echo
+    echo -e "${C_BOLD}$(t patch_launch_header)${C_RESET}"
+    patch_launch_options_core
+
+    echo
     log OK "$(t install_done)"
-    echo -e "${C_DIM}sh ./cream.sh %command%${C_RESET}"
     pause
 }
 
@@ -702,7 +788,7 @@ change_language() {
         3) LANGUAGE="zh" ;;
     esac
     echo "$LANGUAGE" > "$CONFIG_FILE"
-    log OK "$(t lang_set)"
+    log OK "$LANGUAGE"
     pause
 }
 
@@ -744,6 +830,20 @@ main_menu() {
     done
 }
 
-[ -f "$CONFIG_FILE" ] && LANGUAGE="$(cat "$CONFIG_FILE")"
+detect_system_lang() {
+    local loc="${LANG:-en}"
+    loc="$(echo "$loc" | tr '[:upper:]' '[:lower:]')"
+    case "$loc" in
+        ru*) echo ru ;;
+        zh*) echo zh ;;
+        *) echo en ;;
+    esac
+}
+
+if [ -f "$CONFIG_FILE" ]; then
+    LANGUAGE="$(cat "$CONFIG_FILE")"
+else
+    LANGUAGE="$(detect_system_lang)"
+fi
 check_deps
 main_menu
