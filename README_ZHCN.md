@@ -73,7 +73,7 @@ curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/S
 
 ### macOS 和 Steam Deck
 
-**不支持 macOS。** Steam 路径、底层文件机制（Linux 上的 `LD_PRELOAD`/`.so` 对比 macOS 上的 `DYLD_INSERT_LIBRARIES`/Mach-O），甚至基础工具（macOS 默认自带的是 BSD 版 `sed` 而非 GNU 版）差异都很大，导致现有脚本在 macOS 上根本无法运行，需要针对该平台单独开发一个版本。
+**不支持 macOS。** macOS 和 Linux 差异太大（Steam 路径、文件替换机制、系统工具），现有脚本无法直接运行。目前没有移植 macOS 版本的计划，如果以后做，会是单独的版本。
 
 **Steam Deck 理论上应该可行，但尚未测试。** SteamOS 基于 Arch Linux，Stellaris 在 Deck 上默认作为 Proton 游戏运行，因此理论上可以在桌面模式（Konsole 终端）下使用 Proton 版解锁器。可能存在的问题：`jq` 和 `unzip` 可能未预装，需要手动安装。如果您在 Deck 上尝试过，欢迎在 issues 中反馈结果。
 

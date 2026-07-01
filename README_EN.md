@@ -73,7 +73,7 @@ Make sure the launch option field for the game in Steam is **empty** — this ve
 
 ### macOS and Steam Deck
 
-**macOS is not supported.** Steam paths, the underlying file mechanisms (`LD_PRELOAD`/`.so` on Linux vs `DYLD_INSERT_LIBRARIES`/Mach-O on macOS), and even basic tools (macOS ships BSD `sed` by default, not GNU) differ enough that the current scripts simply won't run on macOS — a separate platform-specific version would be needed.
+**macOS is not supported.** It differs too much from Linux (Steam paths, the file-patching mechanism, system tools) for the current scripts to just work. A macOS port isn't planned for now — if that changes, it'll be a separate version.
 
 **Steam Deck should work, but hasn't been tested.** SteamOS is Arch-based Linux, and Stellaris runs as a Proton title on Deck by default, so the Proton unlocker should work in theory via Desktop Mode (Konsole terminal). Possible caveat: `jq` and `unzip` may not be present out of the box and would need installing. If you've tried it on a Deck, let us know in the issues.
 
