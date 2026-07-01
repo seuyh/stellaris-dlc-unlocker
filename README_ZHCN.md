@@ -7,57 +7,106 @@
 ---
 
 ## 项目描述
-用于自动解锁和安装 Stellaris（Steam 版）DLC 的工具。
 
-## 使用方法
+用于自动解锁和安装 Stellaris（Steam 版）DLC 的工具。支持 Windows 和 Linux（原生版本与 Proton 版本）。
 
-## 方法 1 - 🚀 快速启动 (PowerShell)
-运行解锁器最简单的方法是在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
+⚠️ 仅适用于 Steam 版游戏。
+
+
+## Windows
+
+### 🚀 快速启动 (PowerShell)
+在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
 
 ```powershell
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
 ```
-### PS 版本特性：
-* **运行日志**：如果运行出现问题，可以在此处找到详细报告：`%LocalAppData%\StellarisDLCUnlocker` 文件夹下的 `unlocker.log` 文件。
+
+* **运行日志**：`%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
 * **无需管理员权限**：在大多数情况下，不需要以管理员身份运行。但如果运行不正常，请尝试以管理员身份运行 PowerShell 并再次执行该命令。
 
-## 方法 2 - 下载已编译的程序
-**请从当前的 [仓库发布页面](https://github.com/seuyh/stellaris-dlc-unlocker/releases) 下载最新版本。**
+#### 如果出现问题
+请先通过 Steam 卸载游戏，然后**额外手动删除**游戏文件夹——Steam 卸载时经常会留下残留文件，包括已被修补过的文件。通常路径为：`C:\Program Files (x86)\Steam\steamapps\common\Stellaris`。彻底删除后重新安装游戏，再运行解锁器。这能解决绝大多数问题。
 
-## 方法 3 - 🐍 通过 Python 运行
-1. **安装 Python**：确保已安装 Python 3.8 或更高版本。
-2. **下载仓库**：克隆或下载包含源代码的压缩包。
-3. **安装依赖**：在项目文件夹中打开终端并运行：
-    ```bash
-    pip install -r requirements.txt
-    ```
-4. **启动程序**：
-    ```bash
-    python main.py
-    ```
+✅ 已在 Windows 10 和 Windows 11 上测试。
+
+
+## Linux
+
+Linux 上的游戏可能以两种不同形式安装——原生版本（Steam Linux Runtime）或通过 Proton 运行的 Windows 版本。可以在 Steam 游戏属性的 **Compatibility** 选项卡中查看您是哪一种。如果那里强制启用了某个 Proton 版本，说明您安装的是 Windows 版本，请使用 Proton 解锁器；如果没有启用，则是原生版本，请使用普通的 Linux 解锁器。
+
+### 🐧 原生版本 (CreamLinux)
+基于 [CreamLinux](https://github.com/anticitizn/creamlinux) 实现。一条命令即可运行，无需手动下载：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlocker.sh | bash
+```
+
+* **运行日志**：`~/.local/share/StellarisDLCUnlocker/unlocker.log`
+* 脚本会自动检测您的 Steam 安装方式（原生、Flatpak、Snap）并设置所需的游戏启动参数
+* 依赖项：`curl`、`unzip`、`grep`、`awk`（系统通常已自带）；建议安装 `jq`
+
+#### 如果出现问题
+请确认游戏在 Steam 中设置了正确的启动参数。查看方法：在 Steam 库中右键 Stellaris → **属性** → **常规** 选项卡 → **启动选项** 字段。其内容应该正好是：
+```
+sh ./cream.sh %command%
+```
+如果该字段为空或内容不同，请手动填入该字符串并重新启动游戏。
+
+✅ 已在 Zorin OS 18.1 上测试。
+
+### 🍷 Proton 版本
+基于 CreamAPI（Windows DLL 模拟器）实现，在您的 Proton 前缀内运行。同样一条命令即可运行，使用独立的脚本：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlockerProton.sh | bash
+```
+
+* **运行日志**：`~/.local/share/StellarisDLCUnlocker/unlocker.log`
+* 脚本会自动找到游戏的 Proton 前缀，并将文件直接安装到其中
+* 依赖项相同，另外会使用您 Steam 安装自带的 `wine`/`Proton`（无需额外安装）
+
+#### 如果出现问题
+请确认游戏在 Steam 中的启动选项字段是**空的**——此版本不需要任何启动参数，文件是直接替换的。查看方法：在 Steam 库中右键 Stellaris → **属性** → **常规** 选项卡 → **启动选项** 字段。如果其中有内容，请将其完全清空。
+
+✅ 已在 Zorin OS 18.1（Proton 10.0-4）上测试。
+
+### macOS 和 Steam Deck
+
+**不支持 macOS。** Steam 路径、底层文件机制（Linux 上的 `LD_PRELOAD`/`.so` 对比 macOS 上的 `DYLD_INSERT_LIBRARIES`/Mach-O），甚至基础工具（macOS 默认自带的是 BSD 版 `sed` 而非 GNU 版）差异都很大，导致现有脚本在 macOS 上根本无法运行，需要针对该平台单独开发一个版本。
+
+**Steam Deck 理论上应该可行，但尚未测试。** SteamOS 基于 Arch Linux，Stellaris 在 Deck 上默认作为 Proton 游戏运行，因此理论上可以在桌面模式（Konsole 终端）下使用 Proton 版解锁器。可能存在的问题：`jq` 和 `unzip` 可能未预装，需要手动安装。如果您在 Deck 上尝试过，欢迎在 issues 中反馈结果。
+
+### 在其他发行版上能正常工作吗？
+大概率可以。两个脚本均为纯 bash 编写，仅依赖几乎所有发行版都自带的标准工具（`curl`、`unzip`、`grep`、`awk`），常见的 Steam 安装路径（原生、Flatpak、Snap）也会自动检测——如果检测失败，脚本会请求手动输入路径并进行校验。目前仅在 Zorin OS 18.1 上进行了充分测试，但没有理由认为在 Ubuntu、Fedora、Arch、Mint 等发行版上无法运行。如果您在自己的发行版上遇到问题，欢迎提交 issue，我们会协助排查。
+
 
 ## 系统要求
+
 - Steam 授权：Stellaris 正版游戏
-- 操作系统：Windows 10/11
-- 互联网访问
+- Windows 10/11 或 Linux
 - 约 2GB 的可用磁盘空间
-- 具备阅读屏幕文字的能力
+- 互联网访问
 
-## 联系方式
-Telegram 频道：[https://t.me/stelka_unlocker](https://t.me/stelka_unlocker)
-
-## 关于杀毒软件误报
-此类问题源于用于打包代码的 PyInstaller 运行机制。如果您担心硬件安全，可以随时使用 PowerShell 方法，或者在阅读源代码后自行通过 Python 运行代码。此外，您也可以选择完全不使用本软件。请不要为此创建 Issue 或反馈相关信息。
 
 ## 许可协议
+
 本项目采用 [知识共享署名-非商业性使用-禁止演绎 (CC BY-NC-ND) 4.0 许可协议](https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh) 进行许可。
 
+
 ## 错误报告与建议请提交至
+
 https://github.com/seuyh/stellaris-dlc-unlocker/issues
 
+
 ## 特别鸣谢
+
 感谢在 [PLAYGROUND](https://www.playground.ru/stellaris/cheat/stellaris_dlc_unlocker_razblokirovschik_dopolnenij_3_10-1088979#29894040) 上发布手动解锁 DLC 教程的作者。
 
 翻译成简体中文 [wuyilingwei](https://github.com/wuyilingwei)。
 
-注：解锁器处于开发阶段，并且以“按原样”提供。产品可能会变更、补充和改进。不排除存在缺陷、不足、崩溃的可能。
+Linux 版本基于 [CreamLinux](https://github.com/anticitizn/creamlinux) 构建。
+
+---
+
+注：解锁器处于开发阶段，并且以"按原样"提供。产品可能会变更、补充和改进。不排除存在缺陷、不足、崩溃的可能。
