@@ -578,12 +578,20 @@ update_cream_ini() {
         fi
 
         local added=0
+        local pending=()
         IFS=',' read -ra ids <<< "$csv"
         for id in "${ids[@]}"; do
             id="$(echo "$id" | xargs)"
             [ -z "$id" ] && continue
             grep -q "^$id " "$ini_path" 2>/dev/null && continue
-            printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
+            pending+=("$id")
+        done
+
+        local total=${#pending[@]}
+        local current=0
+        for id in "${pending[@]}"; do
+            current=$((current+1))
+            printf "\r${C_DIM}$(t fetching_dlc_info) [%d/%d] %s...${C_RESET}      " "$current" "$total" "$id"
             local name="$id"
             local dlc_info
             dlc_info=$(http_get_fast "$STEAMCMD_API/$id" 2>/dev/null) || true
@@ -805,7 +813,6 @@ do_install() {
         fi
 
         if [ -n "$msi_path" ] && [ -f "$msi_path" ]; then
-            # Сохраняем launcherpath на случай, если деинсталлятор его снесет
             local pointer_file="$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Paradox Interactive/launcherpath"
             local pointer_backup=""
             if [ -f "$pointer_file" ]; then
@@ -816,7 +823,6 @@ do_install() {
             run_wine msiexec /uninstall "Z:${msi_path//\//\\}" /quiet /norestart >/dev/null 2>&1 || true
             sleep 2
 
-            # Удаляем только папки с бинарниками, AppData/Local/Paradox Interactive не трогаем!
             local cleaned_any=0
             while IFS= read -r l_base; do
                 if [ -n "$l_base" ] && [ -d "$l_base" ]; then
@@ -1021,7 +1027,7 @@ main_menu() {
         hr
         echo -e "  ${C_CYAN}1)${C_RESET} $(t m_status)"
         echo -e "  ${C_CYAN}2)${C_RESET} $(t m_install)"
-        echo -e "  ${C_CYAN}3)${C_RESET} $(t m_lang)"
+        echo -e "  ${C_CYAN}3)${C_RESET} Language / Язык / 中文"
         echo -e "  ${C_CYAN}4)${C_RESET} $(t m_log)"
         echo -e "  ${C_CYAN}0)${C_RESET} $(t m_exit)"
         hr
