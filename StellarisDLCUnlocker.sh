@@ -580,12 +580,20 @@ update_cream_ini() {
     fi
 
     local added=0
+    local pending=()
     IFS=',' read -ra ids <<< "$csv"
     for id in "${ids[@]}"; do
         id="$(echo "$id" | xargs)"
         [ -z "$id" ] && continue
         grep -q "^$id " "$ini_path" 2>/dev/null && continue
-        printf "\r${C_DIM}$(t fetching_dlc_info) %s...${C_RESET}      " "$id"
+        pending+=("$id")
+    done
+
+    local total=${#pending[@]}
+    local current=0
+    for id in "${pending[@]}"; do
+        current=$((current+1))
+        printf "\r${C_DIM}$(t fetching_dlc_info) [%d/%d] %s...${C_RESET}      " "$current" "$total" "$id"
         local name="$id"
         local dlc_info
         dlc_info=$(http_get_fast "$STEAMCMD_API/$id" 2>/dev/null) || true
@@ -957,7 +965,7 @@ main_menu() {
         echo -e "  ${C_CYAN}1)${C_RESET} $(t m_status)"
         echo -e "  ${C_CYAN}2)${C_RESET} $(t m_install)"
         echo -e "  ${C_CYAN}3)${C_RESET} $(t m_steam_launch)"
-        echo -e "  ${C_CYAN}4)${C_RESET} $(t m_lang)"
+        echo -e "  ${C_CYAN}4)${C_RESET} Language / Язык / 中文"
         echo -e "  ${C_CYAN}5)${C_RESET} $(t m_log)"
         echo -e "  ${C_CYAN}0)${C_RESET} $(t m_exit)"
         hr
