@@ -19,10 +19,10 @@
 ## Windows
 
 ### 🚀 Быстрый запуск (PowerShell)
-Выполните команду в терминале (PowerShell), либо нажмите win+r и вставьте код в открывшееся окно:
+Выполните команду в терминале:
 
-```powershell
-powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+pwsh -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
 ```
 
 * **Логи работы**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
