@@ -16,10 +16,10 @@ A utility for automatic unlocking and installation of DLCs for Stellaris (Steam 
 ## Windows
 
 ### 🚀 Quick Start (PowerShell)
-Run the command in your terminal (PowerShell), or press `Win + R` and paste the code into the window:
+Run the command in your terminal:
 
-```powershell
-powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+pwsh -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
 ```
 
 * **Work Logs**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
