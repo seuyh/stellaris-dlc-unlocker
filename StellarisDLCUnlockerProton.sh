@@ -300,10 +300,10 @@ get_remote_sha() {
         fi
     else
         if [ -n "$api_json" ]; then
-            sha=$(echo "$api_json" | grep -A5 "\"name\": \"$filename\"" | grep -oP '"sha":\s*"\K[a-f0-9]+' | head -1)
+            sha=$(echo "$api_json" | grep -A5 "\"name\": \"$filename\"" | sed -n 's/.*"sha"[[:space:]]*:[[:space:]]*"\([a-f0-9]*\)".*/\1/p' | head -1)
         fi
         if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
-            sha=$(echo "$manifest_json" | grep -oP "\"$filename\":\\s*\"\\K[a-f0-9]+" | head -1)
+            sha=$(echo "$manifest_json" | sed -n "s/.*\"$filename\"[[:space:]]*:[[:space:]]*\"\\([a-f0-9]*\\)\".*/\\1/p" | head -1)
         fi
     fi
     echo "$sha"
@@ -367,7 +367,7 @@ find_game_dir() {
     if [ -f "$lib_vdf" ]; then
         while IFS= read -r p; do
             [ -n "$p" ] && libs+=("$p")
-        done < <(grep -oP '"path"\s*"\K[^"]+' "$lib_vdf" 2>/dev/null)
+        done < <(sed -n 's/.*"path"[[:space:]]*"\([^"]*\)".*/\1/p' "$lib_vdf" 2>/dev/null)
     fi
 
     for lib in "${libs[@]}"; do
@@ -514,7 +514,8 @@ dlc_folders() {
     if command -v jq >/dev/null 2>&1; then
         echo "$DLC_DATA_JSON" | jq -r '.[].dlc_folder // empty'
     else
-        echo "$DLC_DATA_JSON" | grep -oP '"dlc_folder"\s*:\s*"\K[^"]+'
+        echo "$DLC_DATA_JSON" | grep -oE '"dlc_folder"[[:space:]]*:[[:space:]]*"[^"]*"' \
+            | sed -E 's/^"dlc_folder"[[:space:]]*:[[:space:]]*"([^"]*)"$/\1/'
     fi
 }
 
@@ -564,7 +565,7 @@ update_cream_ini() {
     if command -v jq >/dev/null 2>&1; then
         csv=$(echo "$info" | jq -r ".data[\"$APPID\"].extended.listofdlc // empty")
     else
-        csv=$(echo "$info" | grep -oP '"listofdlc"\s*:\s*"\K[^"]+')
+        csv=$(echo "$info" | sed -n 's/.*"listofdlc"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
     fi
     if [ -z "$csv" ]; then
         log WARN "$(t ini_skip)"
@@ -602,7 +603,7 @@ update_cream_ini() {
                     [ -n "$n" ] && name="$n"
                 else
                     local n
-                    n=$(echo "$dlc_info" | grep -oP '"name"\s*:\s*"\K[^"]+' | head -1)
+                    n=$(echo "$dlc_info" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
                     [ -n "$n" ] && name="$n"
                 fi
             fi
@@ -632,7 +633,7 @@ dlc_hash_entries() {
     if command -v jq >/dev/null 2>&1; then
         echo "$DLC_HASHES_JSON" | jq -r 'to_entries[] | "\(.key)\t\(.value)"'
     else
-        echo "$DLC_HASHES_JSON" | grep -oP '"[^"]+"\s*:\s*"[a-fA-F0-9]{32}"' \
+        echo "$DLC_HASHES_JSON" | grep -oE '"[^"]+"[[:space:]]*:[[:space:]]*"[a-fA-F0-9]{32}"' \
             | sed -E 's/^"([^"]+)"[[:space:]]*:[[:space:]]*"([a-fA-F0-9]{32})"$/\1\t\2/'
     fi
 }
