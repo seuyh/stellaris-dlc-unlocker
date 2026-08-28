@@ -15,7 +15,7 @@
 
 ## Windows
 
-### 🚀 快速启动 (PowerShell)
+### 🚀 启动
 在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
 
 ```powershell
