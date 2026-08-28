@@ -121,6 +121,7 @@ $BUILTIN = @{
         err_title='Error'; warn_title='Warning'; wait_title='Please wait'; confirm_title='Confirm'
         confirm_full='This will delete ALL Stellaris saves and settings. Continue?'
         dlc_ok='OK'; dlc_old='Outdated'; dlc_missing='Missing'
+        chk_unstable='Install unstable DLCs (may break other DLCs)'; unstable='⚠ Unstable'; confirm_unstable='Unstable DLCs can break other DLCs or prevent the game from starting correctly. If something breaks, delete the entire "dlc" folder from the Stellaris game folder and run the unlocker again. Continue?'
     }
     ru = @{
         title='STELLARIS DLC UNLOCKER'; path_label='ПУТЬ К STELLARIS'; lbl_launcher_path='ПУТЬ К ЛАУНЧЕРУ'; browse='Обзор'
@@ -139,6 +140,7 @@ $BUILTIN = @{
         err_title='Ошибка'; warn_title='Предупреждение'; wait_title='Подождите'; confirm_title='Подтверждение'
         confirm_full='Это удалит ВСЕ сохранения и настройки Stellaris. Продолжить?'
         dlc_ok='OK'; dlc_old='Устарел'; dlc_missing='Отсутствует'
+        chk_unstable='Устанавливать нестабильные DLC (могут сломать другие DLC)'; unstable='⚠ Нестабильный'; confirm_unstable='Нестабильные DLC могут сломать другие DLC или привести к проблемам с запуском игры. Если что-то сломается, удалите целиком папку «dlc» из папки с игрой и снова запустите разблокировку. Продолжить?'
     }
     zh = @{
         title='STELLARIS DLC UNLOCKER'; path_label='STELLARIS 路径'; lbl_launcher_path='启动器路径'; browse='浏览'
@@ -156,6 +158,7 @@ $BUILTIN = @{
         err_title='错误'; warn_title='警告'; wait_title='请稍候'; confirm_title='确认'
         confirm_full='这将删除所有 Stellaris 存档和设置。是否继续？'
         dlc_ok='OK'; dlc_old='已过时'; dlc_missing='缺失'
+        chk_unstable='安装不稳定 DLC（可能导致其他 DLC 出现问题）'; unstable='⚠ 不稳定'; confirm_unstable='不稳定 DLC 可能导致其他 DLC 出现问题，甚至导致游戏无法正常启动。如果出现问题，请删除游戏目录中的整个 “dlc” 文件夹，然后再次运行解锁器。是否继续？'
     }
 }
 
@@ -500,7 +503,13 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
 
     $dlcDir = Join-Path $_GAMEPATH 'dlc'; $queue = @(); $total = 0
     foreach ($dlc in $_DLCDATA) {
-        $f = $dlc.dlc_folder; if (-not $f) { continue }; $total++
+        $f = $dlc.dlc_folder; if (-not $f) { continue }
+        $isUnstable = ($dlc.PSObject.Properties.Name -contains 'unstable') -and [bool]$dlc.unstable
+        if ($isUnstable -and -not $_INSTALL_UNSTABLE) {
+            _Log "  Skipping unstable DLC: $($dlc.dlc_name) [$f]" 'WARN'
+            continue
+        }
+        $total++
         $zip = Join-Path $dlcDir "$f.zip"; $dir = Join-Path $dlcDir $f
         if (Test-Path $dir) {
             if ($f -in $_OUTDATED) {
@@ -793,6 +802,7 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                 <CheckBox x:Name="ChkFull" Style="{StaticResource CK}"/>
                 <CheckBox x:Name="ChkSkip" Style="{StaticResource CK}"/>
                 <CheckBox x:Name="ChkNoUpdate" Style="{StaticResource CK}" IsChecked="True"/>
+                <CheckBox x:Name="ChkUnstable" Style="{StaticResource CK}"/>
                 <TextBlock x:Name="LblLauncher" Style="{StaticResource SL}" Margin="0,10,0,0"/>
                 <ComboBox x:Name="CmbLauncher" Style="{StaticResource CBx}"/>
                 <TextBlock x:Name="LblLauncherPath" Style="{StaticResource SL}" Margin="0,10,0,0"/>
@@ -860,7 +870,7 @@ $pathBox     = $window.FindName('PathBox');    $browseBtn  = $window.FindName('B
 $lblLauncherPath    = $window.FindName('LblLauncherPath')
 $launcherPathBox    = $window.FindName('LauncherPathBox')
 $launcherBrowseBtn  = $window.FindName('LauncherBrowseBtn')
-$chkNoUpdate = $window.FindName('ChkNoUpdate')
+$chkNoUpdate = $window.FindName('ChkNoUpdate'); $chkUnstable = $window.FindName('ChkUnstable')
 $statusLbl   = $window.FindName('StatusLbl'); $logBox     = $window.FindName('LogBox')
 $installBtn  = $window.FindName('InstallBtn');$launchBtn  = $window.FindName('LaunchBtn')
 $refreshBtn  = $window.FindName('RefreshBtn')
@@ -920,7 +930,7 @@ function Apply-UIText {
     $titleLbl.Text=T 'title'; $lblPath.Text=T 'path_label'; $browseBtn.Content=T 'browse'
     $lblStatus.Text=T 'status_label'; $lblOpts.Text=T 'options_label'
     $chkFull.Content=T 'chk_full'; $chkSkip.Content=T 'chk_skip'
-    $chkNoUpdate.Content = T 'chk_no_update'
+    $chkNoUpdate.Content = T 'chk_no_update'; $chkUnstable.Content = T 'chk_unstable'
     $lblLauncher.Text=T 'lbl_launcher'
     $lblLauncherPath.Text = T 'lbl_launcher_path'
     $launcherBrowseBtn.Content = T 'browse'
@@ -945,11 +955,31 @@ function Refresh-DlcList {
     foreach ($dlc in $script:dlcData) {
         $name=$dlc.dlc_name; $f=$dlc.dlc_folder
         if (-not $name -or -not $f) { continue }
+        $isUnstable = ($dlc.PSObject.Properties.Name -contains 'unstable') -and [bool]$dlc.unstable
         $exists = try { Test-Path (Join-Path $dlcBase $f) } catch { $false }
         $color  = if (-not $exists) {'#e74c3c'} elseif ($f -in $script:outdatedFolders) {'#f39c12'} else {'#27ae60'}
-        $tb=[System.Windows.Controls.TextBlock]::new(); $tb.Text=$name; $tb.FontSize=12
+
+        # Keep normal status colors. Unstable DLCs are marked with an icon instead.
+        $panel=[System.Windows.Controls.StackPanel]::new()
+        $panel.Orientation=[System.Windows.Controls.Orientation]::Horizontal
+
+        if ($isUnstable) {
+            $icon=[System.Windows.Controls.TextBlock]::new()
+            $icon.Text='⚠'
+            $icon.FontSize=12
+            $icon.Margin=[System.Windows.Thickness]::new(0,0,6,0)
+            $icon.Foreground=[System.Windows.Media.Brushes]::Orange
+            $panel.Children.Add($icon) | Out-Null
+        }
+
+        $tb=[System.Windows.Controls.TextBlock]::new()
+        $tb.Text=$name
+        $tb.FontSize=12
         $tb.Foreground=[System.Windows.Media.SolidColorBrush][System.Windows.Media.ColorConverter]::ConvertFromString($color)
-        $li=[System.Windows.Controls.ListBoxItem]::new(); $li.Content=$tb
+        $panel.Children.Add($tb) | Out-Null
+
+        $li=[System.Windows.Controls.ListBoxItem]::new()
+        $li.Content=$panel
         $dlcList.Items.Add($li) | Out-Null
     }
 }
@@ -1031,6 +1061,14 @@ $chkSkip.Add_Checked({
 })
 $chkSkip.Add_Unchecked({ $chkFull.IsEnabled=$true; $cmbLauncher.IsEnabled=$true })
 
+$chkUnstable.Add_Checked({
+    $r = [System.Windows.MessageBox]::Show(
+        (T 'confirm_unstable'), (T 'warn_title'),
+        [System.Windows.MessageBoxButton]::YesNo,
+        [System.Windows.MessageBoxImage]::Warning)
+    if ($r -ne 'Yes') { $chkUnstable.IsChecked = $false }
+})
+
 $chkNoUpdate.Add_Unchecked({
     $r = [System.Windows.MessageBox]::Show(
         (T 'confirm_no_update'), (T 'warn_title'),
@@ -1068,6 +1106,7 @@ $installBtn.Add_Click({
         _FULL                 = [bool]$chkFull.IsChecked
         _SKIP                 = [bool]$chkSkip.IsChecked
         _NO_UPDATE            = [bool]$chkNoUpdate.IsChecked
+        _INSTALL_UNSTABLE    = [bool]$chkUnstable.IsChecked
         _ALT                  = ($null -ne $selectedAlt)
         _CACHE_DIR            = $CACHE_DIR
         _ORIGIN_API           = $ORIGIN_API
