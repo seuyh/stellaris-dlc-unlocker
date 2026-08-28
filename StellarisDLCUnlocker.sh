@@ -87,6 +87,17 @@ _t_en() {
         invalid_choice) echo "Invalid choice." ;;
         log_empty) echo "Log is empty." ;;
         confirm_install) echo "Proceed? [Y/n]: " ;;
+        install_unstable) echo "Install unstable DLCs? [y/N]: " ;;
+        unstable_warning_title) echo "UNSTABLE DLC WARNING" ;;
+        unstable_warning_body) echo "These DLCs may break other DLCs or cause game problems." ;;
+        unstable_warning_fix) echo "If something breaks, delete the entire "dlc" folder from the Stellaris game folder and run the unlocker again." ;;
+        unstable_warning_confirm) echo "Install unstable DLCs anyway? [y/N]: " ;;
+        dlc_status_header) echo "DLC STATUS" ;;
+        status_installed) echo "Installed" ;;
+        status_missing) echo "Not installed" ;;
+        status_outdated) echo "Outdated" ;;
+        status_unstable) echo "Unstable" ;;
+        status_legend) echo "Legend" ;;
         cancelled) echo "Cancelled." ;;
         no_dlc_to_download) echo "All DLC up to date." ;;
         hashes_skip) echo "Could not fetch hashes.json, skipping integrity check." ;;
@@ -146,6 +157,17 @@ _t_ru() {
         invalid_choice) echo "Неверный выбор." ;;
         log_empty) echo "Лог пуст." ;;
         confirm_install) echo "Продолжить? [Y/n]: " ;;
+        install_unstable) echo "Устанавливать нестабильные DLC? [y/N]: " ;;
+        unstable_warning_title) echo "ПРЕДУПРЕЖДЕНИЕ: НЕСТАБИЛЬНЫЕ DLC" ;;
+        unstable_warning_body) echo "Эти DLC могут сломать другие DLC или вызвать проблемы с игрой." ;;
+        unstable_warning_fix) echo "Если что-то сломается, удалите целиком папку "dlc" из папки с игрой Stellaris и снова запустите разблокировку." ;;
+        unstable_warning_confirm) echo "Всё равно установить нестабильные DLC? [y/N]: " ;;
+        dlc_status_header) echo "СТАТУС DLC" ;;
+        status_installed) echo "Установлено" ;;
+        status_missing) echo "Не установлено" ;;
+        status_outdated) echo "Устарело" ;;
+        status_unstable) echo "Нестабильное" ;;
+        status_legend) echo "Обозначения" ;;
         cancelled) echo "Отменено." ;;
         no_dlc_to_download) echo "Все DLC актуальны." ;;
         hashes_skip) echo "Не удалось получить hashes.json, проверка целостности пропущена." ;;
@@ -205,6 +227,17 @@ _t_zh() {
         invalid_choice) echo "无效选择。" ;;
         log_empty) echo "日志为空。" ;;
         confirm_install) echo "继续？[Y/n]: " ;;
+        install_unstable) echo "安装不稳定 DLC？[y/N]: " ;;
+        unstable_warning_title) echo "警告：不稳定 DLC" ;;
+        unstable_warning_body) echo "这些 DLC 可能导致其他 DLC 出现问题或影响游戏运行。" ;;
+        unstable_warning_fix) echo "如果出现问题，请删除 Stellaris 游戏目录中的整个 "dlc" 文件夹，然后重新运行解锁器。" ;;
+        unstable_warning_confirm) echo "仍然安装不稳定 DLC？[y/N]: " ;;
+        dlc_status_header) echo "DLC 状态" ;;
+        status_installed) echo "已安装" ;;
+        status_missing) echo "未安装" ;;
+        status_outdated) echo "已过期" ;;
+        status_unstable) echo "不稳定" ;;
+        status_legend) echo "图例" ;;
         cancelled) echo "已取消。" ;;
         no_dlc_to_download) echo "所有 DLC 均为最新。" ;;
         hashes_skip) echo "无法获取 hashes.json，跳过完整性检查。" ;;
@@ -516,6 +549,16 @@ dlc_folders() {
     fi
 }
 
+dlc_entries() {
+    if command -v jq >/dev/null 2>&1; then
+        echo "$DLC_DATA_JSON" | jq -r '.[] | select(.dlc_folder != null and .dlc_folder != "") | "\(.dlc_folder)\t\(if (.unstable // false) then 1 else 0 end)\t\(.dlc_name // .name // .dlc_folder)"'
+    elif command -v python3 >/dev/null 2>&1; then
+        printf '%s\n' "$DLC_DATA_JSON" | python3 -c 'import json,sys; data=json.load(sys.stdin); [print("{}\t{}\t{}".format(x.get("dlc_folder",""), int(bool(x.get("unstable",False))), str(x.get("dlc_name") or x.get("name") or x.get("dlc_folder","")))) for x in data if x.get("dlc_folder")]'
+    else
+        dlc_folders | while IFS= read -r f; do [ -n "$f" ] && printf '%s\t0\t%s\n' "$f" "$f"; done
+    fi
+}
+
 fetch_creamlinux() {
     local dest_dir="$CACHE_DIR/$CREAMLINUX_SUBDIR"
     mkdir -p "$dest_dir"
@@ -687,6 +730,102 @@ mark_stale_dlc_folders() {
     done
 }
 
+show_dlc_install_status() {
+    local dlc_dir="$GAME_DIR/dlc"
+    mkdir -p "$dlc_dir"
+
+    echo
+    echo -e "${C_BOLD}${C_WHITE}┌──────────────────────────────────────────────────────────────────┐${C_RESET}"
+    echo -e "${C_BOLD}${C_WHITE}│ $(t dlc_status_header)${C_RESET}"
+    echo -e "${C_BOLD}${C_WHITE}└──────────────────────────────────────────────────────────────────┘${C_RESET}"
+    echo
+
+    local hashes_available=0
+    declare -A status_hash=()
+    if fetch_dlc_hashes; then
+        while IFS=$'\t' read -r relpath md5; do
+            [ -n "$relpath" ] && status_hash["$relpath"]="$md5"
+        done < <(dlc_hash_entries)
+        [ ${#status_hash[@]} -gt 0 ] && hashes_available=1
+    fi
+
+    local installed_count=0 missing_count=0 outdated_count=0 unstable_count=0
+    local folder unstable name
+    while IFS=$'\t' read -r folder unstable name; do
+        [ -n "$folder" ] || continue
+        [ -n "$name" ] || name="$folder"
+
+        local state="missing"
+        local state_icon="✗"
+        local state_color="$C_RED"
+
+        if [ -d "$dlc_dir/$folder" ]; then
+            state="installed"
+            state_icon="✓"
+            state_color="$C_GREEN"
+
+            if [ "$hashes_available" -eq 1 ]; then
+                local has_expected=0
+                local outdated=0 key localfile actual
+                for key in "${!status_hash[@]}"; do
+                    if [[ "$key" == "$folder/"* ]]; then
+                        has_expected=1
+                        localfile="$dlc_dir/$key"
+                        if [ ! -f "$localfile" ]; then
+                            outdated=1
+                            break
+                        fi
+                        actual=$(md5sum "$localfile" 2>/dev/null | awk '{print $1}')
+                        if [ "$actual" != "${status_hash[$key]}" ]; then
+                            outdated=1
+                            break
+                        fi
+                    fi
+                done
+                if [ "$has_expected" -eq 1 ] && [ "$outdated" -eq 1 ]; then
+                    state="outdated"
+                    state_icon="↻"
+                    state_color="$C_YELLOW"
+                fi
+            fi
+        fi
+
+        local unstable_mark=" "
+        if [ "$unstable" = "1" ]; then
+            unstable_mark="${C_MAGENTA}⚠${C_RESET} "
+            unstable_count=$((unstable_count+1))
+        fi
+
+        case "$state" in
+            installed) installed_count=$((installed_count+1)) ;;
+            missing) missing_count=$((missing_count+1)) ;;
+            outdated) outdated_count=$((outdated_count+1)) ;;
+        esac
+
+        printf "  %b%b%b %-48s\n" "$unstable_mark" "${state_color}${state_icon}${C_RESET}" "" "$name"
+    done < <(dlc_entries)
+
+    echo
+    echo -e "${C_DIM}$(t status_legend):${C_RESET} ${C_GREEN}✓${C_RESET} $(t status_installed)   ${C_RED}✗${C_RESET} $(t status_missing)   ${C_YELLOW}↻${C_RESET} $(t status_outdated)   ${C_MAGENTA}⚠${C_RESET} $(t status_unstable)"
+    echo
+    echo -e "  ${C_GREEN}✓ $installed_count${C_RESET}   ${C_RED}✗ $missing_count${C_RESET}   ${C_YELLOW}↻ $outdated_count${C_RESET}   ${C_MAGENTA}⚠ $unstable_count${C_RESET}"
+    echo
+}
+
+confirm_unstable_install() {
+    echo
+    echo -e "${C_BOLD}${C_YELLOW}╔══════════════════════════════════════════════════════════════════╗${C_RESET}"
+    printf "${C_BOLD}${C_YELLOW}║  ⚠  %-60s║${C_RESET}\n" "$(t unstable_warning_title)"
+    echo -e "${C_BOLD}${C_YELLOW}╠══════════════════════════════════════════════════════════════════╣${C_RESET}"
+    printf "${C_YELLOW}║  %-62s║${C_RESET}\n" "$(t unstable_warning_body)"
+    printf "${C_YELLOW}║  %-62s║${C_RESET}\n" "$(t unstable_warning_fix)"
+    echo -e "${C_BOLD}${C_YELLOW}╚══════════════════════════════════════════════════════════════════╝${C_RESET}"
+    echo
+    local answer
+    ask "$(t unstable_warning_confirm)" answer
+    [[ "$answer" =~ ^[yYдД]$ ]]
+}
+
 download_dlc_content() {
     local dlc_dir="$GAME_DIR/dlc"
     mkdir -p "$dlc_dir"
@@ -694,9 +833,14 @@ download_dlc_content() {
     mark_stale_dlc_folders "$dlc_dir"
 
     local folders=()
-    while IFS= read -r f; do
-        [ -n "$f" ] && folders+=("$f")
-    done < <(dlc_folders)
+    while IFS=$'\t' read -r f unstable name; do
+        [ -n "$f" ] || continue
+        if [ "$unstable" = "1" ] && [ "$install_unstable" -ne 1 ]; then
+            log WARN "Skipping unstable DLC: $f"
+            continue
+        fi
+        folders+=("$f")
+    done < <(dlc_entries)
 
     local total=${#folders[@]}
     local queue=()
@@ -864,6 +1008,20 @@ do_install() {
         pause; return 1
     fi
 
+    fetch_dlc_data || { pause; return 1; }
+    show_dlc_install_status
+
+    local install_unstable=0
+    ask "$(t install_unstable)" ans
+    if [[ "$ans" =~ ^[yYдД]$ ]]; then
+        if confirm_unstable_install; then
+            install_unstable=1
+        else
+            log INFO "$(t cancelled)"
+            pause; return 0
+        fi
+    fi
+
     echo
     ask "$(t confirm_install)" confirm
     [ -z "$confirm" ] && confirm="y"
@@ -872,7 +1030,6 @@ do_install() {
         pause; return 0
     fi
 
-    fetch_dlc_data || { pause; return 1; }
     fetch_creamlinux || { pause; return 1; }
     copy_creamlinux_to_game
     mkdir -p "$GAME_DIR/dlc"
