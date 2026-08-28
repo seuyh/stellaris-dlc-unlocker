@@ -13,7 +13,7 @@
 ⚠️ Работает только со Steam-версией игры.
 
 
-## ⚠️⚠️⚠️ Если у вас не скачиваются файлы, вы видите ошибки связанные с таймаутами и прочие сетевые ошибки, это НЕ проблема анлокера, а проблема в том кто придумывает блокировать интернет, используйте VPN, не нужно писать об этом репорты ⚠️⚠️⚠️
+## ⚠️⚠️⚠️ Если у вас не скачиваются файлы, не открывается анлокер, вы видите ошибки связанные с таймаутами и прочие сетевые ошибки, это НЕ проблема анлокера, а проблема в том кто придумывает блокировать интернет, используйте VPN, не нужно писать об этом репорты ⚠️⚠️⚠️
 
 
 ## Windows
@@ -23,6 +23,11 @@
 
 ```powershell
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+
+Зеркало (jsDelivr):
+```powershell
+powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding]::UTF8;$w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')|iex"
 ```
 
 * **Логи работы**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
