@@ -50,6 +50,11 @@ powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlocker.sh | bash
 ```
 
+Зеркало (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.sh | bash
+```
+
 * **Логи работы**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`
 * Скрипт сам определяет установку Steam (нативная, Flatpak, Snap) и прописывает нужные параметры запуска игры
 * Зависимости: `curl`, `unzip`, `grep`, `awk` (обычно уже есть в системе); рекомендуется `jq`
@@ -68,6 +73,11 @@ sh ./cream.sh %command%
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlockerProton.sh | bash
+```
+
+Зеркало (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlockerProton.sh | bash
 ```
 
 * **Логи работы**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`
