@@ -15,7 +15,7 @@ A utility for automatic unlocking and installation of DLCs for Stellaris (Steam 
 
 ## Windows
 
-### 🚀 Quick Start (PowerShell)
+### 🚀 Start
 Run the command in your terminal (PowerShell), or press `Win + R` and paste the code into the window:
 
 ```powershell
