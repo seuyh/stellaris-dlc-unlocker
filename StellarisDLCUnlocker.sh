@@ -92,7 +92,6 @@ _t_en() {
         unstable_warning_body) echo "These DLCs may break other DLCs or cause game problems." ;;
         unstable_warning_fix) echo "If something breaks, delete the following DLC folders from the Stellaris game folder:" ;;
         unstable_warning_none) echo "(No unstable DLC folders found)" ;;
-        unstable_warning_rerun) echo "Then run the unlocker again." ;;
         unstable_warning_confirm) echo "Install unstable DLCs anyway? [y/N]: " ;;
         dlc_status_header) echo "DLC STATUS" ;;
         status_installed) echo "Installed" ;;
@@ -164,7 +163,6 @@ _t_ru() {
         unstable_warning_body) echo "Эти DLC могут сломать другие DLC или вызвать проблемы с игрой." ;;
         unstable_warning_fix) echo "Если что-то сломается, удалите следующие папки DLC из папки с игрой Stellaris:" ;;
         unstable_warning_none) echo "(Нестабильные папки DLC не найдены)" ;;
-        unstable_warning_rerun) echo "После этого снова запустите разблокировку." ;;
         unstable_warning_confirm) echo "Всё равно установить нестабильные DLC? [y/N]: " ;;
         dlc_status_header) echo "СТАТУС DLC" ;;
         status_installed) echo "Установлено" ;;
@@ -236,7 +234,6 @@ _t_zh() {
         unstable_warning_body) echo "这些 DLC 可能导致其他 DLC 出现问题或影响游戏运行。" ;;
         unstable_warning_fix) echo "如果出现问题，请从 Stellaris 游戏目录中删除以下 DLC 文件夹：" ;;
         unstable_warning_none) echo "（未找到不稳定 DLC 文件夹）" ;;
-        unstable_warning_rerun) echo "然后重新运行解锁器。" ;;
         unstable_warning_confirm) echo "仍然安装不稳定 DLC？[y/N]: " ;;
         dlc_status_header) echo "DLC 状态" ;;
         status_installed) echo "已安装" ;;
@@ -857,7 +854,6 @@ confirm_unstable_install() {
         printf "${C_YELLOW}║    %s${C_RESET}\n" "$(t unstable_warning_none)"
     fi
 
-    echo -e "${C_YELLOW}║  $(t unstable_warning_rerun)${C_RESET}"
     echo -e "${C_BOLD}${C_YELLOW}╚══════════════════════════════════════════════════════════════════╝${C_RESET}"
     echo
     local answer

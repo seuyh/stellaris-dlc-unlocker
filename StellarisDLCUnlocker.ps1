@@ -120,8 +120,13 @@ $BUILTIN = @{
         err_loading='Server data is still loading. Please wait.'
         err_title='Error'; warn_title='Warning'; wait_title='Please wait'; confirm_title='Confirm'
         confirm_full='This will delete ALL Stellaris saves and settings. Continue?'
-        dlc_ok='OK'; dlc_old='Outdated'; dlc_missing='Missing'
-        chk_unstable='Install unstable DLCs (may break other DLCs)'; unstable='⚠ Unstable'; confirm_unstable='Unstable DLCs can break other DLCs or prevent the game from starting correctly. If something breaks, delete the entire "dlc" folder from the Stellaris game folder and run the unlocker again. Continue?'
+        dlc_ok='OK'; dlc_old='Outdated'; dlc_missing='Missing'; status_unstable='Unstable'
+        chk_unstable='Install unstable DLCs (may break other DLCs)'; unstable='⚠ Unstable'
+        unstable_warning_title='UNSTABLE DLC WARNING'
+        unstable_warning_body='These DLCs may break other DLCs or cause game problems.'
+        unstable_warning_fix='If something breaks, delete the following DLC folders from the Stellaris game folder:'
+        unstable_warning_none='(No unstable DLC folders found)'
+        confirm_unstable='Install unstable DLCs anyway?'
     }
     ru = @{
         title='STELLARIS DLC UNLOCKER'; path_label='ПУТЬ К STELLARIS'; lbl_launcher_path='ПУТЬ К ЛАУНЧЕРУ'; browse='Обзор'
@@ -139,8 +144,13 @@ $BUILTIN = @{
         err_loading='Данные сервера ещё загружаются. Подождите.'
         err_title='Ошибка'; warn_title='Предупреждение'; wait_title='Подождите'; confirm_title='Подтверждение'
         confirm_full='Это удалит ВСЕ сохранения и настройки Stellaris. Продолжить?'
-        dlc_ok='OK'; dlc_old='Устарел'; dlc_missing='Отсутствует'
-        chk_unstable='Устанавливать нестабильные DLC (могут сломать другие DLC)'; unstable='⚠ Нестабильный'; confirm_unstable='Нестабильные DLC могут сломать другие DLC или привести к проблемам с запуском игры. Если что-то сломается, удалите целиком папку «dlc» из папки с игрой и снова запустите разблокировку. Продолжить?'
+        dlc_ok='OK'; dlc_old='Устарел'; dlc_missing='Отсутствует'; status_unstable='Нестабильное'
+        chk_unstable='Устанавливать нестабильные DLC (могут сломать другие DLC)'; unstable='⚠ Нестабильный'
+        unstable_warning_title='ПРЕДУПРЕЖДЕНИЕ: НЕСТАБИЛЬНЫЕ DLC'
+        unstable_warning_body='Эти DLC могут сломать другие DLC или вызвать проблемы с игрой.'
+        unstable_warning_fix='Если что-то сломается, удалите следующие папки DLC из папки с игрой Stellaris:'
+        unstable_warning_none='(Нестабильные папки DLC не найдены)'
+        confirm_unstable='Всё равно установить нестабильные DLC?'
     }
     zh = @{
         title='STELLARIS DLC UNLOCKER'; path_label='STELLARIS 路径'; lbl_launcher_path='启动器路径'; browse='浏览'
@@ -157,8 +167,13 @@ $BUILTIN = @{
         err_loading='服务器数据仍在加载中，请稍候。'
         err_title='错误'; warn_title='警告'; wait_title='请稍候'; confirm_title='确认'
         confirm_full='这将删除所有 Stellaris 存档和设置。是否继续？'
-        dlc_ok='OK'; dlc_old='已过时'; dlc_missing='缺失'
-        chk_unstable='安装不稳定 DLC（可能导致其他 DLC 出现问题）'; unstable='⚠ 不稳定'; confirm_unstable='不稳定 DLC 可能导致其他 DLC 出现问题，甚至导致游戏无法正常启动。如果出现问题，请删除游戏目录中的整个 “dlc” 文件夹，然后再次运行解锁器。是否继续？'
+        dlc_ok='OK'; dlc_old='已过时'; dlc_missing='缺失'; status_unstable='不稳定'
+        chk_unstable='安装不稳定 DLC（可能导致其他 DLC 出现问题）'; unstable='⚠ 不稳定'
+        unstable_warning_title='警告：不稳定 DLC'
+        unstable_warning_body='这些 DLC 可能导致其他 DLC 出现问题或影响游戏运行。'
+        unstable_warning_fix='如果出现问题，请删除 Stellaris 游戏目录中的以下 DLC 文件夹：'
+        unstable_warning_none='（未找到不稳定 DLC 文件夹）'
+        confirm_unstable='仍然安装不稳定 DLC？'
     }
 }
 
@@ -166,6 +181,52 @@ function Write-Log([string]$msg, [string]$level = 'INFO') {
     Add-Content -Path $LOG_FILE -Value "[$(Get-Date -Format 'HH:mm:ss')][$level] $msg" -Encoding UTF8 -ErrorAction SilentlyContinue
 }
 function T([string]$key) { if ($script:L -and $script:L.ContainsKey($key)) { return $script:L[$key] }; return $key }
+
+function Get-UnstableDlcFolders {
+    $folders = @()
+    if (-not $script:dlcData) { return $folders }
+
+    foreach ($dlc in $script:dlcData) {
+        if (-not $dlc.dlc_folder) { continue }
+        $isUnstable = ($dlc.PSObject.Properties.Name -contains 'unstable') -and [bool]$dlc.unstable
+        if ($isUnstable) {
+            $folders += [string]$dlc.dlc_folder
+        }
+    }
+
+    return @($folders | Select-Object -Unique)
+}
+
+function Confirm-UnstableDlc {
+    $folders = @(Get-UnstableDlcFolders)
+
+    $lines = @(
+        (T 'unstable_warning_title'),
+        '',
+        (T 'unstable_warning_body'),
+        '',
+        (T 'unstable_warning_fix')
+    )
+
+    if ($folders.Count -gt 0) {
+        foreach ($folder in $folders) {
+            $lines += "  • $folder"
+        }
+    } else {
+        $lines += "  $(T 'unstable_warning_none')"
+    }
+
+    $lines += ''
+    $lines += (T 'confirm_unstable')
+
+    $message = $lines -join [Environment]::NewLine
+    return [System.Windows.MessageBox]::Show(
+        $message,
+        (T 'unstable_warning_title'),
+        [System.Windows.MessageBoxButton]::YesNo,
+        [System.Windows.MessageBoxImage]::Warning
+    ) -eq 'Yes'
+}
 function Get-SystemLang {
     $ui = [System.Globalization.CultureInfo]::CurrentUICulture.Name.ToLower()
     if ($ui.StartsWith('ru')) { return 'ru' }
@@ -827,7 +888,9 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                         <Ellipse Width="8" Height="8" Fill="#f39c12" Margin="0,0,4,0" VerticalAlignment="Center"/>
                         <TextBlock x:Name="LegOld"  Foreground="#55557a" FontSize="10" Margin="0,0,10,0"/>
                         <Ellipse Width="8" Height="8" Fill="#e74c3c" Margin="0,0,4,0" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="LegMiss" Foreground="#55557a" FontSize="10"/>
+                        <TextBlock x:Name="LegMiss" Foreground="#55557a" FontSize="10" Margin="0,0,10,0"/>
+                        <TextBlock x:Name="LegUnstableIcon" Text="⚠" Foreground="#e0a020" FontSize="10" Margin="0,0,4,0"/>
+                        <TextBlock x:Name="LegUnstable" Foreground="#55557a" FontSize="10"/>
                     </StackPanel>
                 </Grid>
                 <ListBox x:Name="DlcList" Grid.Row="1" Background="Transparent" BorderThickness="0"
@@ -884,6 +947,7 @@ $btnEn=$window.FindName('BtnEn'); $btnRu=$window.FindName('BtnRu'); $btnZh=$wind
 $titleLbl=$window.FindName('TitleLbl'); $lblPath=$window.FindName('LblPath')
 $lblStatus=$window.FindName('LblStatus'); $lblOpts=$window.FindName('LblOpts'); $lblDlc=$window.FindName('LblDlc')
 $legOk=$window.FindName('LegOk'); $legOld=$window.FindName('LegOld'); $legMiss=$window.FindName('LegMiss')
+$legUnstable=$window.FindName('LegUnstable')
 
 function Add-LogItem([string]$text, [string]$level) {
     $color = switch ($level) { 'ERROR' {'#e74c3c'} 'WARN' {'#f39c12'} 'OK' {'#27ae60'} default {'#6a7a9a'} }
@@ -941,7 +1005,7 @@ function Apply-UIText {
     if ($sel -ge 0) { $cmbLauncher.SelectedIndex = $sel } else { $cmbLauncher.SelectedIndex = 0 }
     $lblDlc.Text=T 'dlc_label'; $installBtn.Content=T 'install_btn'; $launchBtn.Content=T 'launch_btn'
     $refreshBtn.ToolTip=T 'refresh_tip'
-    $legOk.Text=T 'dlc_ok'; $legOld.Text=T 'dlc_old'; $legMiss.Text=T 'dlc_missing'
+    $legOk.Text=T 'dlc_ok'; $legOld.Text=T 'dlc_old'; $legMiss.Text=T 'dlc_missing'; $legUnstable.Text=T 'status_unstable'
 }
 function Apply-Lang([string]$lang) { Set-LangBuiltin $lang; Set-LangActive $lang; Apply-UIText; Update-UI }
 
@@ -957,9 +1021,9 @@ function Refresh-DlcList {
         if (-not $name -or -not $f) { continue }
         $isUnstable = ($dlc.PSObject.Properties.Name -contains 'unstable') -and [bool]$dlc.unstable
         $exists = try { Test-Path (Join-Path $dlcBase $f) } catch { $false }
+        $statusIcon = if (-not $exists) { '✗' } elseif ($f -in $script:outdatedFolders) { '↻' } else { '✓' }
         $color  = if (-not $exists) {'#e74c3c'} elseif ($f -in $script:outdatedFolders) {'#f39c12'} else {'#27ae60'}
 
-        # Keep normal status colors. Unstable DLCs are marked with an icon instead.
         $panel=[System.Windows.Controls.StackPanel]::new()
         $panel.Orientation=[System.Windows.Controls.Orientation]::Horizontal
 
@@ -971,6 +1035,13 @@ function Refresh-DlcList {
             $icon.Foreground=[System.Windows.Media.Brushes]::Orange
             $panel.Children.Add($icon) | Out-Null
         }
+
+        $state=[System.Windows.Controls.TextBlock]::new()
+        $state.Text=$statusIcon
+        $state.FontSize=12
+        $state.Margin=[System.Windows.Thickness]::new(0,0,6,0)
+        $state.Foreground=[System.Windows.Media.SolidColorBrush][System.Windows.Media.ColorConverter]::ConvertFromString($color)
+        $panel.Children.Add($state) | Out-Null
 
         $tb=[System.Windows.Controls.TextBlock]::new()
         $tb.Text=$name
@@ -1062,11 +1133,18 @@ $chkSkip.Add_Checked({
 $chkSkip.Add_Unchecked({ $chkFull.IsEnabled=$true; $cmbLauncher.IsEnabled=$true })
 
 $chkUnstable.Add_Checked({
-    $r = [System.Windows.MessageBox]::Show(
-        (T 'confirm_unstable'), (T 'warn_title'),
-        [System.Windows.MessageBoxButton]::YesNo,
-        [System.Windows.MessageBoxImage]::Warning)
-    if ($r -ne 'Yes') { $chkUnstable.IsChecked = $false }
+    if (-not $script:dlcData) {
+        $chkUnstable.IsChecked = $false
+        [System.Windows.MessageBox]::Show(
+            (T 'err_loading'), (T 'wait_title'),
+            [System.Windows.MessageBoxButton]::OK,
+            [System.Windows.MessageBoxImage]::Information) | Out-Null
+        return
+    }
+
+    if (-not (Confirm-UnstableDlc)) {
+        $chkUnstable.IsChecked = $false
+    }
 })
 
 $chkNoUpdate.Add_Unchecked({
