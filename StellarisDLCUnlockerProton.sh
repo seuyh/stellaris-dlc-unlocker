@@ -85,7 +85,9 @@ _t_en() {
         install_unstable) echo "Install unstable DLCs? [y/N]: " ;;
         unstable_warning_title) echo "UNSTABLE DLC WARNING" ;;
         unstable_warning_body) echo "These DLCs may break other DLCs or cause game problems." ;;
-        unstable_warning_fix) echo "If something breaks, delete the entire \"dlc\" folder from the Stellaris game folder and run the unlocker again." ;;
+        unstable_warning_fix) echo "If something breaks, delete the following DLC folders from the Stellaris game folder:" ;;
+        unstable_warning_none) echo "(No unstable DLC folders found)" ;;
+        unstable_warning_rerun) echo "Then run the unlocker again." ;;
         unstable_warning_confirm) echo "Install unstable DLCs anyway? [y/N]: " ;;
         dlc_status_header) echo "DLC STATUS" ;;
         status_installed) echo "Installed" ;;
@@ -152,7 +154,9 @@ _t_ru() {
         install_unstable) echo "Устанавливать нестабильные DLC? [y/N]: " ;;
         unstable_warning_title) echo "ПРЕДУПРЕЖДЕНИЕ: НЕСТАБИЛЬНЫЕ DLC" ;;
         unstable_warning_body) echo "Эти DLC могут сломать другие DLC или вызвать проблемы с игрой." ;;
-        unstable_warning_fix) echo "Если что-то сломается, удалите целиком папку \"dlc\" из папки с игрой Stellaris и снова запустите разблокировку." ;;
+        unstable_warning_fix) echo "Если что-то сломается, удалите следующие папки DLC из папки с игрой Stellaris:" ;;
+        unstable_warning_none) echo "(Нестабильные папки DLC не найдены)" ;;
+        unstable_warning_rerun) echo "После этого снова запустите разблокировку." ;;
         unstable_warning_confirm) echo "Всё равно установить нестабильные DLC? [y/N]: " ;;
         dlc_status_header) echo "СТАТУС DLC" ;;
         status_installed) echo "Установлено" ;;
@@ -219,7 +223,9 @@ _t_zh() {
         install_unstable) echo "安装不稳定 DLC？[y/N]: " ;;
         unstable_warning_title) echo "警告：不稳定 DLC" ;;
         unstable_warning_body) echo "这些 DLC 可能导致其他 DLC 出现问题或影响游戏运行。" ;;
-        unstable_warning_fix) echo "如果出现问题，请删除 Stellaris 游戏目录中的整个 \"dlc\" 文件夹，然后重新运行解锁器。" ;;
+        unstable_warning_fix) echo "如果出现问题，请从 Stellaris 游戏目录中删除以下 DLC 文件夹：" ;;
+        unstable_warning_none) echo "（未找到不稳定 DLC 文件夹）" ;;
+        unstable_warning_rerun) echo "然后重新运行解锁器。" ;;
         unstable_warning_confirm) echo "仍然安装不稳定 DLC？[y/N]: " ;;
         dlc_status_header) echo "DLC 状态" ;;
         status_installed) echo "已安装" ;;
@@ -329,14 +335,14 @@ get_remote_sha() {
     if command -v jq >/dev/null 2>&1; then
         [ -n "$api_json" ] && sha=$(echo "$api_json" | jq -r --arg f "$filename" '.[] | select(.name==$f) | .sha // empty' 2>/dev/null)
         if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
-            sha=$(echo "$manifest_json" | jq -r --arg f "$filename" '.[$f] // empty' 2>/dev/null)
+            sha=$(echo "$manifest_json" | jq -r --arg f "$filename" '.[] | select(.name == $f) | .sha // empty' 2>/dev/null | head -1)
         fi
     else
         if [ -n "$api_json" ]; then
             sha=$(echo "$api_json" | grep -A5 "\"name\": \"$filename\"" | sed -n 's/.*"sha"[[:space:]]*:[[:space:]]*"\([a-f0-9]*\)".*/\1/p' | head -1)
         fi
         if [ -z "$sha" ] && [ -n "$manifest_json" ]; then
-            sha=$(echo "$manifest_json" | sed -n "s/.*\"$filename\"[[:space:]]*:[[:space:]]*\"\\([a-f0-9]*\\)\".*/\\1/p" | head -1)
+            sha=$(printf '%s' "$manifest_json" | tr '\n' ' ' | sed -n "s/.*\"name\"[[:space:]]*:[[:space:]]*\"$filename\".*\"sha\"[[:space:]]*:[[:space:]]*\"\([a-fA-F0-9]*\)\".*/\1/p" | head -1)
         fi
     fi
     echo "$sha"
@@ -665,6 +671,7 @@ update_cream_ini() {
 DLC_HASHES_JSON=""
 
 fetch_dlc_hashes() {
+    [ -n "$DLC_HASHES_JSON" ] && return 0
     DLC_HASHES_JSON=$(http_get "$GITHUB_HASHES_URL" 2>/dev/null) || true
     if [ -z "$DLC_HASHES_JSON" ]; then
         DLC_HASHES_JSON=$(http_get "$JSDELIVR_HASHES_URL" 2>/dev/null) || true
@@ -683,6 +690,7 @@ dlc_hash_entries() {
 
 mark_stale_dlc_folders() {
     local dlc_dir="$1"
+    local install_unstable="${2:-0}"
     fetch_dlc_hashes || { log WARN "$(t hashes_skip)"; return; }
 
     declare -A expected_hash=()
@@ -692,10 +700,27 @@ mark_stale_dlc_folders() {
 
     [ ${#expected_hash[@]} -eq 0 ] && return
 
+    local unstable_folders=()
+    declare -A unstable_map=()
+    if [ "$install_unstable" -ne 1 ]; then
+        local entry_folder entry_unstable entry_name
+        while IFS=$'\t' read -r entry_folder entry_unstable entry_name; do
+            [ -n "$entry_folder" ] || continue
+            if [ "$entry_unstable" = "1" ]; then
+                unstable_map["$entry_folder"]=1
+            fi
+        done < <(dlc_entries)
+    fi
+
     local stale_folders=()
     local key
     for key in "${!expected_hash[@]}"; do
         local folder="${key%%/*}"
+
+        if [ "$install_unstable" -ne 1 ] && [ "${unstable_map[$folder]:-0}" = "1" ]; then
+            continue
+        fi
+
         local already=0
         local sf
         for sf in "${stale_folders[@]:-}"; do
@@ -810,19 +835,32 @@ confirm_unstable_install() {
     printf "${C_BOLD}${C_YELLOW}║  ⚠  %-60s║${C_RESET}\n" "$(t unstable_warning_title)"
     echo -e "${C_BOLD}${C_YELLOW}╠══════════════════════════════════════════════════════════════════╣${C_RESET}"
     printf "${C_YELLOW}║  %-62s║${C_RESET}\n" "$(t unstable_warning_body)"
-    printf "${C_YELLOW}║  %-62s║${C_RESET}\n" "$(t unstable_warning_fix)"
+    echo -e "${C_YELLOW}║  $(t unstable_warning_fix)${C_RESET}"
+
+    local found=0
+    while IFS=$'\t' read -r folder unstable name; do
+        [ -n "$folder" ] || continue
+        [ "$unstable" = "1" ] || continue
+        found=1
+        printf "${C_YELLOW}║    ${C_MAGENTA}•${C_RESET} ${C_WHITE}%s${C_RESET}\n" "$folder"
+    done < <(dlc_entries)
+
+    if [ "$found" -eq 0 ]; then
+        printf "${C_YELLOW}║    %s${C_RESET}\n" "$(t unstable_warning_none)"
+    fi
+
+    echo -e "${C_YELLOW}║  $(t unstable_warning_rerun)${C_RESET}"
     echo -e "${C_BOLD}${C_YELLOW}╚══════════════════════════════════════════════════════════════════╝${C_RESET}"
     echo
     local answer
     ask "$(t unstable_warning_confirm)" answer
     [[ "$answer" =~ ^[yYдД]$ ]]
 }
-
 download_dlc_content() {
     local dlc_dir="$GAME_DIR/dlc"
     mkdir -p "$dlc_dir"
 
-    mark_stale_dlc_folders "$dlc_dir"
+    mark_stale_dlc_folders "$dlc_dir" "$install_unstable"
 
     local folders=()
     while IFS=$'\t' read -r f unstable name; do
