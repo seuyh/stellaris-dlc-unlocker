@@ -13,16 +13,21 @@
 ⚠️ Работает только со Steam-версией игры.
 
 
-## ⚠️⚠️⚠️ Если у вас не скачиваются файлы, вы видите ошибки связанные с таймаутами и прочие сетевые ошибки, это НЕ проблема анлокера, а проблема в том кто придумывает блокировать интернет, используйте VPN, не нужно писать об этом репорты ⚠️⚠️⚠️
+## ⚠️⚠️⚠️ Если у вас не скачиваются файлы, не открывается анлокер, вы видите ошибки связанные с таймаутами и прочие сетевые ошибки, это НЕ проблема анлокера, а проблема в том кто придумывает блокировать интернет, используйте VPN, не нужно писать об этом репорты ⚠️⚠️⚠️
 
 
 ## Windows
 
-### 🚀 Быстрый запуск (PowerShell)
+### 🚀 Запуск
 Выполните команду в терминале (PowerShell), либо нажмите win+r и вставьте код в открывшееся окно:
 
 ```powershell
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+
+Зеркало (jsDelivr):
+```powershell
+powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding]::UTF8;$w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')|iex"
 ```
 
 * **Логи работы**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
@@ -45,6 +50,11 @@ powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlocker.sh | bash
 ```
 
+Зеркало (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.sh | bash
+```
+
 * **Логи работы**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`
 * Скрипт сам определяет установку Steam (нативная, Flatpak, Snap) и прописывает нужные параметры запуска игры
 * Зависимости: `curl`, `unzip`, `grep`, `awk` (обычно уже есть в системе); рекомендуется `jq`
@@ -63,6 +73,11 @@ sh ./cream.sh %command%
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlockerProton.sh | bash
+```
+
+Зеркало (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlockerProton.sh | bash
 ```
 
 * **Логи работы**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`

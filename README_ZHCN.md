@@ -15,11 +15,16 @@
 
 ## Windows
 
-### 🚀 快速启动 (PowerShell)
+### 🚀 启动
 在终端 (PowerShell) 中执行以下命令，或者按下 `Win + R` 并将代码粘贴到运行窗口中：
 
 ```powershell
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+
+镜像源 (jsDelivr):
+```powershell
+powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding]::UTF8;$w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')|iex"
 ```
 
 * **运行日志**：`%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
@@ -42,6 +47,11 @@ Linux 上的游戏可能以两种不同形式安装——原生版本（Steam Li
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlocker.sh | bash
 ```
 
+镜像源 (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.sh | bash
+```
+
 * **运行日志**：`~/.local/share/StellarisDLCUnlocker/unlocker.log`
 * 脚本会自动检测您的 Steam 安装方式（原生、Flatpak、Snap）并设置所需的游戏启动参数
 * 依赖项：`curl`、`unzip`、`grep`、`awk`（系统通常已自带）；建议安装 `jq`
@@ -60,6 +70,11 @@ sh ./cream.sh %command%
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlockerProton.sh | bash
+```
+
+镜像源 (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlockerProton.sh | bash
 ```
 
 * **运行日志**：`~/.local/share/StellarisDLCUnlocker/unlocker.log`

@@ -15,11 +15,16 @@ A utility for automatic unlocking and installation of DLCs for Stellaris (Steam 
 
 ## Windows
 
-### 🚀 Quick Start (PowerShell)
+### 🚀 Start
 Run the command in your terminal (PowerShell), or press `Win + R` and paste the code into the window:
 
 ```powershell
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/refs/heads/main/StellarisDLCUnlocker.ps1 | iex"
+```
+
+Mirror (jsDelivr):
+```powershell
+powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding]::UTF8;$w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')|iex"
 ```
 
 * **Work Logs**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
@@ -42,6 +47,11 @@ Works through [CreamLinux](https://github.com/anticitizn/creamlinux). Runs with 
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlocker.sh | bash
 ```
 
+Mirror (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.sh | bash
+```
+
 * **Work Logs**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`
 * The script auto-detects your Steam installation (native, Flatpak, Snap) and sets the required game launch options
 * Dependencies: `curl`, `unzip`, `grep`, `awk` (usually already present); `jq` is recommended
@@ -60,6 +70,11 @@ Works through CreamAPI (a Windows DLL emulator) running inside your Proton prefi
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/seuyh/stellaris-dlc-unlocker/main/StellarisDLCUnlockerProton.sh | bash
+```
+
+Mirror (jsDelivr):
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlockerProton.sh | bash
 ```
 
 * **Work Logs**: `~/.local/share/StellarisDLCUnlocker/unlocker.log`
