@@ -504,6 +504,10 @@ get_launcher_bases() {
     fi
 }
 
+get_launcher_bases_unique() {
+    get_launcher_bases | awk '!seen[$0]++'
+}
+
 run_wine() {
     export WINEPREFIX="$PREFIX_DIR"
     export WINEDEBUG=-all
@@ -527,6 +531,111 @@ run_wine() {
         log ERROR "Proton wine binary not found. Try running the game once via Steam."
         return 1
     fi
+}
+
+clean_phantom_launcher_records() {
+    log WARN "  Deep cleanup: scanning for phantom Paradox Launcher records..."
+
+    local root key
+
+    for root in \
+        'HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall' \
+        'HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall' \
+        'HKLM\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'; do
+        while IFS= read -r key; do
+            [ -z "$key" ] && continue
+            log WARN "    Phantom uninstall entry: $key"
+            run_wine reg delete "$key" /f >/dev/null 2>&1 || true
+            log OK "    Removed: $key"
+        done < <(run_wine reg query "$root" /s 2>/dev/null | awk '
+            /^[[:space:]]*HKEY_/ {
+                line = $0; sub(/^[[:space:]]*/, "", line); key = line; next
+            }
+            /DisplayName/ && /Paradox Launcher/ { print key }
+        ' | sort -u)
+    done
+
+    for root in \
+        'HKCU\Software\Classes\Installer\Products' \
+        'HKLM\Software\Classes\Installer\Products'; do
+        while IFS= read -r key; do
+            [ -z "$key" ] && continue
+            log WARN "    Phantom MSI product: $key"
+            run_wine reg delete "$key" /f >/dev/null 2>&1 || true
+            log OK "    Removed: $key"
+        done < <(run_wine reg query "$root" /s 2>/dev/null | awk '
+            /^[[:space:]]*HKEY_/ {
+                line = $0; sub(/^[[:space:]]*/, "", line); key = line; next
+            }
+            /ProductName/ && /Paradox Launcher/ { print key }
+        ' | sort -u)
+    done
+
+    for root in \
+        'HKCU\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products' \
+        'HKLM\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products'; do
+        while IFS= read -r key; do
+            [ -z "$key" ] && continue
+            log WARN "    Phantom UserData product: $key"
+            run_wine reg delete "$key" /f >/dev/null 2>&1 || true
+            log OK "    Removed: $key"
+        done < <(run_wine reg query "$root" /s 2>/dev/null | awk '
+            /^[[:space:]]*HKEY_/ {
+                line = $0; sub(/^[[:space:]]*/, "", line); key = line; next
+            }
+            /DisplayName/ && /Paradox Launcher/ && key ~ /\\InstallProperties$/ {
+                parent = key; sub(/\\InstallProperties$/, "", parent); print parent
+            }
+        ' | sort -u)
+    done
+
+    log OK "  Deep cleanup finished."
+}
+
+version_key() {
+    local name="$1"
+    local out
+    out=$(printf '%s' "$name" | grep -oE '[0-9]+' | while read -r n; do printf '%06d' "$n"; done | tr -d '\n')
+    [ -z "$out" ] && out="000000"
+    printf '%s' "$out"
+}
+
+find_installers() {
+    local dir="$1"
+    find "$dir" -maxdepth 1 -type f 2>/dev/null | while IFS= read -r f; do
+        local bn
+        bn=$(basename "$f")
+        case "$bn" in
+            *[Ss][Aa][Nn][Dd][Bb][Oo][Xx]*) continue ;;
+        esac
+        case "${bn,,}" in
+            *.msi|*.exe) ;;
+            *) continue ;;
+        esac
+        if echo "$bn" | grep -qiE 'launcher.*installer'; then
+            echo "$f"
+        fi
+    done
+}
+
+pick_newest() {
+    local f
+    for f in "$@"; do
+        printf '%s\t%s\n' "$(version_key "$(basename "$f")")" "$f"
+    done | sort -r | head -1 | cut -f2-
+}
+
+pick_newest_of_ext() {
+    local want="$1"; shift
+    local files=()
+    local f ext
+    for f in "$@"; do
+        ext="${f##*.}"
+        ext="${ext,,}"
+        [ "$ext" = "$want" ] && files+=("$f")
+    done
+    [ ${#files[@]} -eq 0 ] && return 1
+    pick_newest "${files[@]}"
 }
 
 DLC_DATA_JSON=""
@@ -852,6 +961,7 @@ confirm_unstable_install() {
     ask "$(t unstable_warning_confirm)" answer
     [[ "$answer" =~ ^[yYдД]$ ]]
 }
+
 download_dlc_content() {
     local dlc_dir="$GAME_DIR/dlc"
     mkdir -p "$dlc_dir"
@@ -990,55 +1100,169 @@ do_install() {
     mkdir -p "$GAME_DIR/dlc"
 
     if [ "$reinstall_launcher" -eq 1 ]; then
-        log INFO "Reinstalling Paradox Launcher (binary files only)..."
-        local msi_path=""
+        log INFO "Reinstalling Paradox Launcher..."
+
+        local installer_path=""
+        local installer_files=()
+        local installer_ext=""
+
         if [ "$launcher_ver" -gt 0 ]; then
             local alt_name="${ALT_LAUNCHERS[$((launcher_ver-1))]}"
-            msi_path="$CACHE_DIR/$alt_name"
-            if [ ! -f "$msi_path" ]; then
-                download_file "https://$SERVER_URL/unlocker/$alt_name" "$msi_path" "$alt_name"
+            installer_path="$CACHE_DIR/$alt_name"
+            if [ ! -f "$installer_path" ]; then
+                download_file "https://$SERVER_URL/unlocker/$alt_name" "$installer_path" "$alt_name"
             fi
-            log INFO "  Using alt launcher: $(basename "$msi_path")"
+            log INFO "  Using alt launcher: $(basename "$installer_path")"
         else
-            msi_path=$(ls -v "$GAME_DIR"/launcher-installer-windows*.msi 2>/dev/null | tail -n 1)
-            [ -n "$msi_path" ] && log INFO "  MSI selected (latest): $(basename "$msi_path")"
+            while IFS= read -r f; do
+                [ -n "$f" ] && installer_files+=("$f")
+            done < <(find_installers "$GAME_DIR")
+
+            if [ ${#installer_files[@]} -gt 0 ]; then
+                installer_path=$(pick_newest "${installer_files[@]}")
+                log INFO "  Installer selected (latest): $(basename "$installer_path")"
+                [ ${#installer_files[@]} -gt 1 ] && log WARN "  (${#installer_files[@]} installer files found, using newest for install)"
+            fi
+
+            if [ -z "$installer_path" ]; then
+                local fb="${ALT_LAUNCHERS[0]}"
+                local fb_dest="$GAME_DIR/$fb"
+                log WARN "  No valid installer in game folder. Downloading latest from server..."
+                if download_file "https://$SERVER_URL/unlocker/$fb" "$fb_dest" "$fb"; then
+                    if [ -f "$fb_dest" ]; then
+                        installer_path="$fb_dest"
+                        log OK "  Fallback installer saved to game folder: $fb"
+                    fi
+                else
+                    log ERROR "  Failed to download fallback installer."
+                fi
+            fi
         fi
 
-        if [ -n "$msi_path" ] && [ -f "$msi_path" ]; then
+        if [ -z "$installer_path" ] || [ ! -f "$installer_path" ]; then
+            log WARN "  No installer found — skipping launcher reinstall."
+        else
+            installer_ext="${installer_path##*.}"
+            installer_ext="${installer_ext,,}"
+
             local pointer_file="$PREFIX_DIR/drive_c/users/steamuser/AppData/Local/Paradox Interactive/launcherpath"
             local pointer_backup=""
             if [ -f "$pointer_file" ]; then
                 pointer_backup=$(cat "$pointer_file" | tr -d '\r\n')
             fi
 
-            log INFO "  Removing old MSI registry keys (/uninstall)..."
-            run_wine msiexec /uninstall "Z:${msi_path//\//\\}" /quiet /norestart >/dev/null 2>&1 || true
-            sleep 2
+            local uninstall_targets=()
+            if [ "$launcher_ver" -gt 0 ]; then
+                uninstall_targets+=("$installer_path")
+            elif [ ${#installer_files[@]} -gt 0 ]; then
+                local newest_exe=""
+                local newest_msi=""
+                newest_exe=$(pick_newest_of_ext "exe" "${installer_files[@]}") || newest_exe=""
+                newest_msi=$(pick_newest_of_ext "msi" "${installer_files[@]}") || newest_msi=""
+                [ -n "$newest_exe" ] && uninstall_targets+=("$newest_exe")
+                [ -n "$newest_msi" ] && uninstall_targets+=("$newest_msi")
+            else
+                uninstall_targets+=("$installer_path")
+            fi
+
+            if [ ${#uninstall_targets[@]} -gt 1 ]; then
+                log INFO "  Multiple uninstall targets detected (${#uninstall_targets[@]}). Trying each..."
+            fi
+
+            local any_uninstall_ok=0
+            local ut ut_ext rc winpath
+            for ut in "${uninstall_targets[@]}"; do
+                ut_ext="${ut##*.}"
+                ut_ext="${ut_ext,,}"
+                log INFO "  Uninstalling via .$ut_ext : $(basename "$ut")"
+                winpath="Z:${ut//\//\\}"
+                rc=0
+                if [ "$ut_ext" = "msi" ]; then
+                    run_wine msiexec /uninstall "$winpath" /quiet /norestart >/dev/null 2>&1
+                    rc=$?
+                else
+                    run_wine "$winpath" /uninstall /quiet /norestart >/dev/null 2>&1
+                    rc=$?
+                fi
+                log INFO "  Uninstall exit code ($ut_ext): $rc"
+                case "$rc" in
+                    0|3010|1641) any_uninstall_ok=1 ;;
+                    *) log WARN "  Uninstall via .$ut_ext returned non-success ($rc)." ;;
+                esac
+            done
 
             local cleaned_any=0
             while IFS= read -r l_base; do
                 if [ -n "$l_base" ] && [ -d "$l_base" ]; then
-                    log INFO "  Removing old binaries in: $l_base"
+                    log INFO "  Removing: $l_base"
                     rm -rf "$l_base"
                     cleaned_any=1
                 fi
-            done < <(get_launcher_bases)
+            done < <(get_launcher_bases_unique)
 
-            [ "$cleaned_any" -eq 1 ] && sleep 1
+            if [ "$any_uninstall_ok" -eq 0 ]; then
+                run_wine reg delete 'HKCU\Software\Paradox Interactive\Paradox Launcher v2' /f >/dev/null 2>&1 || true
+                log INFO "  Removed HKCU Paradox Launcher v2 registry key."
+            fi
 
-            log INFO "  Running msiexec /package..."
-            run_wine msiexec /package "Z:${msi_path//\//\\}" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0
             sleep 2
+
+            if [ "$installer_ext" = "msi" ]; then
+                local retry=0 success=0 deep_done=0 pkg_rc=0
+                while [ $retry -lt 3 ] && [ $success -eq 0 ]; do
+                    log INFO "  Running msiexec /package (Attempt $((retry+1)))..."
+                    winpath="Z:${installer_path//\//\\}"
+                    run_wine msiexec /package "$winpath" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0 >/dev/null 2>&1
+                    pkg_rc=$?
+                    log INFO "  Package exit code: $pkg_rc"
+                    case "$pkg_rc" in
+                        0|3010|1641)
+                            success=1
+                            log OK "  Launcher reinstalled."
+                            ;;
+                        1618)
+                            log WARN "  Installer busy (1618). Waiting 3 sec..."
+                            sleep 3
+                            retry=$((retry+1))
+                            ;;
+                        *)
+                            log WARN "  Launcher install returned code: $pkg_rc"
+                            if [ $deep_done -eq 0 ]; then
+                                log WARN "  Install failed — running deep phantom cleanup and retrying..."
+                                clean_phantom_launcher_records
+                                deep_done=1
+                                sleep 2
+                                retry=$((retry+1))
+                            else
+                                log ERROR "  Install still failing after cleanup. Giving up."
+                                break
+                            fi
+                            ;;
+                    esac
+                done
+            else
+                log INFO "  Running installer /quiet (EXE)..."
+                winpath="Z:${installer_path//\//\\}"
+                run_wine "$winpath" /quiet /norestart >/dev/null 2>&1
+                local exe_rc=$?
+                log INFO "  Install exit code: $exe_rc"
+                case "$exe_rc" in
+                    0|3010|1641)
+                        log OK "  Launcher reinstalled."
+                        ;;
+                    *)
+                        log WARN "  Launcher install returned code: $exe_rc"
+                        log WARN "  Running deep phantom cleanup as fallback..."
+                        clean_phantom_launcher_records
+                        ;;
+                esac
+            fi
 
             if [ -n "$pointer_backup" ] && [ ! -f "$pointer_file" ]; then
                 mkdir -p "$(dirname "$pointer_file")"
                 echo "$pointer_backup" > "$pointer_file"
                 log INFO "  Restored launcherpath from backup."
             fi
-
-            log OK "  Launcher reinstalled."
-        else
-            log WARN "  No MSI found — skipping launcher reinstall."
         fi
     else
         log INFO "Launcher reinstall skipped."
@@ -1046,17 +1270,9 @@ do_install() {
 
     log INFO "$(t patching_launcher)"
     local found_launcher=0
-    local processed_bases=()
 
     while IFS= read -r l_base; do
         if [ -n "$l_base" ] && [ -d "$l_base" ]; then
-            local skip=0
-            for pb in "${processed_bases[@]}"; do
-                if [ "$pb" == "$l_base" ]; then skip=1; break; fi
-            done
-            [ "$skip" -eq 1 ] && continue
-            processed_bases+=("$l_base")
-
             for lf in "$l_base"/launcher-*; do
                 [ -d "$lf" ] || continue
                 found_launcher=1
@@ -1087,7 +1303,7 @@ do_install() {
                 fi
             done
         fi
-    done < <(get_launcher_bases)
+    done < <(get_launcher_bases_unique)
 
     if [ "$found_launcher" -eq 0 ]; then
         log WARN "  Launcher versions not found. Run the game once via Steam to initialize the launcher."
@@ -1147,7 +1363,7 @@ show_status() {
                         fi
                     done
                 fi
-            done < <(get_launcher_bases)
+            done < <(get_launcher_bases_unique)
 
             if [ "$launcher_found" -eq 1 ]; then
                 echo -e "${C_GREEN}Paradox Launcher:${C_RESET} Installed"

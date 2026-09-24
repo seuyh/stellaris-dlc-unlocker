@@ -4,7 +4,8 @@ $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
-Add-Type @'
+if (-not ('Picker.FolderDialog' -as [type])) {
+    Add-Type @'
 using System;
 using System.Runtime.InteropServices;
 namespace Picker {
@@ -54,7 +55,7 @@ namespace Picker {
             var dlg = (IFileDialog)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID));
             try {
                 uint opts; dlg.GetOptions(out opts);
-                dlg.SetOptions(opts | 0x20); // FOS_PICKFOLDERS
+                dlg.SetOptions(opts | 0x20);
                 dlg.SetTitle(title);
                 if (!string.IsNullOrEmpty(initial)) {
                     try {
@@ -73,6 +74,7 @@ namespace Picker {
     }
 }
 '@
+}
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -89,7 +91,7 @@ $JSDELIVR_DLC_URL    = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker
 $JSDELIVR_HASHES_URL = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/hashes.json'
 
 $SERVER_URL        = 'yblocker.xyz'
-$ALT_LAUNCHERS     = @('launcher-installer-windows_2024.14.msi', 'launcher-installer-windows_2024.13.msi', 'launcher-installer-windows_2024.8.msi')
+$ALT_LAUNCHERS     = @('paradox-launcher-installer-2026_11_1.exe', 'launcher-installer-windows_2024.14.msi', 'launcher-installer-windows_2024.13.msi')
 
 $STEAMCMD_API      = 'https://api.steamcmd.net/v1/info'
 
@@ -127,6 +129,7 @@ $BUILTIN = @{
         unstable_warning_fix='If something breaks, delete the following DLC folders from the Stellaris game folder:'
         unstable_warning_none='(No unstable DLC folders found)'
         confirm_unstable='Install unstable DLCs anyway?'
+        sandbox_warn='⚠ Incompatible Sandbox launcher detected! It will be forcefully removed and reinstalled.'
     }
     ru = @{
         title='STELLARIS DLC UNLOCKER'; path_label='ПУТЬ К STELLARIS'; lbl_launcher_path='ПУТЬ К ЛАУНЧЕРУ'; browse='Обзор'
@@ -151,6 +154,7 @@ $BUILTIN = @{
         unstable_warning_fix='Если что-то сломается, удалите следующие папки DLC из папки с игрой Stellaris:'
         unstable_warning_none='(Нестабильные папки DLC не найдены)'
         confirm_unstable='Всё равно установить нестабильные DLC?'
+        sandbox_warn='⚠ Обнаружен несовместимый Sandbox-лаунчер! Он будет принудительно удалён и переустановлен.'
     }
     zh = @{
         title='STELLARIS DLC UNLOCKER'; path_label='STELLARIS 路径'; lbl_launcher_path='启动器路径'; browse='浏览'
@@ -174,6 +178,7 @@ $BUILTIN = @{
         unstable_warning_fix='如果出现问题，请删除 Stellaris 游戏目录中的以下 DLC 文件夹：'
         unstable_warning_none='（未找到不稳定 DLC 文件夹）'
         confirm_unstable='仍然安装不稳定 DLC？'
+        sandbox_warn='⚠ 检测到不兼容的沙盒启动器！将被强制卸载并重新安装。'
     }
 }
 
@@ -325,6 +330,195 @@ $BG_COMMON = {
         if (-not $lp2 -or [System.IO.Path]::GetPathRoot($lp2+'') -eq $lp2) { $lp2 = "$h\AppData\Local\Paradox Interactive" }
         return @($lp2, "$h\AppData\Roaming\Paradox Interactive", "$h\AppData\Roaming\paradox-launcher-v2")
     }
+
+    function _IsAdmin {
+        $id = [Security.Principal.WindowsIdentity]::GetCurrent()
+        (New-Object Security.Principal.WindowsPrincipal($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+
+    function _RunElevatedScript([string]$body) {
+        $tag    = [guid]::NewGuid().ToString('N')
+        $tmpPs  = Join-Path $env:TEMP "sdu_elev_$tag.ps1"
+        $tmpLog = Join-Path $env:TEMP "sdu_elev_$tag.log"
+        $logEsc = $tmpLog.Replace("'", "''")
+
+        $wrapper = @"
+`$ErrorActionPreference = 'Continue'
+`$ProgressPreference    = 'SilentlyContinue'
+`$script:_OUT = [System.Collections.Generic.List[string]]::new()
+function _W([string]`$m) { `$script:_OUT.Add(`$m) }
+try {
+$body
+} catch {
+    _W "ERROR: `$(`$_.Exception.Message)"
+}
+`$script:_OUT | Out-File -FilePath '$logEsc' -Encoding UTF8
+"@
+
+        $utf8Bom = New-Object System.Text.UTF8Encoding($true)
+        [System.IO.File]::WriteAllText($tmpPs, $wrapper, $utf8Bom)
+
+        $elevOk = $false
+        try {
+            $psi = New-Object System.Diagnostics.ProcessStartInfo
+            $psi.FileName        = 'powershell.exe'
+            $psi.Arguments       = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$tmpPs`""
+            $psi.UseShellExecute = $true
+            $psi.Verb            = 'RunAs'
+            $psi.WindowStyle     = [System.Diagnostics.ProcessWindowStyle]::Hidden
+            $proc = [System.Diagnostics.Process]::Start($psi)
+            $proc.WaitForExit()
+            $elevOk = $true
+        } catch {
+            _Log "    Elevation declined or failed: $($_.Exception.Message)" 'WARN'
+        } finally {
+            Remove-Item $tmpPs -Force -ErrorAction SilentlyContinue
+        }
+
+        if (Test-Path $tmpLog) {
+            Get-Content $tmpLog -ErrorAction SilentlyContinue | ForEach-Object {
+                if ($_.Trim()) { _Log "    $_" }
+            }
+            Remove-Item $tmpLog -Force -ErrorAction SilentlyContinue
+        }
+
+        return $elevOk
+    }
+
+    function _CleanPhantomLauncherRecords {
+        _Log "  Deep cleanup: scanning for phantom Paradox Launcher records..." 'WARN'
+
+        $roots = @(
+            @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
+            @{ P='HKCU:\Software\Classes\Installer\Products';                                              K='Products' },
+            @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products';   K='UserData' }
+        )
+        if (_IsAdmin) {
+            $roots += @(
+                @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
+                @{ P='HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall';                  K='Uninstall' },
+                @{ P='HKLM:\SOFTWARE\Classes\Installer\Products';                                              K='Products' },
+                @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products';   K='UserData' }
+            )
+        }
+
+        foreach ($r in $roots) {
+            if (-not (Test-Path $r.P)) { continue }
+            $keys = @(Get-ChildItem $r.P -ErrorAction SilentlyContinue)
+            foreach ($k in $keys) {
+                switch ($r.K) {
+                    'Uninstall' {
+                        $p = Get-ItemProperty $k.PSPath -ErrorAction SilentlyContinue
+                        if (-not $p -or -not $p.DisplayName) { continue }
+                        if ($p.DisplayName -notmatch 'Paradox Launcher') { continue }
+                        _Log "    Phantom uninstall entry: '$($p.DisplayName)'  [$($k.PSChildName)]" 'WARN'
+                        $pc = $null
+                        if ($p.UninstallString -and ($p.UninstallString -match '\{[0-9A-Fa-f\-]{36}\}')) { $pc = $Matches[0] }
+                        if (-not $pc -and $k.PSChildName -match '^\{[0-9A-Fa-f\-]{36}\}$') { $pc = $k.PSChildName }
+                        if ($pc) {
+                            try {
+                                $pi = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/X$pc /quiet /norestart")
+                                $pi.WindowStyle  = [System.Diagnostics.ProcessWindowStyle]::Hidden
+                                $pi.CreateNoWindow = $true
+                                $pr = [System.Diagnostics.Process]::Start($pi)
+                                $pr.WaitForExit()
+                                _Log "    msiexec /X $pc -> $($pr.ExitCode)"
+                            } catch { _Log "    msiexec /X failed: $($_.Exception.Message)" 'WARN' }
+                        }
+                        try {
+                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+                            _Log "    Removed: $($k.PSPath)" 'OK'
+                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
+                    }
+                    'Products' {
+                        $p = Get-ItemProperty $k.PSPath -ErrorAction SilentlyContinue
+                        if (-not $p -or -not $p.ProductName) { continue }
+                        if ($p.ProductName -notmatch 'Paradox Launcher') { continue }
+                        _Log "    Phantom MSI product record: '$($p.ProductName)'  [$($k.PSChildName)]" 'WARN'
+                        try {
+                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+                            _Log "    Removed: $($k.PSPath)" 'OK'
+                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
+                    }
+                    'UserData' {
+                        $ip = Join-Path $k.PSPath 'InstallProperties'
+                        if (-not (Test-Path $ip)) { continue }
+                        $p = Get-ItemProperty $ip -ErrorAction SilentlyContinue
+                        if (-not $p -or -not $p.DisplayName) { continue }
+                        if ($p.DisplayName -notmatch 'Paradox Launcher') { continue }
+                        _Log "    Phantom UserData product record: '$($p.DisplayName)'  [$($k.PSChildName)]" 'WARN'
+                        try {
+                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+                            _Log "    Removed: $($k.PSPath)" 'OK'
+                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
+                    }
+                }
+            }
+        }
+
+        if (-not (_IsAdmin)) {
+            _Log "  Requesting UAC elevation for HKLM cleanup..." 'WARN'
+            $body = @'
+$ErrorActionPreference = 'SilentlyContinue'
+
+function _CU([string]$root) {
+    if (-not (Test-Path $root)) { return }
+    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
+        $p = Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
+        if (-not $p -or -not $p.DisplayName) { return }
+        if ($p.DisplayName -notmatch 'Paradox Launcher') { return }
+        _W "phantom uninstall entry: $($p.DisplayName) [$($_.PSChildName)]"
+        $pc = $null
+        if ($p.UninstallString -match '\{[0-9A-Fa-f\-]{36}\}') { $pc = $Matches[0] }
+        if (-not $pc -and $_.PSChildName -match '^\{[0-9A-Fa-f\-]{36}\}$') { $pc = $_.PSChildName }
+        if ($pc) {
+            try {
+                $pr = Start-Process msiexec.exe -ArgumentList "/X$pc /quiet /norestart" -Wait -PassThru -WindowStyle Hidden
+                _W "msiexec /X $pc -> $($pr.ExitCode)"
+            } catch { _W "msiexec /X failed: $($_.Exception.Message)" }
+        }
+        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+        _W "removed: $($_.PSPath)"
+    }
+}
+
+function _CP([string]$root) {
+    if (-not (Test-Path $root)) { return }
+    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
+        $p = Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
+        if (-not $p -or -not $p.ProductName) { return }
+        if ($p.ProductName -notmatch 'Paradox Launcher') { return }
+        _W "phantom MSI product: $($p.ProductName) [$($_.PSChildName)]"
+        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+        _W "removed: $($_.PSPath)"
+    }
+}
+
+function _CUD([string]$root) {
+    if (-not (Test-Path $root)) { return }
+    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
+        $ip = Join-Path $_.PSPath 'InstallProperties'
+        if (-not (Test-Path $ip)) { return }
+        $p = Get-ItemProperty $ip -ErrorAction SilentlyContinue
+        if (-not $p -or -not $p.DisplayName) { return }
+        if ($p.DisplayName -notmatch 'Paradox Launcher') { return }
+        _W "phantom UserData: $($p.DisplayName) [$($_.PSChildName)]"
+        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+        _W "removed: $($_.PSPath)"
+    }
+}
+
+_CU 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+_CU 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+_CP 'HKLM:\SOFTWARE\Classes\Installer\Products'
+_CUD 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products'
+_W "HKLM cleanup finished"
+'@
+            _RunElevatedScript $body
+        }
+
+        _Log "  Deep cleanup finished." 'OK'
+    }
 }
 
 $INIT_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
@@ -430,6 +624,42 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
         if (Test-Path $doc) { Remove-Item $doc -Recurse -Force; _Log "  Removed: $doc" 'OK' }
         $dd = Join-Path $_GAMEPATH 'dlc'
         if (Test-Path $dd) { Remove-Item $dd -Recurse -Force; _Log "  Removed dlc\ folder." 'OK' }
+    }
+
+    _Log "  Checking for incompatible Sandbox launcher..."
+    $sandboxReg = 'HKCU:\Software\Paradox Interactive\Paradox Launcher v2 Sandbox'
+    if (Test-Path $sandboxReg) {
+        _Log "  Sandbox launcher registry key found. Cleaning up..." 'WARN'
+        $sbPath = try { (Get-ItemProperty $sandboxReg -ErrorAction Stop).LauncherInstallation } catch { $null }
+
+        $sbFiles = @(Get-ChildItem $_GAMEPATH -File -ErrorAction SilentlyContinue | Where-Object {
+            $_.Name -match 'sandbox' -and ($_.Extension -ieq '.msi' -or $_.Extension -ieq '.exe')
+        })
+        foreach ($sbFile in $sbFiles) {
+            _Log "    Uninstalling Sandbox file: $($sbFile.Name)"
+            if ($sbFile.Extension -ieq '.msi') {
+                $psiSb = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/uninstall `"$($sbFile.FullName)`" /quiet /norestart")
+            } else {
+                $psiSb = [System.Diagnostics.ProcessStartInfo]::new($sbFile.FullName, "/uninstall /quiet /norestart")
+            }
+            $psiSb.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psiSb.CreateNoWindow = $true
+            $procSb = [System.Diagnostics.Process]::Start($psiSb); $procSb.WaitForExit()
+            _Log "    Uninstall exit code: $($procSb.ExitCode)"
+
+            try {
+                $newName = $sbFile.Name -replace '(?i)\.(msi|exe)$', '.bak'
+                Rename-Item -Path $sbFile.FullName -NewName $newName -Force
+                _Log "    Renamed $($sbFile.Name) to .bak" 'OK'
+            } catch { _Log "    Failed to rename $($sbFile.Name)" 'WARN' }
+        }
+
+        if ($sbPath -and (Test-Path $sbPath)) {
+            try { Remove-Item $sbPath -Recurse -Force; _Log "    Removed Sandbox folder: $sbPath" 'OK' }
+            catch { _Log "    Could not remove Sandbox folder: $sbPath" 'WARN' }
+        }
+        try { Remove-Item $sandboxReg -Recurse -Force; _Log "    Removed Sandbox registry key." 'OK' } catch {}
+    } else {
+        _Log "  No Sandbox launcher detected." 'OK'
     }
 
     $altPath = $null
@@ -604,23 +834,44 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
 
     if (-not $_SKIP) {
         _Log "🔧 Reinstalling Paradox Launcher..."
-        $msiPath = $null
+
+        $vk = {
+            $nums = [regex]::Matches($_.Name, '\d+') | ForEach-Object { $_.Value.PadLeft(6,'0') }
+            if ($nums.Count -eq 0) { '000000' } else { $nums -join '' }
+        }
+
+        $installerPath  = $null
+        $installerFiles = @()
         if ($altPath -and (Test-Path $altPath)) {
-            $msiPath = $altPath
-            _Log "  Using alt launcher: $(Split-Path $msiPath -Leaf)"
+            $installerPath = $altPath
+            _Log "  Using alt launcher: $(Split-Path $installerPath -Leaf)"
         } else {
-            $msiFiles = @(Get-ChildItem $_GAMEPATH -Filter 'launcher-installer-windows*.msi' -ErrorAction SilentlyContinue)
-            if ($msiFiles.Count -gt 0) {
-                $msiPath = ($msiFiles | Sort-Object {
-                    if ($_.Name -match 'launcher-installer-windows[_.](\d+)[._](\d+)') {
-                        [long]("$($Matches[1])$($Matches[2].PadLeft(6,'0'))")
-                    } else { 0L }
-                } -Descending)[0].FullName
-                _Log "  MSI selected (latest): $(Split-Path $msiPath -Leaf)"
-                if ($msiFiles.Count -gt 1) { _Log "  ($($msiFiles.Count) MSI files found, using newest)" 'WARN' }
+            $installerFiles = @(Get-ChildItem $_GAMEPATH -File -ErrorAction SilentlyContinue | Where-Object {
+                $_.Name -match 'launcher.*installer' -and
+                $_.Name -notmatch 'sandbox' -and
+                ($_.Extension -ieq '.msi' -or $_.Extension -ieq '.exe')
+            })
+            if ($installerFiles.Count -gt 0) {
+                $installerPath = ($installerFiles | Sort-Object $vk -Descending)[0].FullName
+                _Log "  Installer selected (latest): $(Split-Path $installerPath -Leaf)"
+                if ($installerFiles.Count -gt 1) { _Log "  ($($installerFiles.Count) installer files found, using newest for install)" 'WARN' }
+            }
+
+            if (-not $installerPath -and $_ALTLAUNCHERS -and $_ALTLAUNCHERS.Count -gt 0 -and $_SERVERURL) {
+                _Log "  No valid installer in game folder. Downloading latest from server..." 'WARN'
+                $fallbackName = $_ALTLAUNCHERS[0]
+                $fallbackDest = Join-Path $_GAMEPATH $fallbackName
+                try {
+                    _DownloadFile "https://$_SERVERURL/unlocker/$fallbackName" $fallbackDest $fallbackName
+                    if (Test-Path $fallbackDest) {
+                        $installerPath = $fallbackDest
+                        _Log "  Fallback installer downloaded and saved to game folder: $fallbackName" 'OK'
+                    }
+                } catch { _Log "  Failed to download fallback installer: $($_.Exception.Message)" 'ERROR' }
             }
         }
-        if ($msiPath) {
+
+        if ($installerPath) {
             $launcherBase = _GetLauncherBase
             foreach ($lp in @($launcherBase) + (_GetLauncherDataFolders)) {
                 if ($lp -and (Test-Path $lp)) {
@@ -628,17 +879,116 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                     catch { _Log "  Could not remove $lp" 'WARN' }
                 }
             }
-            _Log "  Running msiexec /uninstall..."
-            $psi = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/uninstall `"$msiPath`" /quiet /norestart")
-            $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psi.CreateNoWindow = $true
-            $proc = [System.Diagnostics.Process]::Start($psi); $proc.WaitForExit()
-            Start-Sleep -Seconds 1
-            _Log "  Running msiexec /package..."
-            $psi2 = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/package `"$msiPath`" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0")
-            $psi2.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psi2.CreateNoWindow = $true
-            $proc2 = [System.Diagnostics.Process]::Start($psi2); $proc2.WaitForExit()
-            _Log "  Launcher reinstalled." 'OK'
-        } else { _Log "  No MSI found in game folder — skipping launcher reinstall." 'WARN' }
+
+            $uninstallTargets = [System.Collections.Generic.List[string]]::new()
+            if ($altPath -and (Test-Path $altPath)) {
+                $uninstallTargets.Add($altPath)
+            } elseif ($installerFiles.Count -gt 0) {
+                $exeCandidates = @($installerFiles | Where-Object { $_.Extension -ieq '.exe' })
+                $msiCandidates = @($installerFiles | Where-Object { $_.Extension -ieq '.msi' })
+                if ($exeCandidates.Count -gt 0) {
+                    $exeNewest = ($exeCandidates | Sort-Object $vk -Descending)[0].FullName
+                    $uninstallTargets.Add($exeNewest)
+                }
+                if ($msiCandidates.Count -gt 0) {
+                    $msiNewest = ($msiCandidates | Sort-Object $vk -Descending)[0].FullName
+                    $uninstallTargets.Add($msiNewest)
+                }
+            } else {
+                $uninstallTargets.Add($installerPath)
+            }
+
+            if ($uninstallTargets.Count -gt 1) {
+                _Log "  Multiple uninstall targets detected ($($uninstallTargets.Count)). Trying each..."
+            }
+
+            $anyUninstallOk = $false
+            foreach ($ut in $uninstallTargets) {
+                $utExt = [System.IO.Path]::GetExtension($ut).ToLower()
+                _Log "  Uninstalling via $utExt : $(Split-Path $ut -Leaf)"
+                try {
+                    if ($utExt -eq '.msi') {
+                        $psiU = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/uninstall `"$ut`" /quiet /norestart")
+                    } else {
+                        $psiU = [System.Diagnostics.ProcessStartInfo]::new($ut, "/uninstall /quiet /norestart")
+                    }
+                    $psiU.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psiU.CreateNoWindow = $true
+                    $procU = [System.Diagnostics.Process]::Start($psiU); $procU.WaitForExit()
+                    _Log "  Uninstall exit code ($utExt): $($procU.ExitCode)"
+                    if ($procU.ExitCode -in @(0, 3010, 1641)) { $anyUninstallOk = $true }
+                    else { _Log "  Uninstall via $utExt returned non-success ($($procU.ExitCode))." 'WARN' }
+                } catch {
+                    _Log "  Uninstall via $utExt failed to launch: $($_.Exception.Message)" 'WARN'
+                }
+            }
+
+            $launcherBase2 = _GetLauncherBase
+            foreach ($lp in @($launcherBase2) + (_GetLauncherDataFolders)) {
+                if ($lp -and (Test-Path $lp)) {
+                    try { Remove-Item $lp -Recurse -Force; _Log "  Removed: $lp" 'OK' }
+                    catch { _Log "  Could not remove $lp" 'WARN' }
+                }
+            }
+
+            if (-not $anyUninstallOk) {
+                $launcherReg = 'HKCU:\Software\Paradox Interactive\Paradox Launcher v2'
+                if (Test-Path $launcherReg) {
+                    try { Remove-Item $launcherReg -Recurse -Force; _Log "  Removed registry key: $launcherReg" 'OK' }
+                    catch { _Log "  Could not remove registry key: $launcherReg" 'WARN' }
+                }
+            }
+
+            Start-Sleep -Seconds 2
+
+            $installerExt = [System.IO.Path]::GetExtension($installerPath).ToLower()
+            if ($installerExt -eq '.msi') {
+                $retry = 0
+                $success = $false
+                $deepCleanupDone = $false
+                while ($retry -lt 3 -and -not $success) {
+                    _Log "  Running msiexec /package (Attempt $($retry + 1))..."
+                    $psi2 = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/package `"$installerPath`" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0")
+                    $psi2.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psi2.CreateNoWindow = $true
+                    $proc2 = [System.Diagnostics.Process]::Start($psi2); $proc2.WaitForExit()
+                    _Log "  Package exit code: $($proc2.ExitCode)"
+
+                    if ($proc2.ExitCode -in @(0, 3010, 1641)) {
+                        $success = $true
+                        _Log "  Launcher reinstalled." 'OK'
+                    } elseif ($proc2.ExitCode -eq 1618) {
+                        _Log "  Installer busy (1618). Waiting 3 sec..." 'WARN'
+                        Start-Sleep -Seconds 3
+                        $retry++
+                    } else {
+                        _Log "  Launcher install returned code: $($proc2.ExitCode)" 'WARN'
+                        if (-not $deepCleanupDone) {
+                            _Log "  Install failed — running deep phantom cleanup and retrying..." 'WARN'
+                            _CleanPhantomLauncherRecords
+                            $deepCleanupDone = $true
+                            Start-Sleep -Seconds 2
+                            $retry++
+                        } else {
+                            _Log "  Install still failing after cleanup. Giving up." 'ERROR'
+                            break
+                        }
+                    }
+                }
+            } else {
+                _Log "  Running installer /quiet (EXE)..."
+                $psi2 = [System.Diagnostics.ProcessStartInfo]::new($installerPath, "/quiet /norestart")
+                $psi2.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $psi2.CreateNoWindow = $true
+                $proc2 = [System.Diagnostics.Process]::Start($psi2); $proc2.WaitForExit()
+                _Log "  Install exit code: $($proc2.ExitCode)"
+
+                if ($proc2.ExitCode -in @(0, 3010, 1641)) {
+                    _Log "  Launcher reinstalled." 'OK'
+                } else {
+                    _Log "  Launcher install returned code: $($proc2.ExitCode)" 'WARN'
+                    _Log "  Running deep phantom cleanup as fallback..." 'WARN'
+                    _CleanPhantomLauncherRecords
+                }
+            }
+        } else { _Log "  No installer found in game folder — skipping launcher reinstall." 'WARN' }
     } else { _Log "  Launcher reinstall skipped." }
 
     _Log "📋 Patching launcher folders..."
@@ -864,6 +1214,8 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                 <CheckBox x:Name="ChkSkip" Style="{StaticResource CK}"/>
                 <CheckBox x:Name="ChkNoUpdate" Style="{StaticResource CK}" IsChecked="True"/>
                 <CheckBox x:Name="ChkUnstable" Style="{StaticResource CK}"/>
+                <TextBlock x:Name="SandboxWarn" Foreground="#e74c3c" FontSize="11" FontWeight="Bold"
+                           TextWrapping="Wrap" Visibility="Collapsed" Margin="0,8,0,0"/>
                 <TextBlock x:Name="LblLauncher" Style="{StaticResource SL}" Margin="0,10,0,0"/>
                 <ComboBox x:Name="CmbLauncher" Style="{StaticResource CBx}"/>
                 <TextBlock x:Name="LblLauncherPath" Style="{StaticResource SL}" Margin="0,10,0,0"/>
@@ -934,6 +1286,7 @@ $lblLauncherPath    = $window.FindName('LblLauncherPath')
 $launcherPathBox    = $window.FindName('LauncherPathBox')
 $launcherBrowseBtn  = $window.FindName('LauncherBrowseBtn')
 $chkNoUpdate = $window.FindName('ChkNoUpdate'); $chkUnstable = $window.FindName('ChkUnstable')
+$sandboxWarn = $window.FindName('SandboxWarn')
 $statusLbl   = $window.FindName('StatusLbl'); $logBox     = $window.FindName('LogBox')
 $installBtn  = $window.FindName('InstallBtn');$launchBtn  = $window.FindName('LaunchBtn')
 $refreshBtn  = $window.FindName('RefreshBtn')
@@ -1006,6 +1359,7 @@ function Apply-UIText {
     $lblDlc.Text=T 'dlc_label'; $installBtn.Content=T 'install_btn'; $launchBtn.Content=T 'launch_btn'
     $refreshBtn.ToolTip=T 'refresh_tip'
     $legOk.Text=T 'dlc_ok'; $legOld.Text=T 'dlc_old'; $legMiss.Text=T 'dlc_missing'; $legUnstable.Text=T 'status_unstable'
+    if ($sandboxWarn.Visibility -eq [System.Windows.Visibility]::Visible) { $sandboxWarn.Text = T 'sandbox_warn' }
 }
 function Apply-Lang([string]$lang) { Set-LangBuiltin $lang; Set-LangActive $lang; Apply-UIText; Update-UI }
 
@@ -1061,6 +1415,17 @@ function Update-UI {
         'installed'     { $statusLbl.Text=T 'status_installed';     $statusLbl.Foreground='#27ae60'; $installBtn.IsEnabled=$ready }
         'not_installed' { $statusLbl.Text=T 'status_not_installed'; $statusLbl.Foreground='#f0a030'; $installBtn.IsEnabled=$ready }
         'not_found'     { $statusLbl.Text=T 'status_not_found';     $statusLbl.Foreground='#e74c3c'; $installBtn.IsEnabled=$false }
+    }
+
+    $sandboxReg = 'HKCU:\Software\Paradox Interactive\Paradox Launcher v2 Sandbox'
+    if (Test-Path $sandboxReg) {
+        $sandboxWarn.Text = T 'sandbox_warn'
+        $sandboxWarn.Visibility = [System.Windows.Visibility]::Visible
+        $chkSkip.IsChecked = $false
+        $chkSkip.IsEnabled = $false
+    } else {
+        $sandboxWarn.Visibility = [System.Windows.Visibility]::Collapsed
+        if (-not $chkFull.IsChecked) { $chkSkip.IsEnabled = $true }
     }
 }
 
@@ -1125,7 +1490,10 @@ $chkFull.Add_Checked({
     if ($r -ne 'Yes') { $chkFull.IsChecked=$false; return }
     $chkSkip.IsChecked=$false; $chkSkip.IsEnabled=$false
 })
-$chkFull.Add_Unchecked({ $chkSkip.IsEnabled=$true })
+$chkFull.Add_Unchecked({
+    $sandboxReg = 'HKCU:\Software\Paradox Interactive\Paradox Launcher v2 Sandbox'
+    if (-not (Test-Path $sandboxReg)) { $chkSkip.IsEnabled=$true }
+})
 $chkSkip.Add_Checked({
     $chkFull.IsChecked=$false; $chkFull.IsEnabled=$false
     $cmbLauncher.IsEnabled=$false
@@ -1179,6 +1547,7 @@ $installBtn.Add_Click({
         _LAUNCHERPATH         = $launcherPathBox.Text.Trim()
         _DLCDATA              = $script:dlcData
         _SERVERURL            = $SERVER_URL
+        _ALTLAUNCHERS         = $ALT_LAUNCHERS
         _ALTNAME              = $selectedAlt
         _OUTDATED             = $script:outdatedFolders
         _FULL                 = [bool]$chkFull.IsChecked
