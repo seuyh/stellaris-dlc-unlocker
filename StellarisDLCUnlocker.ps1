@@ -91,7 +91,7 @@ $JSDELIVR_DLC_URL    = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker
 $JSDELIVR_HASHES_URL = 'https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/hashes.json'
 
 $SERVER_URL        = 'yblocker.xyz'
-$ALT_LAUNCHERS     = @('paradox-launcher-installer-2026_11_1.exe', 'launcher-installer-windows_2024.13.msi', 'launcher-installer-windows_2024.8.msi')
+$ALT_LAUNCHERS     = @('paradox-launcher-installer-2026_11_1.exe', 'launcher-installer-windows_2024.14.msi', 'launcher-installer-windows_2024.13.msi')
 
 $STEAMCMD_API      = 'https://api.steamcmd.net/v1/info'
 
