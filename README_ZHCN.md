@@ -24,7 +24,7 @@ powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw
 
 镜像源 (jsDelivr):
 ```powershell
-powershell -ep bypass -c "$w=New-Object Net.WebClient;$w.Encoding=[Text.Encoding]::UTF8;$w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')|iex"
+powershell -ep bypass -c "$b = (New-Object Net.WebClient); $b.Encoding = [Text.Encoding]::UTF8; iex $b.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')"
 ```
 
 * **运行日志**：`%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
