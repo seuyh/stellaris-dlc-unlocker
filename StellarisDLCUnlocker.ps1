@@ -336,64 +336,17 @@ $BG_COMMON = {
         (New-Object Security.Principal.WindowsPrincipal($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
 
-    function _RunElevatedScript([string]$body) {
-        $tag    = [guid]::NewGuid().ToString('N')
-        $tmpPs  = Join-Path $env:TEMP "sdu_elev_$tag.ps1"
-        $tmpLog = Join-Path $env:TEMP "sdu_elev_$tag.log"
-        $logEsc = $tmpLog.Replace("'", "''")
-
-        $wrapper = @"
-`$ErrorActionPreference = 'Continue'
-`$ProgressPreference    = 'SilentlyContinue'
-`$script:_OUT = [System.Collections.Generic.List[string]]::new()
-function _W([string]`$m) { `$script:_OUT.Add(`$m) }
-try {
-$body
-} catch {
-    _W "ERROR: `$(`$_.Exception.Message)"
-}
-`$script:_OUT | Out-File -FilePath '$logEsc' -Encoding UTF8
-"@
-
-        $utf8Bom = New-Object System.Text.UTF8Encoding($true)
-        [System.IO.File]::WriteAllText($tmpPs, $wrapper, $utf8Bom)
-
-        $elevOk = $false
-        try {
-            $psi = New-Object System.Diagnostics.ProcessStartInfo
-            $psi.FileName        = 'powershell.exe'
-            $psi.Arguments       = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$tmpPs`""
-            $psi.UseShellExecute = $true
-            $psi.Verb            = 'RunAs'
-            $psi.WindowStyle     = [System.Diagnostics.ProcessWindowStyle]::Hidden
-            $proc = [System.Diagnostics.Process]::Start($psi)
-            $proc.WaitForExit()
-            $elevOk = $true
-        } catch {
-            _Log "    Elevation declined or failed: $($_.Exception.Message)" 'WARN'
-        } finally {
-            Remove-Item $tmpPs -Force -ErrorAction SilentlyContinue
-        }
-
-        if (Test-Path $tmpLog) {
-            Get-Content $tmpLog -ErrorAction SilentlyContinue | ForEach-Object {
-                if ($_.Trim()) { _Log "    $_" }
-            }
-            Remove-Item $tmpLog -Force -ErrorAction SilentlyContinue
-        }
-
-        return $elevOk
-    }
-
     function _CleanPhantomLauncherRecords {
         _Log "  Deep cleanup: scanning for phantom Paradox Launcher records..." 'WARN'
+
+        $isAdmin = _IsAdmin
 
         $roots = @(
             @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
             @{ P='HKCU:\Software\Classes\Installer\Products';                                              K='Products' },
             @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products';   K='UserData' }
         )
-        if (_IsAdmin) {
+        if ($isAdmin) {
             $roots += @(
                 @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
                 @{ P='HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall';                  K='Uninstall' },
@@ -456,65 +409,8 @@ $body
             }
         }
 
-        if (-not (_IsAdmin)) {
-            _Log "  Requesting UAC elevation for HKLM cleanup..." 'WARN'
-            $body = @'
-$ErrorActionPreference = 'SilentlyContinue'
-
-function _CU([string]$root) {
-    if (-not (Test-Path $root)) { return }
-    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
-        $p = Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
-        if (-not $p -or -not $p.DisplayName) { return }
-        if ($p.DisplayName -notmatch 'Paradox Launcher') { return }
-        _W "phantom uninstall entry: $($p.DisplayName) [$($_.PSChildName)]"
-        $pc = $null
-        if ($p.UninstallString -match '\{[0-9A-Fa-f\-]{36}\}') { $pc = $Matches[0] }
-        if (-not $pc -and $_.PSChildName -match '^\{[0-9A-Fa-f\-]{36}\}$') { $pc = $_.PSChildName }
-        if ($pc) {
-            try {
-                $pr = Start-Process msiexec.exe -ArgumentList "/X$pc /quiet /norestart" -Wait -PassThru -WindowStyle Hidden
-                _W "msiexec /X $pc -> $($pr.ExitCode)"
-            } catch { _W "msiexec /X failed: $($_.Exception.Message)" }
-        }
-        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-        _W "removed: $($_.PSPath)"
-    }
-}
-
-function _CP([string]$root) {
-    if (-not (Test-Path $root)) { return }
-    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
-        $p = Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue
-        if (-not $p -or -not $p.ProductName) { return }
-        if ($p.ProductName -notmatch 'Paradox Launcher') { return }
-        _W "phantom MSI product: $($p.ProductName) [$($_.PSChildName)]"
-        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-        _W "removed: $($_.PSPath)"
-    }
-}
-
-function _CUD([string]$root) {
-    if (-not (Test-Path $root)) { return }
-    Get-ChildItem $root -ErrorAction SilentlyContinue | ForEach-Object {
-        $ip = Join-Path $_.PSPath 'InstallProperties'
-        if (-not (Test-Path $ip)) { return }
-        $p = Get-ItemProperty $ip -ErrorAction SilentlyContinue
-        if (-not $p -or -not $p.DisplayName) { return }
-        if ($p.DisplayName -notmatch 'Paradox Launcher') { return }
-        _W "phantom UserData: $($p.DisplayName) [$($_.PSChildName)]"
-        Remove-Item $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-        _W "removed: $($_.PSPath)"
-    }
-}
-
-_CU 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
-_CU 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
-_CP 'HKLM:\SOFTWARE\Classes\Installer\Products'
-_CUD 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products'
-_W "HKLM cleanup finished"
-'@
-            _RunElevatedScript $body
+        if (-not $isAdmin) {
+            _Log "  HKLM entries not cleaned (not running as Administrator). Re-run this script as Administrator to remove them." 'WARN'
         }
 
         _Log "  Deep cleanup finished." 'OK'
