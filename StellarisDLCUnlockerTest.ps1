@@ -330,91 +330,6 @@ $BG_COMMON = {
         if (-not $lp2 -or [System.IO.Path]::GetPathRoot($lp2+'') -eq $lp2) { $lp2 = "$h\AppData\Local\Paradox Interactive" }
         return @($lp2, "$h\AppData\Roaming\Paradox Interactive", "$h\AppData\Roaming\paradox-launcher-v2")
     }
-
-    function _IsAdmin {
-        $id = [Security.Principal.WindowsIdentity]::GetCurrent()
-        (New-Object Security.Principal.WindowsPrincipal($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    }
-
-    function _CleanPhantomLauncherRecords {
-        _Log "  Deep cleanup: scanning for phantom Paradox Launcher records..." 'WARN'
-
-        $isAdmin = _IsAdmin
-
-        $roots = @(
-            @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
-            @{ P='HKCU:\Software\Classes\Installer\Products';                                              K='Products' },
-            @{ P='HKCU:\Software\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products';   K='UserData' }
-        )
-        if ($isAdmin) {
-            $roots += @(
-                @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall';                              K='Uninstall' },
-                @{ P='HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall';                  K='Uninstall' },
-                @{ P='HKLM:\SOFTWARE\Classes\Installer\Products';                                              K='Products' },
-                @{ P='HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products';   K='UserData' }
-            )
-        }
-
-        foreach ($r in $roots) {
-            if (-not (Test-Path $r.P)) { continue }
-            $keys = @(Get-ChildItem $r.P -ErrorAction SilentlyContinue)
-            foreach ($k in $keys) {
-                switch ($r.K) {
-                    'Uninstall' {
-                        $p = Get-ItemProperty $k.PSPath -ErrorAction SilentlyContinue
-                        if (-not $p -or -not $p.DisplayName) { continue }
-                        if ($p.DisplayName -notmatch 'Paradox Launcher') { continue }
-                        _Log "    Phantom uninstall entry: '$($p.DisplayName)'  [$($k.PSChildName)]" 'WARN'
-                        $pc = $null
-                        if ($p.UninstallString -and ($p.UninstallString -match '\{[0-9A-Fa-f\-]{36}\}')) { $pc = $Matches[0] }
-                        if (-not $pc -and $k.PSChildName -match '^\{[0-9A-Fa-f\-]{36}\}$') { $pc = $k.PSChildName }
-                        if ($pc) {
-                            try {
-                                $pi = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/X$pc /quiet /norestart")
-                                $pi.WindowStyle  = [System.Diagnostics.ProcessWindowStyle]::Hidden
-                                $pi.CreateNoWindow = $true
-                                $pr = [System.Diagnostics.Process]::Start($pi)
-                                $pr.WaitForExit()
-                                _Log "    msiexec /X $pc -> $($pr.ExitCode)"
-                            } catch { _Log "    msiexec /X failed: $($_.Exception.Message)" 'WARN' }
-                        }
-                        try {
-                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-                            _Log "    Removed: $($k.PSPath)" 'OK'
-                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
-                    }
-                    'Products' {
-                        $p = Get-ItemProperty $k.PSPath -ErrorAction SilentlyContinue
-                        if (-not $p -or -not $p.ProductName) { continue }
-                        if ($p.ProductName -notmatch 'Paradox Launcher') { continue }
-                        _Log "    Phantom MSI product record: '$($p.ProductName)'  [$($k.PSChildName)]" 'WARN'
-                        try {
-                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-                            _Log "    Removed: $($k.PSPath)" 'OK'
-                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
-                    }
-                    'UserData' {
-                        $ip = Join-Path $k.PSPath 'InstallProperties'
-                        if (-not (Test-Path $ip)) { continue }
-                        $p = Get-ItemProperty $ip -ErrorAction SilentlyContinue
-                        if (-not $p -or -not $p.DisplayName) { continue }
-                        if ($p.DisplayName -notmatch 'Paradox Launcher') { continue }
-                        _Log "    Phantom UserData product record: '$($p.DisplayName)'  [$($k.PSChildName)]" 'WARN'
-                        try {
-                            Remove-Item $k.PSPath -Recurse -Force -ErrorAction SilentlyContinue
-                            _Log "    Removed: $($k.PSPath)" 'OK'
-                        } catch { _Log "    Could not remove: $($k.PSPath)" 'WARN' }
-                    }
-                }
-            }
-        }
-
-        if (-not $isAdmin) {
-            _Log "  HKLM entries not cleaned (not running as Administrator). Re-run this script as Administrator to remove them." 'WARN'
-        }
-
-        _Log "  Deep cleanup finished." 'OK'
-    }
 }
 
 $INIT_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
@@ -840,7 +755,6 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
             if ($installerExt -eq '.msi') {
                 $retry = 0
                 $success = $false
-                $deepCleanupDone = $false
                 while ($retry -lt 3 -and -not $success) {
                     _Log "  Running msiexec /package (Attempt $($retry + 1))..."
                     $psi2 = [System.Diagnostics.ProcessStartInfo]::new('msiexec.exe', "/package `"$installerPath`" /quiet /norestart CREATE_DESKTOP_SHORTCUT=0")
@@ -857,16 +771,8 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                         $retry++
                     } else {
                         _Log "  Launcher install returned code: $($proc2.ExitCode)" 'WARN'
-                        if (-not $deepCleanupDone) {
-                            _Log "  Install failed — running deep phantom cleanup and retrying..." 'WARN'
-                            _CleanPhantomLauncherRecords
-                            $deepCleanupDone = $true
-                            Start-Sleep -Seconds 2
-                            $retry++
-                        } else {
-                            _Log "  Install still failing after cleanup. Giving up." 'ERROR'
-                            break
-                        }
+                        _Log "  If this repeats, reinstall the game via Steam to reset the MSI database." 'WARN'
+                        break
                     }
                 }
             } else {
@@ -880,8 +786,7 @@ $INSTALL_SCRIPT = [scriptblock]::Create($BG_COMMON.ToString() + @'
                     _Log "  Launcher reinstalled." 'OK'
                 } else {
                     _Log "  Launcher install returned code: $($proc2.ExitCode)" 'WARN'
-                    _Log "  Running deep phantom cleanup as fallback..." 'WARN'
-                    _CleanPhantomLauncherRecords
+                    _Log "  If this repeats, reinstall the game via Steam to reset the MSI database." 'WARN'
                 }
             }
         } else { _Log "  No installer found in game folder — skipping launcher reinstall." 'WARN' }
