@@ -24,7 +24,7 @@ powershell -WindowStyle Hidden -ExecutionPolicy Bypass -Command "irm https://raw
 
 Mirror (jsDelivr):
 ```powershell
-powershell -ep bypass -c "$b = (New-Object Net.WebClient); $b.Encoding = [Text.Encoding]::UTF8; iex $b.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')"
+powershell -ep bypass -c "$w = [Activator]::CreateInstance([Net.WebClient]); $w.Encoding = [Text.Encoding]::UTF8; iex $w.DownloadString('https://cdn.jsdelivr.net/gh/seuyh/stellaris-dlc-unlocker@main/StellarisDLCUnlocker.ps1')"
 ```
 
 * **Work Logs**: `%LocalAppData%\StellarisDLCUnlocker\unlocker.log`
