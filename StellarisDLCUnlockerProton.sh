@@ -14,7 +14,7 @@ GITHUB_DLC_URL="$REPO_GITHUB_RAW/dlc_data.json"
 JSDELIVR_DLC_URL="$REPO_JSDELIVR/dlc_data.json"
 GITHUB_HASHES_URL="$REPO_GITHUB_RAW/hashes.json"
 JSDELIVR_HASHES_URL="$REPO_JSDELIVR/hashes.json"
-SERVER_URL="yblocker.xyz"
+SERVER_URL="anblocker.biz"
 STEAMCMD_API="https://api.steamcmd.net/v1/info"
 
 STEAM_FILES=(Emulator64.dll LinkNeverDie_Com_64.dll SWLoader.txt SWconfig.ini cream_api.ini steam_api64_org_game.dll steam_api64_org_launcher.dll)
